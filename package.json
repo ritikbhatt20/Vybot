@@ -32,12 +32,11 @@
     "compression": "^1.8.0",
     "helmet": "^8.1.0",
     "kysely": "^0.28.1",
-    "mysql2": "^3.14.0",
     "nestjs-telegraf": "^2.8.1",
+    "pg": "^8.11.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
-    "telegraf": "^4.16.3",
-    "telegraf-session-mysql": "^5.3.0"
+    "telegraf": "^4.16.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -50,6 +49,7 @@
     "@types/express": "^5.0.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.14.1",
+    "@types/pg": "^8.10.9",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.2",
