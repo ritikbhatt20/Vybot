@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { VybeApiService } from './vybe-api.service';
-import { KeyboardsService } from './keyboard.service';
+import { KeyboardService } from './keyboard.service';
 
 @Module({
-    providers: [VybeApiService, KeyboardsService],
-    exports: [VybeApiService, KeyboardsService],
+    providers: [VybeApiService, KeyboardService],
+    exports: [VybeApiService, KeyboardService],
 })
-export class SharedModule {}
+export class SharedModule { }

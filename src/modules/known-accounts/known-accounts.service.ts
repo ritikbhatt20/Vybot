@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { KnownAccount } from 'src/types';
+import { KnownAccount } from '../../types';
 
 @Injectable()
 export class KnownAccountsService {
+    private readonly logger = new Logger(KnownAccountsService.name);
+
     constructor(private readonly vybeApi: VybeApiService) { }
 
     async getKnownAccounts(params: {
@@ -16,25 +18,25 @@ export class KnownAccountsService {
         sortByDesc?: string;
     }): Promise<KnownAccount[]> {
         const query = new URLSearchParams();
+
         if (params.ownerAddress) query.append('ownerAddress', params.ownerAddress);
         if (params.name) query.append('name', params.name);
-        if (params.labels) params.labels.forEach((label) => query.append('labels', label));
+        if (params.labels?.length) params.labels.forEach((label) => query.append('labels', label));
         if (params.entity) query.append('entityName', params.entity);
         if (params.entityId) query.append('entityId', params.entityId.toString());
         if (params.sortByAsc) query.append('sortByAsc', params.sortByAsc);
         if (params.sortByDesc) query.append('sortByDesc', params.sortByDesc);
 
         const url = `/account/known-accounts${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching known accounts with params: ${JSON.stringify(params)}`);
+
         try {
             const response = await this.vybeApi.get<{ accounts: KnownAccount[] }>(url);
-            return response.accounts;
+            this.logger.debug(`Found ${response.accounts?.length || 0} accounts`);
+            return response.accounts || [];
         } catch (error) {
-            console.error('Vybe API Error:', {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status,
-                url,
-            });
+            this.logger.error(`Failed to fetch known accounts: ${error.message}`, error.stack);
             throw error;
         }
     }

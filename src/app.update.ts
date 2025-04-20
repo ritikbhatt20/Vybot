@@ -1,23 +1,25 @@
 import { Action, Command, Ctx, Help, Start, Update } from 'nestjs-telegraf';
-import { Context, Markup } from 'telegraf';
+import { Context } from 'telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
-import { KeyboardsService } from './modules/shared/keyboard.service';
+import { Logger } from '@nestjs/common';
+import { KeyboardService } from './modules/shared/keyboard.service';
 import { Actions } from './enums/actions.enum';
 import { Commands } from './enums/commands.enum';
-import { commandDescriptions } from './constants';
+import { BOT_MESSAGES, commandDescriptions } from './constants';
 import { escapeMarkdownV2 } from './utils';
 import { KNOWN_ACCOUNTS_SCENE_ID } from './modules/known-accounts/known-accounts.scene';
 
 @Update()
 export class AppUpdate {
-    constructor(private readonly keyboard: KeyboardsService) { }
+    private readonly logger = new Logger(AppUpdate.name);
+
+    constructor(private readonly keyboard: KeyboardService) { }
 
     @Start()
     async start(@Ctx() ctx: Context) {
-        const message = escapeMarkdownV2(
-            `👋 *Welcome to VybeBot!*\n\n🚀 _Real-time Solana analytics_\n\nUse /knownaccounts to explore labeled accounts.`,
-        );
-        await ctx.replyWithMarkdownV2(message, {
+        this.logger.log(`New user started the bot: ${ctx.from?.id} (${ctx.from?.username || 'no username'})`);
+
+        await ctx.replyWithMarkdownV2(escapeMarkdownV2(BOT_MESSAGES.WELCOME), {
             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
         });
     }
@@ -26,66 +28,77 @@ export class AppUpdate {
     @Action(Actions.HELP)
     async help(@Ctx() ctx: Context) {
         const helpMessage = Object.values(commandDescriptions).join('\n');
+
         await ctx.replyWithMarkdownV2(
-            `*📃 Help*\n\n${escapeMarkdownV2(helpMessage)}`,
+            `${escapeMarkdownV2(BOT_MESSAGES.HELP_HEADER)}${escapeMarkdownV2(helpMessage)}`,
             {
-                reply_markup: Markup.inlineKeyboard([
-                    Markup.button.callback('❌ Close', Actions.CLOSE),
-                ]).reply_markup,
+                reply_markup: this.keyboard.getCloseKeyboard().reply_markup,
             },
         );
     }
 
     @Action(Actions.CLOSE)
     async onClose(@Ctx() ctx: Context) {
-        await ctx.deleteMessage();
+        try {
+            await ctx.answerCbQuery();
+            await ctx.deleteMessage();
+        } catch (error) {
+            this.logger.error(`Error in close action: ${error.message}`);
+        }
     }
 
     @Command(Commands.MAIN_MENU)
     async handleMainMenu(@Ctx() ctx: Context) {
-        const message = escapeMarkdownV2(
-            '👋 *Welcome to VybeBot!*\n\nWhat would you like to explore today?',
-        );
-        await ctx.replyWithMarkdownV2(message, {
+        await ctx.replyWithMarkdownV2(escapeMarkdownV2(BOT_MESSAGES.MAIN_MENU), {
             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
         });
     }
 
     @Action(Actions.MAIN_MENU)
     async handleMainMenuAction(@Ctx() ctx: Context) {
-        ctx.answerCbQuery();
-        const message = escapeMarkdownV2(
-            '👋 *Welcome to VybeBot!*\n\nWhat would you like to explore today?',
-        );
-        await ctx.replyWithMarkdownV2(message, {
+        await ctx.answerCbQuery();
+        await ctx.replyWithMarkdownV2(escapeMarkdownV2(BOT_MESSAGES.MAIN_MENU), {
             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
         });
     }
 
-    // Add these handlers for the filter again and close buttons from the known accounts scene
+    // Global action handlers for scene buttons
     @Action('FILTER_AGAIN')
     async handleFilterAgain(@Ctx() ctx: Context & SceneContext) {
-        await ctx.answerCbQuery('🔄 Preparing to filter again...');
-        // Re-enter the scene to start fresh
-        await ctx.scene.enter(KNOWN_ACCOUNTS_SCENE_ID);
+        try {
+            await ctx.answerCbQuery('🔄 Preparing filter options...');
+            await ctx.scene.enter(KNOWN_ACCOUNTS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in filter again action: ${error.message}`);
+            await ctx.replyWithMarkdownV2(escapeMarkdownV2(BOT_MESSAGES.ERROR.GENERIC));
+        }
     }
 
     @Action('CLOSE_BUTTON')
     async handleCloseButton(@Ctx() ctx: Context) {
-        await ctx.answerCbQuery();
-        await ctx.deleteMessage();
+        try {
+            await ctx.answerCbQuery();
+            await ctx.deleteMessage();
+        } catch (error) {
+            this.logger.error(`Error in close button action: ${error.message}`);
+        }
     }
 
     @Action('CANCEL_BUTTON')
     async handleCancelButton(@Ctx() ctx: Context & SceneContext) {
-        await ctx.answerCbQuery('Operation cancelled');
-        // Make sure we leave the scene BEFORE sending any additional messages
-        if (ctx.scene && ctx.scene.current) {
-            await ctx.scene.leave();
+        try {
+            await ctx.answerCbQuery('Operation cancelled');
+
+            // First leave the scene to prevent any further processing
+            if (ctx.scene && ctx.scene.current) {
+                await ctx.scene.leave();
+            }
+
+            await ctx.replyWithMarkdownV2(escapeMarkdownV2(BOT_MESSAGES.CANCEL), {
+                reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+            });
+        } catch (error) {
+            this.logger.error(`Error in cancel button action: ${error.message}`);
         }
-        const cancelMessage = escapeMarkdownV2('❌ Operation cancelled.');
-        await ctx.replyWithMarkdownV2(cancelMessage, {
-            reply_markup: this.keyboard.getMainKeyboard().reply_markup,
-        });
     }
 }
