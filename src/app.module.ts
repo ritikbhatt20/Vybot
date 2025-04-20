@@ -14,25 +14,39 @@ import { PostgresSessionStore } from './utils/pg-session-store';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        // Get database config with fallbacks for required fields
-        const dbHost = configService.get<string>('DATABASE_HOST') || 'localhost';
-        const dbPort = configService.get<number>('DATABASE_PORT') || 5432;
-        const dbName = configService.get<string>('DATABASE_NAME');
-        const dbUser = configService.get<string>('DATABASE_USER');
-        const dbPassword = configService.get<string>('DATABASE_PASSWORD');
+        // Parse connection parameters from Neon connection string
+        const connectionString = configService.get<string>('DATABASE_URL') || '';
 
-        // Validate required database configuration
-        if (!dbName || !dbUser || !dbPassword) {
-          throw new Error('Missing required database configuration. Please check your .env file.');
+        // Extract connection details from the connection string
+        const regex = /postgresql:\/\/([^:]+):([^@]+)@([^:]+):?(\d+)?\/([^?]+)/;
+        const match = connectionString.match(regex);
+
+        let dbUser, dbPassword, dbHost, dbPort, dbName;
+
+        if (match) {
+          [, dbUser, dbPassword, dbHost, dbPort, dbName] = match;
+        } else {
+          // For Neon's format which may not include port or have a different format
+          const neonRegex = /postgresql:\/\/([^:]+):([^@]+)@([^\/]+)\/([^?]+)/;
+          const neonMatch = connectionString.match(neonRegex);
+
+          if (neonMatch) {
+            [, dbUser, dbPassword, dbHost, dbName] = neonMatch;
+            // Neon typically uses standard PostgreSQL port
+            dbPort = '5432';
+          } else {
+            throw new Error('Unable to parse database connection string');
+          }
         }
 
-        // Create PostgreSQL session store
+        // Create PostgreSQL session store with individual parameters
         const store = PostgresSessionStore({
           host: dbHost,
-          port: dbPort,
+          port: parseInt(dbPort || '5432'),
           database: dbName,
           user: dbUser,
           password: dbPassword,
+          ssl: true
         });
 
         const botToken = configService.get<string>('TELEGRAM_BOT_TOKEN');
