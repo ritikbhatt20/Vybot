@@ -8,11 +8,11 @@ import { escapeMarkdownV2, handleErrorResponses } from 'src/utils';
 
 export const KNOWN_ACCOUNTS_SCENE_ID = 'KNOWN_ACCOUNTS_SCENE';
 
-enum KnownAccountsActions {
-    CANCEL = 'CANCEL',
-    CLOSE = 'CLOSE',
-    FILTER = 'FILTER',
-}
+// Define specific scene actions - these need to match exactly what's used in the buttons
+const FILTER_AGAIN = 'FILTER_AGAIN';
+const CLOSE_BUTTON = 'CLOSE_BUTTON';
+const CANCEL_BUTTON = 'CANCEL_BUTTON';
+const FETCH_ALL = 'FETCH_ALL';
 
 @Wizard(KNOWN_ACCOUNTS_SCENE_ID)
 export class KnownAccountsScene {
@@ -28,24 +28,44 @@ export class KnownAccountsScene {
         );
         await ctx.replyWithMarkdownV2(message, {
             reply_markup: Markup.inlineKeyboard([
-                [Markup.button.callback('📥 Fetch All', 'FETCH_ALL')],
-                [Markup.button.callback('🚫 Cancel', KnownAccountsActions.CANCEL)],
+                [Markup.button.callback('📥 Fetch All', FETCH_ALL)],
+                [Markup.button.callback('🚫 Cancel', CANCEL_BUTTON)],
             ]).reply_markup,
         });
         ctx.wizard.next();
     }
 
-    @Action('FETCH_ALL')
+    @Action(FETCH_ALL)
     async fetchAll(@Ctx() ctx: WizardContext) {
+        await ctx.answerCbQuery('Fetching all accounts...');
         await this.handleFetch(ctx, {});
+    }
+
+    // We also need to handle the CANCEL_BUTTON inside the scene to prevent progression
+    @Action(CANCEL_BUTTON)
+    async onCancel(@Ctx() ctx: WizardContext) {
+        // Important: Remove this handler from the scene to avoid duplicate processing
+        // Just answer the callback query and let the global handler take care of the rest
+        await ctx.answerCbQuery('Operation cancelled');
+        // Stop scene execution - return explicitly to prevent handleFilter from running
+        return;
     }
 
     @WizardStep(2)
     async handleFilter(@Ctx() ctx: WizardContext) {
+        // First check if this is a callback query for actions we want to intercept
+        if (ctx.updateType === 'callback_query') {
+            const data = (ctx.callbackQuery as any).data;
+            if (data === CANCEL_BUTTON || data === CLOSE_BUTTON) {
+                // Don't process these in handleFilter
+                return;
+            }
+        }
+
         const messageText = (ctx.message as { text: string })?.text;
         let params: any = {};
 
-        if (messageText && messageText !== 'FETCH_ALL') {
+        if (messageText && messageText !== FETCH_ALL) {
             try {
                 const pairs = messageText.split(',').map((p) => p.trim().split('='));
                 pairs.forEach(([key, value]) => {
@@ -61,8 +81,8 @@ export class KnownAccountsScene {
                 );
                 await ctx.replyWithMarkdownV2(errorMessage, {
                     reply_markup: Markup.inlineKeyboard([
-                        [Markup.button.callback('📥 Fetch All', 'FETCH_ALL')],
-                        [Markup.button.callback('🚫 Cancel', KnownAccountsActions.CANCEL)],
+                        [Markup.button.callback('📥 Fetch All', FETCH_ALL)],
+                        [Markup.button.callback('🚫 Cancel', CANCEL_BUTTON)],
                     ]).reply_markup,
                 });
                 return;
@@ -86,8 +106,8 @@ export class KnownAccountsScene {
                 const noAccountsMessage = escapeMarkdownV2('🛑 No accounts found.');
                 await ctx.replyWithMarkdownV2(noAccountsMessage, {
                     reply_markup: Markup.inlineKeyboard([
-                        [Markup.button.callback('🔄 Filter Again', KnownAccountsActions.FILTER)],
-                        [Markup.button.callback('❌ Close', KnownAccountsActions.CLOSE)],
+                        [Markup.button.callback('🔄 Filter Again', FILTER_AGAIN)],
+                        [Markup.button.callback('❌ Close', CLOSE_BUTTON)],
                     ]).reply_markup,
                 });
                 await ctx.scene.leave();
@@ -110,9 +130,9 @@ export class KnownAccountsScene {
                 `*📊 Known Accounts*\n\n${message}`,
                 {
                     reply_markup: Markup.inlineKeyboard([
-                        [Markup.button.callback('🔄 Filter Again', KnownAccountsActions.FILTER)],
+                        [Markup.button.callback('🔄 Filter Again', FILTER_AGAIN)],
                         [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
-                        [Markup.button.callback('❌ Close', KnownAccountsActions.CLOSE)],
+                        [Markup.button.callback('❌ Close', CLOSE_BUTTON)],
                     ]).reply_markup,
                 },
             );
@@ -130,62 +150,18 @@ export class KnownAccountsScene {
                 ctx,
                 error,
                 defaultMessage: errorMessage,
-                buttons: [{ text: '🔃 Retry', action: KnownAccountsActions.FILTER }],
+                buttons: [{ text: '🔃 Retry', action: FILTER_AGAIN }],
             });
         }
     }
 
-    @Action(KnownAccountsActions.FILTER)
-    async retryFilter(@Ctx() ctx: WizardContext) {
-        try {
-            console.log('Retry Filter: Action triggered with callback data:', ctx.callbackQuery?.message);
-            await ctx.answerCbQuery('🔄 Preparing to filter again...');
-            console.log('Retry Filter: answerCbQuery called, re-entering scene');
-            await ctx.scene.enter(KNOWN_ACCOUNTS_SCENE_ID); // Re-enter scene instead of selectStep
-            console.log('Retry Filter: Scene re-entered');
-        } catch (error) {
-            console.error('Retry Filter Error:', {
-                message: error.message,
-                response: error.response?.data,
-                status: error.response?.status,
-            });
-            const errorMessage = escapeMarkdownV2('❌ Failed to retry filter. Please try /knownaccounts again.');
-            await ctx.replyWithMarkdownV2(errorMessage, {
-                reply_markup: this.keyboard.getMainKeyboard().reply_markup,
-            });
-            await ctx.scene.leave();
-        }
-    }
-
-    @Action(KnownAccountsActions.CANCEL)
-    async cancel(@Ctx() ctx: WizardContext) {
-        try {
-            console.log('Cancel: Action triggered');
-            await ctx.answerCbQuery();
-            const cancelMessage = escapeMarkdownV2('❌ Operation cancelled.');
-            await ctx.replyWithMarkdownV2(cancelMessage, {
-                reply_markup: this.keyboard.getMainKeyboard().reply_markup,
-            });
-            await ctx.scene.leave();
-        } catch (error) {
-            console.error('Cancel Error:', error.message);
-        }
-    }
-
-    @Action(KnownAccountsActions.CLOSE)
-    async close(@Ctx() ctx: WizardContext) {
-        try {
-            console.log('Close: Action triggered');
-            await ctx.answerCbQuery();
-            await ctx.deleteMessage();
-            await ctx.scene.leave();
-        } catch (error) {
-            console.error('Close Error:', error.message);
-        }
-    }
-
+    // Add this to handle the Cancel command explicitly
     @Command(Commands.Cancel)
     async cancelCommand(@Ctx() ctx: WizardContext) {
+        const cancelMessage = escapeMarkdownV2('❌ Operation cancelled.');
+        await ctx.replyWithMarkdownV2(cancelMessage, {
+            reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+        });
         await ctx.scene.leave();
     }
 }
