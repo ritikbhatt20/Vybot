@@ -11,7 +11,7 @@ export class KeyboardService {
             [Markup.button.callback('🏷️ Known Accounts', Actions.KNOWN_ACCOUNTS)],
             [Markup.button.callback('📊 Analytics Dashboard', 'ANALYTICS')],
             [Markup.button.callback('📚 Help', Actions.HELP)],
-            [Markup.button.url('🌐 Visit AlphaVybe', 'https://alphavybe.com')],
+            [Markup.button.url('🌐 Visit Vybe Network', 'https://www.vybenetwork.com')],
         ]);
     }
 
