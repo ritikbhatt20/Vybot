@@ -13,7 +13,7 @@ export const commandDescriptions: CommandDescriptions = {
 
 export const BOT_MESSAGES = {
     WELCOME: `
-👋 *Welcome to VybeBot*
+👋 <b>Welcome to VybeBot</b>
 
 🚀 Your real-time Solana analytics companion!
 
@@ -21,9 +21,9 @@ VybeBot helps you track and analyze Solana blockchain activity with powerful, us
 
 Use /knownaccounts to explore labeled accounts or type /help to see all available commands.
 `,
-    HELP_HEADER: `*📚 VybeBot Commands*\n\nHere are all the commands you can use:\n\n`,
+    HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
     MAIN_MENU: `
-🏠 *VybeBot Main Menu*
+🏠 <b>VybeBot Main Menu</b>
 
 What would you like to explore today?
 
@@ -36,7 +36,7 @@ Choose an option below or type a command:
     },
     KNOWN_ACCOUNTS: {
         ASK_FILTER: `
-📊 *Known Accounts Filter*
+📊 <b>Known Accounts Filter</b>
 
 Enter a filter or press Fetch All to see all known accounts:
 
@@ -45,9 +45,9 @@ Examples:
 • \`name=Openbook\` - Search by name
 • \`entity=Solana Foundation\` - Filter by entity
 `,
-        SEARCHING: '🔍 *Searching for accounts...*',
+        SEARCHING: '🔍 <b>Searching for accounts...</b>',
         NO_RESULTS: '🔍 No accounts found matching your criteria.',
-        RESULTS_HEADER: '📊 *Known Solana Accounts*\n\n',
+        RESULTS_HEADER: '📊 <b>Known Solana Accounts</b>\n\n',
     },
-    CANCEL: '🚫 *Operation cancelled*',
+    CANCEL: '🚫 <b>Operation cancelled</b>',
 };

@@ -19,7 +19,7 @@ export class AppUpdate {
     async start(@Ctx() ctx: Context) {
         this.logger.log(`New user started the bot: ${ctx.from?.id} (${ctx.from?.username || 'no username'})`);
 
-        await ctx.replyWithMarkdownV2(escapeMarkdownV2(BOT_MESSAGES.WELCOME), {
+        await ctx.replyWithHTML(BOT_MESSAGES.WELCOME, {
             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
         });
     }
@@ -29,8 +29,8 @@ export class AppUpdate {
     async help(@Ctx() ctx: Context) {
         const helpMessage = Object.values(commandDescriptions).join('\n');
 
-        await ctx.replyWithMarkdownV2(
-            `${escapeMarkdownV2(BOT_MESSAGES.HELP_HEADER)}${escapeMarkdownV2(helpMessage)}`,
+        await ctx.replyWithHTML(
+            `${BOT_MESSAGES.HELP_HEADER}${helpMessage}`,
             {
                 reply_markup: this.keyboard.getCloseKeyboard().reply_markup,
             },
@@ -49,7 +49,7 @@ export class AppUpdate {
 
     @Command(Commands.MAIN_MENU)
     async handleMainMenu(@Ctx() ctx: Context) {
-        await ctx.replyWithMarkdownV2(escapeMarkdownV2(BOT_MESSAGES.MAIN_MENU), {
+        await ctx.replyWithHTML(escapeMarkdownV2(BOT_MESSAGES.MAIN_MENU), {
             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
         });
     }
@@ -57,7 +57,7 @@ export class AppUpdate {
     @Action(Actions.MAIN_MENU)
     async handleMainMenuAction(@Ctx() ctx: Context) {
         await ctx.answerCbQuery();
-        await ctx.replyWithMarkdownV2(escapeMarkdownV2(BOT_MESSAGES.MAIN_MENU), {
+        await ctx.replyWithHTML(escapeMarkdownV2(BOT_MESSAGES.MAIN_MENU), {
             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
         });
     }
@@ -70,7 +70,7 @@ export class AppUpdate {
             await ctx.scene.enter(KNOWN_ACCOUNTS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error in filter again action: ${error.message}`);
-            await ctx.replyWithMarkdownV2(escapeMarkdownV2(BOT_MESSAGES.ERROR.GENERIC));
+            await ctx.replyWithHTML(escapeMarkdownV2(BOT_MESSAGES.ERROR.GENERIC));
         }
     }
 
@@ -94,7 +94,7 @@ export class AppUpdate {
                 await ctx.scene.leave();
             }
 
-            await ctx.replyWithMarkdownV2(escapeMarkdownV2(BOT_MESSAGES.CANCEL), {
+            await ctx.replyWithHTML(escapeMarkdownV2(BOT_MESSAGES.CANCEL), {
                 reply_markup: this.keyboard.getMainKeyboard().reply_markup,
             });
         } catch (error) {

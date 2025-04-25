@@ -23,7 +23,7 @@ export class KnownAccountsScene {
     @WizardStep(1)
     async askFilter(@Ctx() ctx: WizardContext) {
         try {
-            await ctx.replyWithMarkdownV2(
+            await ctx.replyWithHTML(
                 escapeMarkdownV2(BOT_MESSAGES.KNOWN_ACCOUNTS.ASK_FILTER),
                 { reply_markup: this.keyboard.getFilterKeyboard().reply_markup }
             );
@@ -81,7 +81,7 @@ export class KnownAccountsScene {
                     this.logger.warn(`Invalid filter format: ${messageText}`);
 
                     // Handle invalid format
-                    await ctx.replyWithMarkdownV2(
+                    await ctx.replyWithHTML(
                         escapeMarkdownV2(BOT_MESSAGES.ERROR.INVALID_FORMAT),
                         { reply_markup: this.keyboard.getFilterKeyboard().reply_markup }
                     );
@@ -108,7 +108,7 @@ export class KnownAccountsScene {
                 await ctx.answerCbQuery('🔍 Searching...');
             }
 
-            await ctx.replyWithMarkdownV2(
+            await ctx.replyWithHTML(
                 escapeMarkdownV2(BOT_MESSAGES.KNOWN_ACCOUNTS.SEARCHING)
             );
 
@@ -116,7 +116,7 @@ export class KnownAccountsScene {
             const accounts = await this.knownAccountsService.getKnownAccounts(params);
 
             if (!accounts || accounts.length === 0) {
-                await ctx.replyWithMarkdownV2(
+                await ctx.replyWithHTML(
                     escapeMarkdownV2(BOT_MESSAGES.KNOWN_ACCOUNTS.NO_RESULTS),
                     { reply_markup: this.keyboard.getResultsKeyboard().reply_markup }
                 );
@@ -144,7 +144,7 @@ export class KnownAccountsScene {
                 .join('\n');
 
             // Show results
-            await ctx.replyWithMarkdownV2(
+            await ctx.replyWithHTML(
                 `${escapeMarkdownV2(BOT_MESSAGES.KNOWN_ACCOUNTS.RESULTS_HEADER)}${message}`,
                 {
                     reply_markup: this.keyboard.getResultsKeyboard().reply_markup,
@@ -169,7 +169,7 @@ export class KnownAccountsScene {
     @Command(Commands.Cancel)
     async cancelCommand(@Ctx() ctx: WizardContext) {
         try {
-            await ctx.replyWithMarkdownV2(
+            await ctx.replyWithHTML(
                 escapeMarkdownV2(BOT_MESSAGES.CANCEL),
                 { reply_markup: this.keyboard.getMainKeyboard().reply_markup }
             );

@@ -60,7 +60,7 @@ export async function handleErrorResponse({
             Markup.button.callback(btn.text, btn.action),
         ]);
 
-        await ctx.replyWithMarkdownV2(`${prefix} ${escapeMarkdownV2(errorMessage)}`, {
+        await ctx.replyWithHTML(`${prefix} ${escapeMarkdownV2(errorMessage)}`, {
             reply_markup: Markup.inlineKeyboard(keyboard).reply_markup,
         });
     } catch (secondaryError) {
