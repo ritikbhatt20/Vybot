@@ -17,6 +17,7 @@ import { TOKEN_TRANSFERS_SCENE_ID } from './modules/tokens/token-transfers.scene
 import { TOKEN_TRADES_SCENE_ID } from './modules/tokens/token-trades.scene';
 import { PROGRAMS_SCENE_ID } from './modules/programs/programs.scene';
 import { PROGRAM_TX_COUNT_SCENE_ID } from './modules/programs/program-tx-count.scene';
+import { PROGRAM_IX_COUNT_SCENE_ID } from './modules/programs/program-ix-count.scene';
 
 @Update()
 export class AppUpdate {
@@ -191,6 +192,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('PROGRAM_IX_COUNT_AGAIN')
+    async handleProgramIxCountAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing program instruction count query...');
+            await ctx.scene.enter(PROGRAM_IX_COUNT_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in program ix count again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -297,6 +309,16 @@ export class AppUpdate {
             await ctx.scene.enter(PROGRAM_TX_COUNT_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering program tx count scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.ProgramIxCount)
+    async handleProgramIxCount(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(PROGRAM_IX_COUNT_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering program ix count scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

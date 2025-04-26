@@ -172,6 +172,12 @@ export interface ProgramTxCount {
     blockTime: number;
 }
 
+export interface ProgramIxCount {
+    programId: string;
+    instructionsCount: number;
+    blockTime: number;
+}
+
 export interface TokenVolumeWizardState {
     mintAddress?: string;
     startTime?: number;
@@ -205,6 +211,11 @@ export interface ProgramsWizardState {
 }
 
 export interface ProgramTxCountWizardState {
+    programAddress?: string;
+    range?: string;
+}
+
+export interface ProgramIxCountWizardState {
     programAddress?: string;
     range?: string;
 }

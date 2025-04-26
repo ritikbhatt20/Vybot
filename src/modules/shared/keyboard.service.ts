@@ -34,7 +34,10 @@ export class KeyboardService {
                 Markup.button.callback('🛠️ Programs', Actions.PROGRAMS),
                 Markup.button.callback('📈 Program Tx Count', Actions.PROGRAM_TX_COUNT),
             ],
-            [Markup.button.callback('❓ Help', Actions.HELP)],
+            [
+                Markup.button.callback('📈 Program Ix Count', Actions.PROGRAM_IX_COUNT),
+                Markup.button.callback('❓ Help', Actions.HELP),
+            ],
         ]);
     }
 
@@ -108,6 +111,12 @@ export class KeyboardService {
     }
 
     getProgramTxCountKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
+        ]);
+    }
+
+    getProgramIxCountKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
         ]);
@@ -201,6 +210,14 @@ export class KeyboardService {
     getProgramTxCountResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Tx Count Again', SceneActions.PROGRAM_TX_COUNT_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
+        ]);
+    }
+
+    getProgramIxCountResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Check Ix Count Again', SceneActions.PROGRAM_IX_COUNT_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
         ]);

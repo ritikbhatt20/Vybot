@@ -6,6 +6,7 @@ import { Actions } from '../../enums/actions.enum';
 import { Commands } from '../../enums/commands.enum';
 import { PROGRAMS_SCENE_ID } from './programs.scene';
 import { PROGRAM_TX_COUNT_SCENE_ID } from './program-tx-count.scene';
+import { PROGRAM_IX_COUNT_SCENE_ID } from './program-ix-count.scene';
 
 @Update()
 export class ProgramsUpdate {
@@ -60,6 +61,32 @@ export class ProgramsUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling program tx count command: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.PROGRAM_IX_COUNT)
+    async onProgramIxCount(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📈 Accessing instruction count time series...');
+            await ctx.scene.enter(PROGRAM_IX_COUNT_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering program ix count scene: ${error.message}`);
+        }
+    }
+
+    @Command(Commands.ProgramIxCount)
+    async handleProgramIxCount(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('📈 Opening instruction count time series explorer...'),
+                ctx.scene.enter(PROGRAM_IX_COUNT_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling program ix count command: ${error.message}`);
         }
     }
 }

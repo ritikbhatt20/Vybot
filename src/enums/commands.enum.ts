@@ -10,6 +10,7 @@ export enum Commands {
     TokenTrades = 'tokentrades',
     Programs = 'programs',
     ProgramTxCount = 'programtxcount',
+    ProgramIxCount = 'programixcount',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',

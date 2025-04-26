@@ -16,6 +16,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.TokenTrades]: '/tokentrades - 📊 View token trade transactions for a Solana token',
     [Commands.Programs]: '/programs - 🛠️ View Solana programs with on-chain IDLs',
     [Commands.ProgramTxCount]: '/programtxcount - 📈 View transaction count time series for a Solana program',
+    [Commands.ProgramIxCount]: '/programixcount - 📈 View instruction count time series for a Solana program',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -28,7 +29,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, /programixcount to view program instruction counts, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -263,6 +264,23 @@ Options: 4 Hours, 12 Hours, 24 Hours, 1 Day, 7 Days, 30 Days`,
         SEARCHING: '🔍 <b>Fetching transaction count data...</b>',
         NO_RESULTS: '🔍 <b>No transaction count data found for this program and range</b>',
         RESULTS_HEADER: '📈 <b>Program Transaction Count Time Series</b>\n\n',
+    },
+
+    PROGRAM_IX_COUNT: {
+        ASK_PROGRAM_ADDRESS: `📈 <b>Program Instruction Count Time Series</b>
+
+Enter a program address to view its instruction count trends:
+
+Example:
+• <code>SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf</code>`,
+        ASK_RANGE: `⏰ <b>Time Range</b>
+
+Select the time range for instruction count data:
+
+Options: 4 Hours, 12 Hours, 24 Hours, 1 Day, 7 Days, 30 Days`,
+        SEARCHING: '🔍 <b>Fetching instruction count data...</b>',
+        NO_RESULTS: '🔍 <b>No instruction count data found for this program and range</b>',
+        RESULTS_HEADER: '📈 <b>Program Instruction Count Time Series</b>\n\n',
     },
 
     CANCEL: '🚫 <b>Operation cancelled</b>',
