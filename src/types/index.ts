@@ -14,3 +14,33 @@ export interface ApiResponse<T> {
     data: T;
     error?: string;
 }
+
+export interface TokenBalance {
+    symbol: string;
+    name: string;
+    mintAddress: string;
+    amount: string;
+    priceUsd: string;
+    priceUsd1dChange: string;
+    priceUsd7dTrend: string[];
+    valueUsd: string;
+    valueUsd1dChange: string;
+    logoUrl: string;
+    category: string;
+    decimals: number;
+    verified: boolean;
+    slot: number;
+}
+
+export interface TokenBalanceResponse {
+    date: number;
+    ownerAddress: string;
+    stakedSolBalanceUsd: string;
+    stakedSolBalance: string;
+    activeStakedSolBalanceUsd: string;
+    activeStakedSolBalance: string;
+    totalTokenValueUsd: string;
+    totalTokenValueUsd1dChange: string;
+    totalTokenCount: number;
+    data: TokenBalance[];
+}

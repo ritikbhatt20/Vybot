@@ -1,3 +1,4 @@
+// constants/index.ts
 import { Commands } from '../enums/commands.enum';
 
 export type CommandDescriptions = {
@@ -6,6 +7,7 @@ export type CommandDescriptions = {
 
 export const commandDescriptions: CommandDescriptions = {
     [Commands.KnownAccounts]: '/knownaccounts - 🏷️ View labeled Solana accounts',
+    [Commands.TokenBalances]: '/tokenbalances - 💰 View token balances for a Solana account',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -18,7 +20,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -31,7 +33,7 @@ Choose an option below or type a command:`,
     ERROR: {
         GENERIC: '❌ Something went wrong. Please try again later.',
         API_ERROR: '❌ Failed to fetch data from the API. Please try again later.',
-        INVALID_FORMAT: '❌ Invalid format. Please follow the example format.'
+        INVALID_FORMAT: '❌ Invalid format. Please provide a valid Solana address.',
     },
 
     KNOWN_ACCOUNTS: {
@@ -47,5 +49,18 @@ Examples:
         NO_RESULTS: '🔍 <b>No accounts found matching your criteria</b>',
         RESULTS_HEADER: '📊 <b>Known Solana Accounts</b>\n\n',
     },
+
+    TOKEN_BALANCES: {
+        ASK_ADDRESS: `💰 <b>Token Balances</b>
+
+Enter a Solana account address to view its token balances:
+
+Example:
+• <code>D5DabCKBxypZDGS4H8HJtTkdXSKtYiM6N3HiYNYa8U9t</code>`,
+        SEARCHING: '🔍 <b>Fetching token balances...</b>',
+        NO_RESULTS: '🔍 <b>No token balances found for this address</b>',
+        RESULTS_HEADER: '💰 <b>Token Balances</b>\n\n',
+    },
+
     CANCEL: '🚫 <b>Operation cancelled</b>',
 };

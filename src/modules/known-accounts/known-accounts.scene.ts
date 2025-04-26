@@ -118,7 +118,7 @@ export class KnownAccountsScene {
 
             if (!accounts || accounts.length === 0) {
                 await ctx.replyWithHTML(BOT_MESSAGES.KNOWN_ACCOUNTS.NO_RESULTS,
-                    { reply_markup: this.keyboard.getResultsKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getKnownAccountsResultsKeyboard().reply_markup }
                 );
                 await ctx.scene.leave();
                 return;
@@ -147,7 +147,7 @@ export class KnownAccountsScene {
             await ctx.replyWithHTML(
                 `${BOT_MESSAGES.KNOWN_ACCOUNTS.RESULTS_HEADER}${message}`,
                 {
-                    reply_markup: this.keyboard.getResultsKeyboard().reply_markup,
+                    reply_markup: this.keyboard.getKnownAccountsResultsKeyboard().reply_markup,
                 }
             );
 

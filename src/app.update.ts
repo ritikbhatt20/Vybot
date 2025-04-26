@@ -1,3 +1,4 @@
+// app.update.ts
 import { Action, Command, Ctx, Help, Start, Update } from 'nestjs-telegraf';
 import { Context } from 'telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
@@ -7,6 +8,7 @@ import { Actions } from './enums/actions.enum';
 import { Commands } from './enums/commands.enum';
 import { BOT_MESSAGES, commandDescriptions } from './constants';
 import { KNOWN_ACCOUNTS_SCENE_ID } from './modules/known-accounts/known-accounts.scene';
+import { TOKEN_BALANCES_SCENE_ID } from './modules/known-accounts/token-balances.scene';
 
 @Update()
 export class AppUpdate {
@@ -16,7 +18,9 @@ export class AppUpdate {
 
     @Start()
     async start(@Ctx() ctx: Context) {
-        this.logger.log(`New user started the bot: ${ctx.from?.id} (${ctx.from?.username || 'no username'})`);
+        this.logger.log(
+            `New user started the bot: ${ctx.from?.id} (${ctx.from?.username || 'no username'})`
+        );
 
         await ctx.replyWithHTML(BOT_MESSAGES.WELCOME, {
             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
@@ -28,12 +32,9 @@ export class AppUpdate {
     async help(@Ctx() ctx: Context) {
         const helpMessage = Object.values(commandDescriptions).join('\n');
 
-        await ctx.replyWithHTML(
-            `${BOT_MESSAGES.HELP_HEADER}${helpMessage}`,
-            {
-                reply_markup: this.keyboard.getCloseKeyboard().reply_markup,
-            },
-        );
+        await ctx.replyWithHTML(`${BOT_MESSAGES.HELP_HEADER}${helpMessage}`, {
+            reply_markup: this.keyboard.getCloseKeyboard().reply_markup,
+        });
     }
 
     @Action(Actions.CLOSE)
@@ -61,7 +62,6 @@ export class AppUpdate {
         });
     }
 
-    // Global action handlers for scene buttons
     @Action('FILTER_AGAIN')
     async handleFilterAgain(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -73,12 +73,33 @@ export class AppUpdate {
         }
     }
 
+    @Action('TOKEN_BALANCES_AGAIN')
+    async handleTokenBalancesAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing token balances query...');
+            await ctx.scene.enter(TOKEN_BALANCES_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in token balances again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
             await ctx.scene.enter(KNOWN_ACCOUNTS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering known accounts scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.TokenBalances)
+    async handleTokenBalances(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(TOKEN_BALANCES_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token balances scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }
@@ -98,7 +119,6 @@ export class AppUpdate {
         try {
             await ctx.answerCbQuery('Operation cancelled');
 
-            // First leave the scene to prevent any further processing
             if (ctx.scene && ctx.scene.current) {
                 await ctx.scene.leave();
             }
