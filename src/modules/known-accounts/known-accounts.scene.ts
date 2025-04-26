@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { escapeMarkdownV2, handleErrorResponse, formatAddress } from '../../utils';
+import { handleErrorResponse, formatAddress } from '../../utils';
 
 export const KNOWN_ACCOUNTS_SCENE_ID = 'KNOWN_ACCOUNTS_SCENE';
 
@@ -23,8 +23,7 @@ export class KnownAccountsScene {
     @WizardStep(1)
     async askFilter(@Ctx() ctx: WizardContext) {
         try {
-            await ctx.replyWithHTML(
-                escapeMarkdownV2(BOT_MESSAGES.KNOWN_ACCOUNTS.ASK_FILTER),
+            await ctx.replyWithHTML(BOT_MESSAGES.KNOWN_ACCOUNTS.ASK_FILTER,
                 { reply_markup: this.keyboard.getFilterKeyboard().reply_markup }
             );
             ctx.wizard.next();
@@ -48,7 +47,10 @@ export class KnownAccountsScene {
     @Action(SceneActions.CANCEL_BUTTON)
     async onCancel(@Ctx() ctx: WizardContext) {
         await ctx.answerCbQuery('Operation cancelled');
-        // Important: return to prevent further processing
+        await ctx.replyWithHTML(BOT_MESSAGES.CANCEL,
+            { reply_markup: this.keyboard.getMainKeyboard().reply_markup }
+        );
+        await ctx.scene.leave();
         return;
     }
 
@@ -81,8 +83,7 @@ export class KnownAccountsScene {
                     this.logger.warn(`Invalid filter format: ${messageText}`);
 
                     // Handle invalid format
-                    await ctx.replyWithHTML(
-                        escapeMarkdownV2(BOT_MESSAGES.ERROR.INVALID_FORMAT),
+                    await ctx.replyWithHTML(BOT_MESSAGES.ERROR.INVALID_FORMAT,
                         { reply_markup: this.keyboard.getFilterKeyboard().reply_markup }
                     );
                     return;
@@ -109,22 +110,21 @@ export class KnownAccountsScene {
             }
 
             await ctx.replyWithHTML(
-                escapeMarkdownV2(BOT_MESSAGES.KNOWN_ACCOUNTS.SEARCHING)
+                BOT_MESSAGES.KNOWN_ACCOUNTS.SEARCHING
             );
 
             // Fetch accounts
             const accounts = await this.knownAccountsService.getKnownAccounts(params);
 
             if (!accounts || accounts.length === 0) {
-                await ctx.replyWithHTML(
-                    escapeMarkdownV2(BOT_MESSAGES.KNOWN_ACCOUNTS.NO_RESULTS),
+                await ctx.replyWithHTML(BOT_MESSAGES.KNOWN_ACCOUNTS.NO_RESULTS,
                     { reply_markup: this.keyboard.getResultsKeyboard().reply_markup }
                 );
                 await ctx.scene.leave();
                 return;
             }
 
-            // Format results with beautiful formatting
+            // Format results with HTML formatting
             const message = accounts
                 .slice(0, 10)
                 .map((acc, i) => {
@@ -135,17 +135,17 @@ export class KnownAccountsScene {
                     const entity = acc.entity || 'N/A';
 
                     return (
-                        `*${i + 1}\\. ${escapeMarkdownV2(name)}*\n` +
-                        `📍 *Address:* \`${escapeMarkdownV2(acc.ownerAddress)}\`\n` +
-                        `🏷️ *Labels:* ${escapeMarkdownV2(labels)}\n` +
-                        `🏢 *Entity:* ${escapeMarkdownV2(entity)}\n`
+                        `<b>${i + 1}. ${name}</b>\n` +
+                        `📍 <b>Address:</b> <code>${acc.ownerAddress}</code>\n` +
+                        `🏷️ <b>Labels:</b> ${labels}\n` +
+                        `🏢 <b>Entity:</b> ${entity}\n`
                     );
                 })
                 .join('\n');
 
             // Show results
             await ctx.replyWithHTML(
-                `${escapeMarkdownV2(BOT_MESSAGES.KNOWN_ACCOUNTS.RESULTS_HEADER)}${message}`,
+                `${BOT_MESSAGES.KNOWN_ACCOUNTS.RESULTS_HEADER}${message}`,
                 {
                     reply_markup: this.keyboard.getResultsKeyboard().reply_markup,
                 }
@@ -166,11 +166,17 @@ export class KnownAccountsScene {
         }
     }
 
+    @Action(SceneActions.FILTER_AGAIN)
+    async filterAgain(@Ctx() ctx: WizardContext) {
+        await ctx.answerCbQuery('Let\'s try again');
+        ctx.wizard.selectStep(1);
+        await this.askFilter(ctx);
+    }
+
     @Command(Commands.Cancel)
     async cancelCommand(@Ctx() ctx: WizardContext) {
         try {
-            await ctx.replyWithHTML(
-                escapeMarkdownV2(BOT_MESSAGES.CANCEL),
+            await ctx.replyWithHTML(BOT_MESSAGES.CANCEL,
                 { reply_markup: this.keyboard.getMainKeyboard().reply_markup }
             );
             await ctx.scene.leave();
