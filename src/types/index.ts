@@ -102,10 +102,20 @@ export interface TokenVolume {
     volume: string;
 }
 
+export interface TokenHoldersTimeSeries {
+    holdersTimestamp: number;
+    nHolders: number;
+}
 
 export interface TokenVolumeWizardState {
     mintAddress?: string;
     startTime?: number;
     endTime?: number;
     interval?: string;
+}
+
+export interface TokenHoldersWizardState {
+    mintAddress?: string;
+    startTime?: number;
+    endTime?: number;
 }

@@ -12,6 +12,7 @@ import { TOKENS_SCENE_ID } from './modules/tokens/tokens.scene';
 import { TOKEN_HOLDERS_SCENE_ID } from './modules/tokens/token-holders.scene';
 import { TOKEN_DETAILS_SCENE_ID } from './modules/tokens/token-details.scene';
 import { TOKEN_VOLUME_SCENE_ID } from './modules/tokens/token-volume.scene';
+import { TOKEN_HOLDERS_TS_SCENE_ID } from './modules/tokens/token-holders-ts.scene';
 
 @Update()
 export class AppUpdate {
@@ -131,6 +132,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('TOKEN_HOLDERS_TS_AGAIN')
+    async handleTokenHoldersTsAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing token holders time series query...');
+            await ctx.scene.enter(TOKEN_HOLDERS_TS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in token holders time series again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -187,6 +199,16 @@ export class AppUpdate {
             await ctx.scene.enter(TOKEN_VOLUME_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering token volume scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.TokenHoldersTs)
+    async handleTokenHoldersTs(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(TOKEN_HOLDERS_TS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token holders time series scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

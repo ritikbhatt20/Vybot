@@ -1,6 +1,6 @@
 import { Injectable, Logger, HttpException } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { Token, TokenHolder, TokenDetails, TokenVolume } from '../../types';
+import { Token, TokenHolder, TokenDetails, TokenVolume, TokenHoldersTimeSeries } from '../../types';
 
 @Injectable()
 export class TokensService {
@@ -114,6 +114,44 @@ export class TokensService {
                 );
             }
             this.logger.error(`Failed to fetch token volume time series: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getTokenHoldersTimeSeries(
+        mintAddress: string,
+        params: {
+            startTime?: number;
+            endTime?: number;
+            interval?: string;
+            limit?: number;
+            page?: number;
+        } = {}
+    ): Promise<TokenHoldersTimeSeries[]> {
+        const query = new URLSearchParams();
+
+        if (params.startTime) query.append('startTime', params.startTime.toString());
+        if (params.endTime) query.append('endTime', params.endTime.toString());
+        query.append('interval', params.interval || 'day'); // Default to 'day' as per API
+        if (params.limit) query.append('limit', params.limit.toString());
+        if (params.page) query.append('page', params.page.toString());
+
+        const url = `/token/${mintAddress}/holders-ts${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching token holders time series for mint ${mintAddress} with params: ${JSON.stringify(params)}`);
+
+        try {
+            const response = await this.vybeApi.get<{ data: TokenHoldersTimeSeries[] }>(url);
+            this.logger.debug(`Found ${response.data?.length || 0} holders data points`);
+            return response.data || [];
+        } catch (error) {
+            if (error.response?.data?.message?.includes('Request has exceeded allowed time limit')) {
+                throw new HttpException(
+                    'Request time range is too large. Please refine your start and end times.',
+                    408
+                );
+            }
+            this.logger.error(`Failed to fetch token holders time series: ${error.message}`, error.stack);
             throw error;
         }
     }
