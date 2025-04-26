@@ -95,3 +95,17 @@ export interface TokenDetails {
     usdValueVolume24h: number;
     verified: boolean;
 }
+
+export interface TokenVolume {
+    amount: string;
+    timeBucketStart: number;
+    volume: string;
+}
+
+
+export interface TokenVolumeWizardState {
+    mintAddress?: string;
+    startTime?: number;
+    endTime?: number;
+    interval?: string;
+}

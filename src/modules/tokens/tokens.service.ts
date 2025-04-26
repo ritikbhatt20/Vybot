@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpException } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { Token, TokenHolder, TokenDetails } from '../../types';
+import { Token, TokenHolder, TokenDetails, TokenVolume } from '../../types';
 
 @Injectable()
 export class TokensService {
@@ -76,6 +76,44 @@ export class TokensService {
             return response;
         } catch (error) {
             this.logger.error(`Failed to fetch token details: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getTokenVolumeTimeSeries(
+        mintAddress: string,
+        params: {
+            startTime?: number;
+            endTime?: number;
+            interval?: string;
+            limit?: number;
+            page?: number;
+        } = {}
+    ): Promise<TokenVolume[]> {
+        const query = new URLSearchParams();
+
+        if (params.startTime) query.append('startTime', params.startTime.toString());
+        if (params.endTime) query.append('endTime', params.endTime.toString());
+        if (params.interval) query.append('interval', params.interval);
+        if (params.limit) query.append('limit', params.limit.toString());
+        if (params.page) query.append('page', params.page.toString());
+
+        const url = `/token/${mintAddress}/transfer-volume${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching token volume time series for mint ${mintAddress} with params: ${JSON.stringify(params)}`);
+
+        try {
+            const response = await this.vybeApi.get<{ data: TokenVolume[] }>(url);
+            this.logger.debug(`Found ${response.data?.length || 0} volume data points`);
+            return response.data || [];
+        } catch (error) {
+            if (error.response?.data?.message?.includes('Request has exceeded allowed time limit')) {
+                throw new HttpException(
+                    'Request time range is too large. Please refine your start and end times.',
+                    408
+                );
+            }
+            this.logger.error(`Failed to fetch token volume time series: ${error.message}`, error.stack);
             throw error;
         }
     }

@@ -10,6 +10,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.Tokens]: '/tokens - 📊 View a list of tracked Solana tokens',
     [Commands.TokenHolders]: '/tokenholders - 👥 View top token holders for a Solana token',
     [Commands.TokenDetails]: '/tokendetails - 📋 View detailed information for a Solana token',
+    [Commands.TokenVolume]: '/tokenvolume - 📈 View token volume time series for a Solana token',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -22,7 +23,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -36,6 +37,8 @@ Choose an option below or type a command:`,
         GENERIC: '❌ Something went wrong. Please try again later.',
         API_ERROR: '❌ Failed to fetch data from the API. Please try again later.',
         INVALID_FORMAT: '❌ Invalid format. Please provide a valid Solana address or filter.',
+        INVALID_TIMESTAMP: '❌ Invalid timestamp. Please provide a valid Unix timestamp.',
+        INVALID_INTERVAL: '❌ Invalid interval. Please select 1h, 1d, or 1w.',
     },
 
     KNOWN_ACCOUNTS: {
@@ -100,6 +103,36 @@ Example:
         SEARCHING: '🔍 <b>Fetching token details...</b>',
         NO_RESULTS: '🔍 <b>No details found for this token</b>',
         RESULTS_HEADER: '📋 <b>Token Details</b>\n\n',
+    },
+
+    TOKEN_VOLUME: {
+        ASK_MINT_ADDRESS: `📈 <b>Token Volume Time Series</b>
+
+Enter a token mint address to view its volume trends:
+
+Example:
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+        ASK_START_TIME: `📅 <b>Start Time</b>
+
+Enter the start time as a Unix timestamp (seconds):
+
+Example:
+• <code>1744934400</code> (2024-10-21 00:00:00 UTC)`,
+        ASK_END_TIME: `📅 <b>End Time</b>
+
+Enter the end time as a Unix timestamp (seconds):
+
+Example:
+• <code>1745625600</code> (2024-10-29 00:00:00 UTC)`,
+        ASK_INTERVAL: `⏰ <b>Interval</b>
+
+Select the time interval for volume data:
+
+Options: 1h (hourly), 1d (daily), 1w (weekly)`,
+        SEARCHING: '🔍 <b>Fetching token volume data...</b>',
+        NO_RESULTS: '🔍 <b>No volume data found for this token and time range</b>',
+        RESULTS_HEADER: '📈 <b>Token Volume Time Series</b>\n\n',
+        TIME_RANGE_TOO_LARGE: '⚠️ <b>Time range too large</b>\n\nPlease select a shorter time range and try again.',
     },
 
     CANCEL: '🚫 <b>Operation cancelled</b>',

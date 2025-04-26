@@ -7,6 +7,7 @@ import { Commands } from '../../enums/commands.enum';
 import { TOKENS_SCENE_ID } from './tokens.scene';
 import { TOKEN_HOLDERS_SCENE_ID } from './token-holders.scene';
 import { TOKEN_DETAILS_SCENE_ID } from './token-details.scene';
+import { TOKEN_VOLUME_SCENE_ID } from './token-volume.scene';
 
 @Update()
 export class TokensUpdate {
@@ -87,6 +88,32 @@ export class TokensUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling token details command: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.TOKEN_VOLUME)
+    async onTokenVolume(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📈 Accessing token volume time series...');
+            await ctx.scene.enter(TOKEN_VOLUME_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token volume scene: ${error.message}`);
+        }
+    }
+
+    @Command(Commands.TokenVolume)
+    async handleTokenVolume(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('📈 Opening token volume time series explorer...'),
+                ctx.scene.enter(TOKEN_VOLUME_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling token volume command: ${error.message}`);
         }
     }
 }

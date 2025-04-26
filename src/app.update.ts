@@ -11,6 +11,7 @@ import { TOKEN_BALANCES_SCENE_ID } from './modules/known-accounts/token-balances
 import { TOKENS_SCENE_ID } from './modules/tokens/tokens.scene';
 import { TOKEN_HOLDERS_SCENE_ID } from './modules/tokens/token-holders.scene';
 import { TOKEN_DETAILS_SCENE_ID } from './modules/tokens/token-details.scene';
+import { TOKEN_VOLUME_SCENE_ID } from './modules/tokens/token-volume.scene';
 
 @Update()
 export class AppUpdate {
@@ -119,6 +120,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('TOKEN_VOLUME_AGAIN')
+    async handleTokenVolumeAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing token volume query...');
+            await ctx.scene.enter(TOKEN_VOLUME_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in token volume again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -165,6 +177,16 @@ export class AppUpdate {
             await ctx.scene.enter(TOKEN_DETAILS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering token details scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.TokenVolume)
+    async handleTokenVolume(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(TOKEN_VOLUME_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token volume scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

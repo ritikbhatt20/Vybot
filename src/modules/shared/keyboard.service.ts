@@ -21,8 +21,8 @@ export class KeyboardService {
                 Markup.button.callback('👥 Top Holders', Actions.TOKEN_HOLDERS),
                 Markup.button.callback('📋 Token Details', Actions.TOKEN_DETAILS),
             ],
-            // Support
             [
+                Markup.button.callback('📈 Volume Trends', Actions.TOKEN_VOLUME),
                 Markup.button.callback('❓ Help', Actions.HELP),
             ],
         ]);
@@ -61,6 +61,12 @@ export class KeyboardService {
     }
 
     getTokenDetailsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
+        ]);
+    }
+
+    getTokenVolumeKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
         ]);
@@ -106,6 +112,14 @@ export class KeyboardService {
     getTokenDetailsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Token Details Again', SceneActions.TOKEN_DETAILS_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
+        ]);
+    }
+
+    getTokenVolumeResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Check Volume Again', SceneActions.TOKEN_VOLUME_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
         ]);
