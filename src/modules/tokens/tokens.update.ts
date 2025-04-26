@@ -6,6 +6,7 @@ import { Actions } from '../../enums/actions.enum';
 import { Commands } from '../../enums/commands.enum';
 import { TOKENS_SCENE_ID } from './tokens.scene';
 import { TOKEN_HOLDERS_SCENE_ID } from './token-holders.scene';
+import { TOKEN_DETAILS_SCENE_ID } from './token-details.scene';
 
 @Update()
 export class TokensUpdate {
@@ -60,6 +61,32 @@ export class TokensUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling token holders command: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.TOKEN_DETAILS)
+    async onTokenDetails(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📋 Accessing token details...');
+            await ctx.scene.enter(TOKEN_DETAILS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token details scene: ${error.message}`);
+        }
+    }
+
+    @Command(Commands.TokenDetails)
+    async handleTokenDetails(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('📋 Opening token details explorer...'),
+                ctx.scene.enter(TOKEN_DETAILS_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling token details command: ${error.message}`);
         }
     }
 }

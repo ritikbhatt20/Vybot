@@ -76,3 +76,22 @@ export interface TokenHolder {
     valueUsd: string;
     percentageOfSupplyHeld: number;
 }
+
+export interface TokenDetails {
+    category: string;
+    currentSupply: number;
+    decimal: number;
+    logoUrl: string;
+    marketCap: number;
+    mintAddress: string;
+    name: string;
+    price: number;
+    price1d: number;
+    price7d: number;
+    subcategory: string;
+    symbol: string;
+    tokenAmountVolume24h: number;
+    updateTime: number;
+    usdValueVolume24h: number;
+    verified: boolean;
+}

@@ -10,6 +10,7 @@ import { KNOWN_ACCOUNTS_SCENE_ID } from './modules/known-accounts/known-accounts
 import { TOKEN_BALANCES_SCENE_ID } from './modules/known-accounts/token-balances.scene';
 import { TOKENS_SCENE_ID } from './modules/tokens/tokens.scene';
 import { TOKEN_HOLDERS_SCENE_ID } from './modules/tokens/token-holders.scene';
+import { TOKEN_DETAILS_SCENE_ID } from './modules/tokens/token-details.scene';
 
 @Update()
 export class AppUpdate {
@@ -107,6 +108,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('TOKEN_DETAILS_AGAIN')
+    async handleTokenDetailsAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing token details query...');
+            await ctx.scene.enter(TOKEN_DETAILS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in token details again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -143,6 +155,16 @@ export class AppUpdate {
             await ctx.scene.enter(TOKEN_HOLDERS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering token holders scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.TokenDetails)
+    async handleTokenDetails(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(TOKEN_DETAILS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token details scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

@@ -9,6 +9,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.TokenBalances]: '/tokenbalances - 💰 View token balances for a Solana account',
     [Commands.Tokens]: '/tokens - 📊 View a list of tracked Solana tokens',
     [Commands.TokenHolders]: '/tokenholders - 👥 View top token holders for a Solana token',
+    [Commands.TokenDetails]: '/tokendetails - 📋 View detailed information for a Solana token',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -21,7 +22,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -87,6 +88,18 @@ Example:
         SEARCHING: '🔍 <b>Fetching top token holders...</b>',
         NO_RESULTS: '🔍 <b>No top token holders found for this mint address</b>',
         RESULTS_HEADER: '👥 <b>Top Token Holders</b>\n\n',
+    },
+
+    TOKEN_DETAILS: {
+        ASK_MINT_ADDRESS: `📋 <b>Token Details</b>
+
+Enter a token mint address to view its details:
+
+Example:
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+        SEARCHING: '🔍 <b>Fetching token details...</b>',
+        NO_RESULTS: '🔍 <b>No details found for this token</b>',
+        RESULTS_HEADER: '📋 <b>Token Details</b>\n\n',
     },
 
     CANCEL: '🚫 <b>Operation cancelled</b>',

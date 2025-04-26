@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { Token, TokenHolder } from '../../types';
+import { Token, TokenHolder, TokenDetails } from '../../types';
 
 @Injectable()
 export class TokensService {
@@ -61,6 +61,21 @@ export class TokensService {
             return response.data || [];
         } catch (error) {
             this.logger.error(`Failed to fetch top token holders: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getTokenDetails(mintAddress: string): Promise<TokenDetails> {
+        const url = `/token/${mintAddress}`;
+
+        this.logger.debug(`Fetching token details for mint ${mintAddress}`);
+
+        try {
+            const response = await this.vybeApi.get<TokenDetails>(url);
+            this.logger.debug(`Fetched token details for ${mintAddress}`);
+            return response;
+        } catch (error) {
+            this.logger.error(`Failed to fetch token details: ${error.message}`, error.stack);
             throw error;
         }
     }

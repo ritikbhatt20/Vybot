@@ -3,6 +3,7 @@ export enum Commands {
     TokenBalances = 'tokenbalances',
     Tokens = 'tokens',
     TokenHolders = 'tokenholders',
+    TokenDetails = 'tokendetails',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',

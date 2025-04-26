@@ -12,13 +12,17 @@ export class KeyboardService {
                 Markup.button.callback('👤 Known Accounts', Actions.KNOWN_ACCOUNTS),
                 Markup.button.url('🌐 Vybe Network', 'https://www.vybenetwork.com'),
             ],
-            // Support and external links
+            // Token-related features
             [
                 Markup.button.callback('💰 Token Balances', Actions.TOKEN_BALANCES),
                 Markup.button.callback('📊 Tokens', Actions.TOKENS),
             ],
             [
                 Markup.button.callback('👥 Top Holders', Actions.TOKEN_HOLDERS),
+                Markup.button.callback('📋 Token Details', Actions.TOKEN_DETAILS),
+            ],
+            // Support
+            [
                 Markup.button.callback('❓ Help', Actions.HELP),
             ],
         ]);
@@ -56,6 +60,12 @@ export class KeyboardService {
         ]);
     }
 
+    getTokenDetailsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
+        ]);
+    }
+
     getKnownAccountsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [
@@ -88,6 +98,14 @@ export class KeyboardService {
     getTokenHoldersResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Top Holders Again', SceneActions.TOKEN_HOLDERS_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
+        ]);
+    }
+
+    getTokenDetailsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Check Token Details Again', SceneActions.TOKEN_DETAILS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
         ]);
