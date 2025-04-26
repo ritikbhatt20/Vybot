@@ -1,4 +1,3 @@
-// constants/index.ts
 import { Commands } from '../enums/commands.enum';
 
 export type CommandDescriptions = {
@@ -9,6 +8,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.KnownAccounts]: '/knownaccounts - 🏷️ View labeled Solana accounts',
     [Commands.TokenBalances]: '/tokenbalances - 💰 View token balances for a Solana account',
     [Commands.Tokens]: '/tokens - 📊 View a list of tracked Solana tokens',
+    [Commands.TokenHolders]: '/tokenholders - 👥 View top token holders for a Solana token',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -21,7 +21,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -75,6 +75,18 @@ Examples:
         SEARCHING: '🔍 <b>Fetching tokens...</b>',
         NO_RESULTS: '🔍 <b>No tokens found matching your criteria</b>',
         RESULTS_HEADER: '📊 <b>Tracked Solana Tokens</b>\n\n',
+    },
+
+    TOKEN_HOLDERS: {
+        ASK_MINT_ADDRESS: `👥 <b>Top Token Holders</b>
+
+Enter a token mint address to view its top holders:
+
+Example:
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+        SEARCHING: '🔍 <b>Fetching top token holders...</b>',
+        NO_RESULTS: '🔍 <b>No top token holders found for this mint address</b>',
+        RESULTS_HEADER: '👥 <b>Top Token Holders</b>\n\n',
     },
 
     CANCEL: '🚫 <b>Operation cancelled</b>',

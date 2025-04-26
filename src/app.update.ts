@@ -1,4 +1,3 @@
-// app.update.ts
 import { Action, Command, Ctx, Help, Start, Update } from 'nestjs-telegraf';
 import { Context } from 'telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
@@ -10,6 +9,7 @@ import { BOT_MESSAGES, commandDescriptions } from './constants';
 import { KNOWN_ACCOUNTS_SCENE_ID } from './modules/known-accounts/known-accounts.scene';
 import { TOKEN_BALANCES_SCENE_ID } from './modules/known-accounts/token-balances.scene';
 import { TOKENS_SCENE_ID } from './modules/tokens/tokens.scene';
+import { TOKEN_HOLDERS_SCENE_ID } from './modules/tokens/token-holders.scene';
 
 @Update()
 export class AppUpdate {
@@ -96,6 +96,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('TOKEN_HOLDERS_AGAIN')
+    async handleTokenHoldersAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing top token holders query...');
+            await ctx.scene.enter(TOKEN_HOLDERS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in token holders again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -122,6 +133,16 @@ export class AppUpdate {
             await ctx.scene.enter(TOKENS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering tokens scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.TokenHolders)
+    async handleTokenHolders(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(TOKEN_HOLDERS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token holders scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

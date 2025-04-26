@@ -1,4 +1,3 @@
-// types/index.ts
 export interface KnownAccount {
     ownerAddress: string;
     name: string | null;
@@ -63,4 +62,17 @@ export interface Token {
     marketCap: number;
     tokenAmountVolume24h: number | null;
     usdValueVolume24h: number | null;
+}
+
+export interface TokenHolder {
+    rank: number;
+    ownerAddress: string;
+    ownerName: string | null;
+    ownerLogoUrl: string | null;
+    tokenMint: string;
+    tokenSymbol: string;
+    tokenLogoUrl: string;
+    balance: string;
+    valueUsd: string;
+    percentageOfSupplyHeld: number;
 }
