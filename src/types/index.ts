@@ -107,6 +107,29 @@ export interface TokenHoldersTimeSeries {
     nHolders: number;
 }
 
+export interface TokenTransfer {
+    signature: string;
+    callingMetadata: Array<{
+        callingInstructions: number[];
+        ixName: string;
+        callingProgram: string;
+        programName: string;
+    }>;
+    senderTokenAccount: string | null;
+    senderAddress: string;
+    receiverTokenAccount: string | null;
+    receiverAddress: string;
+    mintAddress: string;
+    feePayer: string;
+    decimal: number;
+    amount: number;
+    slot: number;
+    blockTime: number;
+    price: string;
+    calculatedAmount: string;
+    valueUsd: string;
+}
+
 export interface TokenVolumeWizardState {
     mintAddress?: string;
     startTime?: number;
@@ -118,4 +141,12 @@ export interface TokenHoldersWizardState {
     mintAddress?: string;
     startTime?: number;
     endTime?: number;
+}
+
+export interface TokenTransfersWizardState {
+    mintAddress?: string;
+    timeStart?: number;
+    timeEnd?: number;
+    minAmount?: number;
+    maxAmount?: number;
 }

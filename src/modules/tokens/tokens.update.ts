@@ -9,6 +9,7 @@ import { TOKEN_HOLDERS_SCENE_ID } from './token-holders.scene';
 import { TOKEN_DETAILS_SCENE_ID } from './token-details.scene';
 import { TOKEN_VOLUME_SCENE_ID } from './token-volume.scene';
 import { TOKEN_HOLDERS_TS_SCENE_ID } from './token-holders-ts.scene';
+import { TOKEN_TRANSFERS_SCENE_ID } from './token-transfers.scene';
 
 @Update()
 export class TokensUpdate {
@@ -141,6 +142,32 @@ export class TokensUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling token holders time series command: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.TOKEN_TRANSFERS)
+    async onTokenTransfers(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('💸 Accessing token transfers...');
+            await ctx.scene.enter(TOKEN_TRANSFERS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token transfers scene: ${error.message}`);
+        }
+    }
+
+    @Command(Commands.TokenTransfers)
+    async handleTokenTransfers(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('💸 Opening token transfers explorer...'),
+                ctx.scene.enter(TOKEN_TRANSFERS_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling token transfers command: ${error.message}`);
         }
     }
 }

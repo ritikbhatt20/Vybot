@@ -13,6 +13,7 @@ import { TOKEN_HOLDERS_SCENE_ID } from './modules/tokens/token-holders.scene';
 import { TOKEN_DETAILS_SCENE_ID } from './modules/tokens/token-details.scene';
 import { TOKEN_VOLUME_SCENE_ID } from './modules/tokens/token-volume.scene';
 import { TOKEN_HOLDERS_TS_SCENE_ID } from './modules/tokens/token-holders-ts.scene';
+import { TOKEN_TRANSFERS_SCENE_ID } from './modules/tokens/token-transfers.scene';
 
 @Update()
 export class AppUpdate {
@@ -143,6 +144,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('TOKEN_TRANSFERS_AGAIN')
+    async handleTokenTransfersAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing token transfers query...');
+            await ctx.scene.enter(TOKEN_TRANSFERS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in token transfers again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -209,6 +221,16 @@ export class AppUpdate {
             await ctx.scene.enter(TOKEN_HOLDERS_TS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering token holders time series scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.TokenTransfers)
+    async handleTokenTransfers(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(TOKEN_TRANSFERS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token transfers scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

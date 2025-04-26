@@ -1,6 +1,6 @@
 import { Injectable, Logger, HttpException } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { Token, TokenHolder, TokenDetails, TokenVolume, TokenHoldersTimeSeries } from '../../types';
+import { Token, TokenHolder, TokenDetails, TokenVolume, TokenHoldersTimeSeries, TokenTransfer } from '../../types';
 
 @Injectable()
 export class TokensService {
@@ -152,6 +152,43 @@ export class TokensService {
                 );
             }
             this.logger.error(`Failed to fetch token holders time series: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getTokenTransfers(params: {
+        mintAddress?: string;
+        timeStart?: number;
+        timeEnd?: number;
+        minAmount?: number;
+        maxAmount?: number;
+        page?: number;
+        limit?: number;
+        sortByAsc?: string;
+        sortByDesc?: string;
+    } = {}): Promise<TokenTransfer[]> {
+        const query = new URLSearchParams();
+
+        if (params.mintAddress) query.append('mintAddress', params.mintAddress);
+        if (params.timeStart) query.append('timeStart', params.timeStart.toString());
+        if (params.timeEnd) query.append('timeEnd', params.timeEnd.toString());
+        if (params.minAmount) query.append('minAmount', params.minAmount.toString());
+        if (params.maxAmount) query.append('maxAmount', params.maxAmount.toString());
+        if (params.page) query.append('page', params.page.toString());
+        if (params.limit) query.append('limit', params.limit.toString());
+        if (params.sortByAsc) query.append('sortByAsc', params.sortByAsc);
+        if (params.sortByDesc) query.append('sortByDesc', params.sortByDesc);
+
+        const url = `/token/transfers${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching token transfers with params: ${JSON.stringify(params)}`);
+
+        try {
+            const response = await this.vybeApi.get<{ transfers: TokenTransfer[] }>(url);
+            this.logger.debug(`Found ${response.transfers?.length || 0} transfer transactions`);
+            return response.transfers || [];
+        } catch (error) {
+            this.logger.error(`Failed to fetch token transfers: ${error.message}`, error.stack);
             throw error;
         }
     }
