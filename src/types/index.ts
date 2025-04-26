@@ -150,6 +150,22 @@ export interface TokenTrade {
     quoteSize: string;
 }
 
+export interface Program {
+    dau: number;
+    entityName: string;
+    friendlyName: string | null;
+    idlUrl: string;
+    instructions1d: number;
+    labels: string[];
+    logoUrl: string;
+    name: string;
+    newUsersChange1d: number;
+    programDescription: string | null;
+    programDetail: string | null;
+    programId: string;
+    transactions1d: number;
+}
+
 export interface TokenVolumeWizardState {
     mintAddress?: string;
     startTime?: number;
@@ -176,4 +192,8 @@ export interface TokenTradesWizardState {
     timeStart?: number;
     timeEnd?: number;
     resolution?: string;
+}
+
+export interface ProgramsWizardState {
+    labels?: string[];
 }

@@ -29,8 +29,9 @@ export class KeyboardService {
                 Markup.button.callback('💸 Transfers', Actions.TOKEN_TRANSFERS),
                 Markup.button.callback('📊 Trades', Actions.TOKEN_TRADES),
             ],
-            // Support
+            // Programs and support
             [
+                Markup.button.callback('🛠️ Programs', Actions.PROGRAMS),
                 Markup.button.callback('❓ Help', Actions.HELP),
             ],
         ]);
@@ -94,6 +95,13 @@ export class KeyboardService {
 
     getTokenTradesKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
+            [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
+        ]);
+    }
+
+    getProgramsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('📥 Fetch All', SceneActions.FETCH_ALL)],
             [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
         ]);
     }
@@ -170,6 +178,14 @@ export class KeyboardService {
     getTokenTradesResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Trades Again', SceneActions.TOKEN_TRADES_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
+        ]);
+    }
+
+    getProgramsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Filter Programs Again', SceneActions.PROGRAMS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
         ]);

@@ -14,6 +14,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.TokenHoldersTs]: '/tokenholdersts - 📊 View token holders time series for a Solana token',
     [Commands.TokenTransfers]: '/tokentransfers - 💸 View token transfer transactions for a Solana token',
     [Commands.TokenTrades]: '/tokentrades - 📊 View token trade transactions for a Solana token',
+    [Commands.Programs]: '/programs - 🛠️ View Solana programs with on-chain IDLs',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -26,7 +27,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -208,7 +209,7 @@ Example:
 Enter a token mint address to view its trade transactions:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+• <code>4vPTz6bXmxsgJRUoetsdBaHTkU14khdKsmjs6rJRbLxj</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
@@ -230,6 +231,19 @@ Options: Hourly, Daily, Weekly, Monthly, Yearly`,
         NO_RESULTS: '🔍 <b>No trade transactions found for this token and criteria</b>',
         RESULTS_HEADER: '📊 <b>Token Trade Transactions</b>\n\n',
         TIME_RANGE_TOO_LARGE: '⚠️ <b>Time range too large</b>\n\nPlease select a shorter time range and try again.',
+    },
+
+    PROGRAMS: {
+        ASK_FILTER: `🛠️ <b>Programs Filter</b>
+
+Enter label filters or press Fetch All to see all Solana programs with on-chain IDLs:
+
+Examples:
+• <code>DEFI,NFT</code> - Find programs with these labels
+• <code>WALLET</code> - Filter by a single label`,
+        SEARCHING: '🔍 <b>Fetching programs...</b>',
+        NO_RESULTS: '🔍 <b>No programs found matching your criteria</b>',
+        RESULTS_HEADER: '🛠️ <b>Solana Programs</b>\n\n',
     },
 
     CANCEL: '🚫 <b>Operation cancelled</b>',

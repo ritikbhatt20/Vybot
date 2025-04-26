@@ -8,6 +8,7 @@ import { AppUpdate } from './app.update';
 import { SharedModule } from './modules/shared/shared.module';
 import { KnownAccountsModule } from './modules/known-accounts/known-accounts.module';
 import { TokensModule } from './modules/tokens/tokens.module';
+import { ProgramsModule } from './modules/programs/programs.module';
 import { PostgresSessionStore } from './utils/pg-session-store';
 
 @Module({
@@ -48,6 +49,7 @@ import { PostgresSessionStore } from './utils/pg-session-store';
     SharedModule,
     KnownAccountsModule,
     TokensModule,
+    ProgramsModule,
   ],
   providers: [AppUpdate],
 })

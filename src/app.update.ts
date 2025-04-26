@@ -15,6 +15,7 @@ import { TOKEN_VOLUME_SCENE_ID } from './modules/tokens/token-volume.scene';
 import { TOKEN_HOLDERS_TS_SCENE_ID } from './modules/tokens/token-holders-ts.scene';
 import { TOKEN_TRANSFERS_SCENE_ID } from './modules/tokens/token-transfers.scene';
 import { TOKEN_TRADES_SCENE_ID } from './modules/tokens/token-trades.scene';
+import { PROGRAMS_SCENE_ID } from './modules/programs/programs.scene';
 
 @Update()
 export class AppUpdate {
@@ -167,6 +168,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('PROGRAMS_AGAIN')
+    async handleProgramsAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing programs query...');
+            await ctx.scene.enter(PROGRAMS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in programs again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -253,6 +265,16 @@ export class AppUpdate {
             await ctx.scene.enter(TOKEN_TRADES_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering token trades scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.Programs)
+    async handlePrograms(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(PROGRAMS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering programs scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

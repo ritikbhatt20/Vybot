@@ -8,6 +8,7 @@ export enum Commands {
     TokenHoldersTs = 'tokenholdersts',
     TokenTransfers = 'tokentransfers',
     TokenTrades = 'tokentrades',
+    Programs = 'programs',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',
