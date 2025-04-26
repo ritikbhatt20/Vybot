@@ -1,6 +1,6 @@
 import { Injectable, Logger, HttpException } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { Token, TokenHolder, TokenDetails, TokenVolume, TokenHoldersTimeSeries, TokenTransfer } from '../../types';
+import { Token, TokenHolder, TokenDetails, TokenVolume, TokenHoldersTimeSeries, TokenTransfer, TokenTrade } from '../../types';
 
 @Injectable()
 export class TokensService {
@@ -189,6 +189,41 @@ export class TokensService {
             return response.transfers || [];
         } catch (error) {
             this.logger.error(`Failed to fetch token transfers: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getTokenTrades(params: {
+        mintAddress?: string;
+        timeStart?: number;
+        timeEnd?: number;
+        resolution?: string;
+        page?: number;
+        limit?: number;
+        sortByAsc?: string;
+        sortByDesc?: string;
+    } = {}): Promise<TokenTrade[]> {
+        const query = new URLSearchParams();
+
+        if (params.mintAddress) query.append('mintAddress', params.mintAddress);
+        if (params.timeStart) query.append('timeStart', params.timeStart.toString());
+        if (params.timeEnd) query.append('timeEnd', params.timeEnd.toString());
+        if (params.resolution) query.append('resolution', params.resolution);
+        if (params.page) query.append('page', params.page.toString());
+        if (params.limit) query.append('limit', params.limit.toString());
+        if (params.sortByAsc) query.append('sortByAsc', params.sortByAsc);
+        if (params.sortByDesc) query.append('sortByDesc', params.sortByDesc);
+
+        const url = `/token/trades${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching token trades with params: ${JSON.stringify(params)}`);
+
+        try {
+            const response = await this.vybeApi.get<{ data: TokenTrade[] }>(url);
+            this.logger.debug(`Found ${response.data?.length || 0} trade transactions`);
+            return response.data || [];
+        } catch (error) {
+            this.logger.error(`Failed to fetch token trades: ${error.message}`, error.stack);
             throw error;
         }
     }

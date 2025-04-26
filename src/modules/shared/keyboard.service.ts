@@ -27,6 +27,10 @@ export class KeyboardService {
             ],
             [
                 Markup.button.callback('💸 Transfers', Actions.TOKEN_TRANSFERS),
+                Markup.button.callback('📊 Trades', Actions.TOKEN_TRADES),
+            ],
+            // Support
+            [
                 Markup.button.callback('❓ Help', Actions.HELP),
             ],
         ]);
@@ -83,6 +87,12 @@ export class KeyboardService {
     }
 
     getTokenTransfersKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
+        ]);
+    }
+
+    getTokenTradesKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
         ]);
@@ -152,6 +162,14 @@ export class KeyboardService {
     getTokenTransfersResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Transfers Again', SceneActions.TOKEN_TRANSFERS_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
+        ]);
+    }
+
+    getTokenTradesResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Check Trades Again', SceneActions.TOKEN_TRADES_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
         ]);

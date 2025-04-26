@@ -130,6 +130,26 @@ export interface TokenTransfer {
     valueUsd: string;
 }
 
+export interface TokenTrade {
+    authorityAddress: string;
+    blockTime: number;
+    iixOrdinal: number;
+    baseMintAddress: string;
+    interIxOrdinal: number;
+    ixOrdinal: number;
+    marketId: string;
+    quoteMintAddress: string;
+    price: string;
+    programId: string;
+    signature: string;
+    slot: number;
+    txIndex: number;
+    fee: string;
+    feePayer: string;
+    baseSize: string;
+    quoteSize: string;
+}
+
 export interface TokenVolumeWizardState {
     mintAddress?: string;
     startTime?: number;
@@ -149,4 +169,11 @@ export interface TokenTransfersWizardState {
     timeEnd?: number;
     minAmount?: number;
     maxAmount?: number;
+}
+
+export interface TokenTradesWizardState {
+    mintAddress?: string;
+    timeStart?: number;
+    timeEnd?: number;
+    resolution?: string;
 }
