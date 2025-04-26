@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { Program } from '../../types';
+import { Program, ProgramTxCount } from '../../types';
 
 @Injectable()
 export class ProgramsService {
@@ -35,6 +35,24 @@ export class ProgramsService {
             return response.data || [];
         } catch (error) {
             this.logger.error(`Failed to fetch programs: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getProgramTxCount(programAddress: string, range: string): Promise<ProgramTxCount[]> {
+        const query = new URLSearchParams();
+        query.append('range', range);
+
+        const url = `/program/${programAddress}/transactions-count-ts?${query}`;
+
+        this.logger.debug(`Fetching transaction count time series for program ${programAddress} with range: ${range}`);
+
+        try {
+            const response = await this.vybeApi.get<{ data: ProgramTxCount[] }>(url);
+            this.logger.debug(`Found ${response.data?.length || 0} transaction count data points`);
+            return response.data || [];
+        } catch (error) {
+            this.logger.error(`Failed to fetch transaction count time series: ${error.message}`, error.stack);
             throw error;
         }
     }

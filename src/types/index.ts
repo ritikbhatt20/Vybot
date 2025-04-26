@@ -166,6 +166,12 @@ export interface Program {
     transactions1d: number;
 }
 
+export interface ProgramTxCount {
+    programId: string;
+    transactionsCount: number;
+    blockTime: number;
+}
+
 export interface TokenVolumeWizardState {
     mintAddress?: string;
     startTime?: number;
@@ -196,4 +202,9 @@ export interface TokenTradesWizardState {
 
 export interface ProgramsWizardState {
     labels?: string[];
+}
+
+export interface ProgramTxCountWizardState {
+    programAddress?: string;
+    range?: string;
 }

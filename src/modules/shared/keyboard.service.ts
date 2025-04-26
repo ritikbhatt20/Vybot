@@ -32,8 +32,9 @@ export class KeyboardService {
             // Programs and support
             [
                 Markup.button.callback('🛠️ Programs', Actions.PROGRAMS),
-                Markup.button.callback('❓ Help', Actions.HELP),
+                Markup.button.callback('📈 Program Tx Count', Actions.PROGRAM_TX_COUNT),
             ],
+            [Markup.button.callback('❓ Help', Actions.HELP)],
         ]);
     }
 
@@ -102,6 +103,12 @@ export class KeyboardService {
     getProgramsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('📥 Fetch All', SceneActions.FETCH_ALL)],
+            [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
+        ]);
+    }
+
+    getProgramTxCountKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
             [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
         ]);
     }
@@ -186,6 +193,14 @@ export class KeyboardService {
     getProgramsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Filter Programs Again', SceneActions.PROGRAMS_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
+        ]);
+    }
+
+    getProgramTxCountResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Check Tx Count Again', SceneActions.PROGRAM_TX_COUNT_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
         ]);

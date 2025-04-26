@@ -16,6 +16,7 @@ import { TOKEN_HOLDERS_TS_SCENE_ID } from './modules/tokens/token-holders-ts.sce
 import { TOKEN_TRANSFERS_SCENE_ID } from './modules/tokens/token-transfers.scene';
 import { TOKEN_TRADES_SCENE_ID } from './modules/tokens/token-trades.scene';
 import { PROGRAMS_SCENE_ID } from './modules/programs/programs.scene';
+import { PROGRAM_TX_COUNT_SCENE_ID } from './modules/programs/program-tx-count.scene';
 
 @Update()
 export class AppUpdate {
@@ -179,6 +180,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('PROGRAM_TX_COUNT_AGAIN')
+    async handleProgramTxCountAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing program transaction count query...');
+            await ctx.scene.enter(PROGRAM_TX_COUNT_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in program tx count again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -275,6 +287,16 @@ export class AppUpdate {
             await ctx.scene.enter(PROGRAMS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering programs scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.ProgramTxCount)
+    async handleProgramTxCount(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(PROGRAM_TX_COUNT_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering program tx count scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

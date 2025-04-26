@@ -5,6 +5,7 @@ import { Logger } from '@nestjs/common';
 import { Actions } from '../../enums/actions.enum';
 import { Commands } from '../../enums/commands.enum';
 import { PROGRAMS_SCENE_ID } from './programs.scene';
+import { PROGRAM_TX_COUNT_SCENE_ID } from './program-tx-count.scene';
 
 @Update()
 export class ProgramsUpdate {
@@ -33,6 +34,32 @@ export class ProgramsUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling programs command: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.PROGRAM_TX_COUNT)
+    async onProgramTxCount(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📈 Accessing transaction count time series...');
+            await ctx.scene.enter(PROGRAM_TX_COUNT_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering program tx count scene: ${error.message}`);
+        }
+    }
+
+    @Command(Commands.ProgramTxCount)
+    async handleProgramTxCount(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('📈 Opening transaction count time series explorer...'),
+                ctx.scene.enter(PROGRAM_TX_COUNT_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling program tx count command: ${error.message}`);
         }
     }
 }
