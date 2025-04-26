@@ -8,6 +8,7 @@ export type CommandDescriptions = {
 export const commandDescriptions: CommandDescriptions = {
     [Commands.KnownAccounts]: '/knownaccounts - 🏷️ View labeled Solana accounts',
     [Commands.TokenBalances]: '/tokenbalances - 💰 View token balances for a Solana account',
+    [Commands.Tokens]: '/tokens - 📊 View a list of tracked Solana tokens',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -20,7 +21,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -33,7 +34,7 @@ Choose an option below or type a command:`,
     ERROR: {
         GENERIC: '❌ Something went wrong. Please try again later.',
         API_ERROR: '❌ Failed to fetch data from the API. Please try again later.',
-        INVALID_FORMAT: '❌ Invalid format. Please provide a valid Solana address.',
+        INVALID_FORMAT: '❌ Invalid format. Please provide a valid Solana address or filter.',
     },
 
     KNOWN_ACCOUNTS: {
@@ -60,6 +61,20 @@ Example:
         SEARCHING: '🔍 <b>Fetching token balances...</b>',
         NO_RESULTS: '🔍 <b>No token balances found for this address</b>',
         RESULTS_HEADER: '💰 <b>Token Balances</b>\n\n',
+    },
+
+    TOKENS: {
+        ASK_FILTER: `📊 <b>Tokens Filter</b>
+
+Enter a filter or press Fetch All to see all tracked tokens:
+
+Examples:
+• <code>sortByAsc=marketCap</code> - Sort by market cap ascending
+• <code>sortByDesc=price</code> - Sort by price descending
+• <code>limit=5,page=0</code> - Limit to 5 tokens, first page`,
+        SEARCHING: '🔍 <b>Fetching tokens...</b>',
+        NO_RESULTS: '🔍 <b>No tokens found matching your criteria</b>',
+        RESULTS_HEADER: '📊 <b>Tracked Solana Tokens</b>\n\n',
     },
 
     CANCEL: '🚫 <b>Operation cancelled</b>',

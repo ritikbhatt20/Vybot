@@ -2,6 +2,7 @@
 export enum Actions {
     KNOWN_ACCOUNTS = 'KNOWN_ACCOUNTS',
     TOKEN_BALANCES = 'TOKEN_BALANCES',
+    TOKENS = 'TOKENS',
     HELP = 'HELP',
     CLOSE = 'CLOSE',
     CANCEL = 'CANCEL',
@@ -11,6 +12,7 @@ export enum Actions {
 export enum SceneActions {
     FILTER_AGAIN = 'FILTER_AGAIN',
     TOKEN_BALANCES_AGAIN = 'TOKEN_BALANCES_AGAIN',
+    TOKENS_AGAIN = 'TOKENS_AGAIN',
     CLOSE_BUTTON = 'CLOSE_BUTTON',
     CANCEL_BUTTON = 'CANCEL_BUTTON',
     FETCH_ALL = 'FETCH_ALL',

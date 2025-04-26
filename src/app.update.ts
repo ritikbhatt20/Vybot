@@ -9,6 +9,7 @@ import { Commands } from './enums/commands.enum';
 import { BOT_MESSAGES, commandDescriptions } from './constants';
 import { KNOWN_ACCOUNTS_SCENE_ID } from './modules/known-accounts/known-accounts.scene';
 import { TOKEN_BALANCES_SCENE_ID } from './modules/known-accounts/token-balances.scene';
+import { TOKENS_SCENE_ID } from './modules/tokens/tokens.scene';
 
 @Update()
 export class AppUpdate {
@@ -84,6 +85,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('TOKENS_AGAIN')
+    async handleTokensAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing tokens query...');
+            await ctx.scene.enter(TOKENS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in tokens again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -100,6 +112,16 @@ export class AppUpdate {
             await ctx.scene.enter(TOKEN_BALANCES_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering token balances scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.Tokens)
+    async handleTokens(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(TOKENS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering tokens scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

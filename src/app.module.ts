@@ -1,3 +1,4 @@
+// app.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TelegrafModule } from 'nestjs-telegraf';
@@ -6,6 +7,7 @@ import { parse as parseConnectionString } from 'pg-connection-string';
 import { AppUpdate } from './app.update';
 import { SharedModule } from './modules/shared/shared.module';
 import { KnownAccountsModule } from './modules/known-accounts/known-accounts.module';
+import { TokensModule } from './modules/tokens/tokens.module';
 import { PostgresSessionStore } from './utils/pg-session-store';
 
 @Module({
@@ -22,14 +24,13 @@ import { PostgresSessionStore } from './utils/pg-session-store';
           throw new Error('Unable to parse database connection string');
         }
 
-        // Create PostgreSQL session store
         const store = PostgresSessionStore({
           host: dbConfig.host,
           port: dbConfig.port ? Number(dbConfig.port) : 5432,
           database: dbConfig.database,
           user: dbConfig.user,
           password: dbConfig.password,
-          ssl: true, // Adjust for Neon
+          ssl: true,
         });
 
         const botToken = configService.get<string>('TELEGRAM_BOT_TOKEN');
@@ -46,6 +47,7 @@ import { PostgresSessionStore } from './utils/pg-session-store';
     }),
     SharedModule,
     KnownAccountsModule,
+    TokensModule,
   ],
   providers: [AppUpdate],
 })

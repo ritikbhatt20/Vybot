@@ -1,3 +1,4 @@
+// types/index.ts
 export interface KnownAccount {
     ownerAddress: string;
     name: string | null;
@@ -43,4 +44,23 @@ export interface TokenBalanceResponse {
     totalTokenValueUsd1dChange: string;
     totalTokenCount: number;
     data: TokenBalance[];
+}
+
+export interface Token {
+    symbol: string;
+    name: string;
+    mintAddress: string;
+    price: number;
+    price1d: number;
+    price7d: number;
+    decimal: number;
+    logoUrl: string;
+    category: string | null;
+    subcategory: string | null;
+    verified: boolean;
+    updateTime: number;
+    currentSupply: number;
+    marketCap: number;
+    tokenAmountVolume24h: number | null;
+    usdValueVolume24h: number | null;
 }
