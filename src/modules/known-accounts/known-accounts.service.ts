@@ -1,7 +1,6 @@
-// modules/known-accounts/known-accounts.service.ts
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { KnownAccount, TokenBalanceResponse } from '../../types';
+import { KnownAccount, TokenBalanceResponse, TokenBalanceTimeSeries } from '../../types';
 
 @Injectable()
 export class KnownAccountsService {
@@ -87,6 +86,24 @@ export class KnownAccountsService {
             return response;
         } catch (error) {
             this.logger.error(`Failed to fetch token balances: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getTokenBalancesTimeSeries(ownerAddress: string, days?: number): Promise<TokenBalanceTimeSeries[]> {
+        const query = new URLSearchParams();
+        if (days) query.append('days', days.toString());
+
+        const url = `/account/token-balance-ts/${ownerAddress}${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching token balances time series for account ${ownerAddress} with days: ${days || 'default'}`);
+
+        try {
+            const response = await this.vybeApi.get<{ data: TokenBalanceTimeSeries[] }>(url);
+            this.logger.debug(`Found ${response.data?.length || 0} token balance time series data points`);
+            return response.data || [];
+        } catch (error) {
+            this.logger.error(`Failed to fetch token balances time series: ${error.message}`, error.stack);
             throw error;
         }
     }

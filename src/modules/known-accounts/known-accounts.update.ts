@@ -1,4 +1,3 @@
-// modules/known-accounts/known-accounts.update.ts
 import { Action, Command, Ctx, Update } from 'nestjs-telegraf';
 import { Context } from 'telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
@@ -7,6 +6,7 @@ import { Actions } from '../../enums/actions.enum';
 import { Commands } from '../../enums/commands.enum';
 import { KNOWN_ACCOUNTS_SCENE_ID } from './known-accounts.scene';
 import { TOKEN_BALANCES_SCENE_ID } from './token-balances.scene';
+import { TOKEN_BALANCES_TS_SCENE_ID } from './token-balances-ts.scene';
 
 @Update()
 export class KnownAccountsUpdate {
@@ -61,6 +61,32 @@ export class KnownAccountsUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling token balances command: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.TOKEN_BALANCES_TS)
+    async onTokenBalancesTs(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📈 Accessing token balances time series...');
+            await ctx.scene.enter(TOKEN_BALANCES_TS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token balances time series scene: ${error.message}`);
+        }
+    }
+
+    @Command(Commands.TokenBalancesTs)
+    async handleTokenBalancesTs(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('📈 Opening token balances time series explorer...'),
+                ctx.scene.enter(TOKEN_BALANCES_TS_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling token balances time series command: ${error.message}`);
         }
     }
 }

@@ -1,6 +1,7 @@
 import { Actions, SceneActions } from '../enums/actions.enum';
 import { Markup } from 'telegraf';
 import { Logger } from '@nestjs/common';
+import { PublicKey } from '@solana/web3.js';
 
 const logger = new Logger('Utils');
 
@@ -17,6 +18,17 @@ export function escapeMarkdownV2(text: string): string {
 export function formatAddress(address: string): string {
     if (!address || address.length < 10) return address;
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+// Validate Solana address
+export function isValidSolanaAddress(address: string): boolean {
+    try {
+        new PublicKey(address);
+        return true;
+    } catch (error) {
+        logger.warn(`Invalid Solana address: ${address}`);
+        return false;
+    }
 }
 
 // Interface for error button

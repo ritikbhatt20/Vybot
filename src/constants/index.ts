@@ -7,6 +7,7 @@ export type CommandDescriptions = {
 export const commandDescriptions: CommandDescriptions = {
     [Commands.KnownAccounts]: '/knownaccounts - 🏷️ View labeled Solana accounts',
     [Commands.TokenBalances]: '/tokenbalances - 💰 View token balances for a Solana account',
+    [Commands.TokenBalancesTs]: '/tokenbalancests - 📈 View token balances time series for a Solana account',
     [Commands.Tokens]: '/tokens - 📊 View a list of tracked Solana tokens',
     [Commands.TokenHolders]: '/tokenholders - 👥 View top token holders for a Solana token',
     [Commands.TokenDetails]: '/tokendetails - 📋 View detailed information for a Solana token',
@@ -33,7 +34,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, /programixcount to view program instruction counts, /programactiveusersts to view program active users time series, /programactiveusers to view program active users, /programdetails to view program details, /programranking to view top-ranked programs, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokenbalancests to check token balances time series, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, /programixcount to view program instruction counts, /programactiveusersts to view program active users time series, /programactiveusers to view program active users, /programdetails to view program details, /programranking to view top-ranked programs, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -80,6 +81,23 @@ Example:
         SEARCHING: '🔍 <b>Fetching token balances...</b>',
         NO_RESULTS: '🔍 <b>No token balances found for this address</b>',
         RESULTS_HEADER: '💰 <b>Token Balances</b>\n\n',
+    },
+
+    TOKEN_BALANCES_TS: {
+        ASK_ADDRESS: `📈 <b>Token Balances Time Series</b>
+
+Enter a Solana account address to view its token balances time series:
+
+Example:
+• <code>D5DabCKBxypZDGS4H8HJtTkdXSKtYiM6N3HiYNYa8U9t</code>`,
+        ASK_DAYS: `⏰ <b>Time Period</b>
+
+Select the number of previous days to include (1 to 30, default is 14):
+
+Options: 1 Day, 7 Days, 14 Days, 30 Days`,
+        SEARCHING: '🔍 <b>Fetching token balances time series...</b>',
+        NO_RESULTS: '🔍 <b>No token balances time series found for this address</b>',
+        RESULTS_HEADER: '📈 <b>Token Balances Time Series</b>\n\n',
     },
 
     TOKENS: {

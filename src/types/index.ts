@@ -45,6 +45,14 @@ export interface TokenBalanceResponse {
     data: TokenBalance[];
 }
 
+export interface TokenBalanceTimeSeries {
+    blockTime: number;
+    tokenValue: string;
+    stakeValue: string;
+    stakeValueSol: string;
+    systemValue: string;
+}
+
 export interface Token {
     symbol: string;
     name: string;
@@ -260,4 +268,9 @@ export interface ProgramRankingWizardState {
     limit?: number;
     interval?: '1d' | '7d' | '30d';
     date?: number;
+}
+
+export interface TokenBalancesTsWizardState {
+    ownerAddress?: string;
+    days?: number;
 }
