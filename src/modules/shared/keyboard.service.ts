@@ -32,17 +32,20 @@ export class KeyboardService {
             // Programs and support
             [
                 Markup.button.callback('🛠️ Programs', Actions.PROGRAMS),
+                Markup.button.callback('🏆 Program Ranking', Actions.PROGRAM_RANKING),
+            ],
+            [
                 Markup.button.callback('📈 Program Tx Count', Actions.PROGRAM_TX_COUNT),
-            ],
-            [
                 Markup.button.callback('📈 Program Ix Count', Actions.PROGRAM_IX_COUNT),
-                Markup.button.callback('📈 Program Active Users TS', Actions.PROGRAM_ACTIVE_USERS_TS),
             ],
             [
+                Markup.button.callback('📈 Program Active Users TS', Actions.PROGRAM_ACTIVE_USERS_TS),
                 Markup.button.callback('📈 Program Active Users', Actions.PROGRAM_ACTIVE_USERS),
-                Markup.button.callback('📋 Program Details', Actions.PROGRAM_DETAILS),
             ],
-            [Markup.button.callback('❓ Help', Actions.HELP)],
+            [
+                Markup.button.callback('📋 Program Details', Actions.PROGRAM_DETAILS),
+                Markup.button.callback('❓ Help', Actions.HELP),
+            ],
         ]);
     }
 
@@ -186,6 +189,31 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+            ],
+        ]);
+    }
+
+    getProgramRankingKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [
+                Markup.button.callback('Default (10)', 'limit:10'),
+                Markup.button.callback('5', 'limit:5'),
+                Markup.button.callback('20', 'limit:20'),
+            ],
+            [
+                Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+            ],
+        ]);
+    }
+
+    getProgramRankingResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Check Rankings Again', SceneActions.PROGRAM_RANKING_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);

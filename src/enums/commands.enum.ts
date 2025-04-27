@@ -14,6 +14,7 @@ export enum Commands {
     ProgramActiveUsersTs = 'programactiveusersts',
     ProgramActiveUsers = 'programactiveusers',
     ProgramDetails = 'programdetails',
+    ProgramRanking = 'programranking',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',

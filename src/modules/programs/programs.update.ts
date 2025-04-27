@@ -10,6 +10,7 @@ import { PROGRAM_IX_COUNT_SCENE_ID } from './program-ix-count.scene';
 import { PROGRAM_ACTIVE_USERS_TS_SCENE_ID } from './program-active-users-ts.scene';
 import { PROGRAM_ACTIVE_USERS_SCENE_ID } from './program-active-users.scene';
 import { PROGRAM_DETAILS_SCENE_ID } from './program-details.scene';
+import { PROGRAM_RANKING_SCENE_ID } from './program-ranking.scene';
 
 @Update()
 export class ProgramsUpdate {
@@ -168,6 +169,32 @@ export class ProgramsUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling program details command: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.PROGRAM_RANKING)
+    async onProgramRanking(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🏆 Accessing program rankings...');
+            await ctx.scene.enter(PROGRAM_RANKING_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering program ranking scene: ${error.message}`);
+        }
+    }
+
+    @Command(Commands.ProgramRanking)
+    async handleProgramRanking(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('🏆 Opening program rankings explorer...'),
+                ctx.scene.enter(PROGRAM_RANKING_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling program ranking command: ${error.message}`);
         }
     }
 }

@@ -21,6 +21,7 @@ import { PROGRAM_IX_COUNT_SCENE_ID } from './modules/programs/program-ix-count.s
 import { PROGRAM_ACTIVE_USERS_TS_SCENE_ID } from './modules/programs/program-active-users-ts.scene';
 import { PROGRAM_ACTIVE_USERS_SCENE_ID } from './modules/programs/program-active-users.scene';
 import { PROGRAM_DETAILS_SCENE_ID } from './modules/programs/program-details.scene';
+import { PROGRAM_RANKING_SCENE_ID } from './modules/programs/program-ranking.scene';
 
 @Update()
 export class AppUpdate {
@@ -248,6 +249,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('PROGRAM_RANKING_AGAIN')
+    async handleProgramRankingAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing program rankings query...');
+            await ctx.scene.enter(PROGRAM_RANKING_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in program ranking again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -394,6 +406,16 @@ export class AppUpdate {
             await ctx.scene.enter(PROGRAM_DETAILS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering program details scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.ProgramRanking)
+    async handleProgramRanking(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(PROGRAM_RANKING_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering program ranking scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

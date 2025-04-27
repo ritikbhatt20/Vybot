@@ -20,6 +20,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.ProgramActiveUsersTs]: '/programactiveusersts - 📈 View active users time series for a Solana program',
     [Commands.ProgramActiveUsers]: '/programactiveusers - 📈 View active users for a Solana program',
     [Commands.ProgramDetails]: '/programdetails - 📋 View details for a Solana program',
+    [Commands.ProgramRanking]: '/programranking - 🏆 View top-ranked Solana programs',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -32,7 +33,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, /programixcount to view program instruction counts, /programactiveusersts to view program active users time series, /programactiveusers to view program active users, /programdetails to view program details, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, /programixcount to view program instruction counts, /programactiveusersts to view program active users time series, /programactiveusers to view program active users, /programdetails to view program details, /programranking to view top-ranked programs, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -41,6 +42,7 @@ Use /knownaccounts to explore labeled accounts, /tokenbalances to check token ba
 What would you like to explore today?
 
 Choose an option below or type a command:`,
+
     ERROR: {
         GENERIC: '❌ Something went wrong. Please try again later.',
         API_ERROR: '❌ Failed to fetch data from the API. Please try again later.',
@@ -51,6 +53,7 @@ Choose an option below or type a command:`,
         INVALID_RESOLUTION: '❌ Invalid resolution. Please select Hourly, Daily, Weekly, Monthly, or Yearly.',
         INVALID_RANGE: '❌ Invalid range. Please select a valid time range (4h, 12h, 24h, 1d, 7d, 30d).',
         INVALID_DAYS: '❌ Invalid number of days. Please select a number between 1 and 30.',
+        INVALID_LIMIT: '❌ Invalid limit. Please provide a non-negative number.',
     },
 
     KNOWN_ACCOUNTS: {
@@ -335,6 +338,29 @@ Example:
         SEARCHING: '🔍 <b>Fetching program details...</b>',
         NO_RESULTS: '🔍 <b>No details found for this program</b>',
         RESULTS_HEADER: '📋 <b>Program Details</b>\n\n',
+    },
+
+    PROGRAM_RANKING: {
+        ASK_LIMIT: `🏆 <b>Program Rankings</b>
+
+Enter the number of programs to display (e.g., 10) or select an option:
+
+Example:
+• <code>10</code>`,
+        ASK_INTERVAL: `📅 <b>Ranking Interval</b>
+
+Select the interval for the rankings:
+
+Options: Daily (1d), Weekly (7d), Monthly (30d)`,
+        ASK_DATE: `📆 <b>Date</b>
+
+Enter the date as a Unix timestamp (e.g., 1744934400) or select Current Date:
+
+Example:
+• <code>1744934400</code> (2024-10-21 00:00:00 UTC)`,
+        SEARCHING: '🔍 <b>Fetching program rankings...</b>',
+        NO_RESULTS: '🔍 <b>No program rankings found</b>',
+        RESULTS_HEADER: '🏆 <b>Top Program Rankings</b>\n\n',
     },
 
     CANCEL: '🚫 <b>Operation cancelled</b>',

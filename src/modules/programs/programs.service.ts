@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { Program, ProgramTxCount, ProgramIxCount, ProgramActiveUsers, ProgramActiveUser } from '../../types';
+import { Program, ProgramTxCount, ProgramIxCount, ProgramActiveUsers, ProgramActiveUser, ProgramRanking } from '../../types';
 
 @Injectable()
 export class ProgramsService {
@@ -131,6 +131,31 @@ export class ProgramsService {
             return response.data || [];
         } catch (error) {
             this.logger.error(`Failed to fetch active users: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getProgramRanking(params: {
+        limit?: number;
+        interval?: '1d' | '7d' | '30d';
+        date?: number;
+    } = {}): Promise<ProgramRanking[]> {
+        const query = new URLSearchParams();
+
+        if (params.limit) query.append('limit', params.limit.toString());
+        if (params.interval) query.append('interval', params.interval);
+        if (params.date) query.append('date', params.date.toString());
+
+        const url = `/program/ranking${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching program rankings with params: ${JSON.stringify(params)}`);
+
+        try {
+            const response = await this.vybeApi.get<{ data: ProgramRanking[] }>(url);
+            this.logger.debug(`Found ${response.data?.length || 0} program rankings`);
+            return response.data || [];
+        } catch (error) {
+            this.logger.error(`Failed to fetch program rankings: ${error.message}`, error.stack);
             throw error;
         }
     }

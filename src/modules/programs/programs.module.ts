@@ -7,6 +7,7 @@ import { ProgramIxCountScene } from './program-ix-count.scene';
 import { ProgramActiveUsersTsScene } from './program-active-users-ts.scene';
 import { ProgramActiveUsersScene } from './program-active-users.scene';
 import { ProgramDetailsScene } from './program-details.scene';
+import { ProgramRankingScene } from './program-ranking.scene';
 import { SharedModule } from '../shared/shared.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { SharedModule } from '../shared/shared.module';
         ProgramActiveUsersTsScene,
         ProgramActiveUsersScene,
         ProgramDetailsScene,
+        ProgramRankingScene,
     ],
     exports: [ProgramsService],
 })

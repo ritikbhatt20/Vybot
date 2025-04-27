@@ -166,6 +166,13 @@ export interface Program {
     transactions1d: number;
 }
 
+export interface ProgramRanking {
+    programRank: number;
+    programId: string;
+    score: number;
+    programName: string;
+}
+
 export interface ProgramTxCount {
     programId: string;
     transactionsCount: number;
@@ -247,4 +254,10 @@ export interface ProgramActiveUsersWizardState {
 
 export interface ProgramDetailsWizardState {
     programAddress?: string;
+}
+
+export interface ProgramRankingWizardState {
+    limit?: number;
+    interval?: '1d' | '7d' | '30d';
+    date?: number;
 }
