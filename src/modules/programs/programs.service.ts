@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { Program, ProgramTxCount, ProgramIxCount } from '../../types';
+import { Program, ProgramTxCount, ProgramIxCount, ProgramActiveUsers } from '../../types';
 
 @Injectable()
 export class ProgramsService {
@@ -71,6 +71,24 @@ export class ProgramsService {
             return response.data || [];
         } catch (error) {
             this.logger.error(`Failed to fetch instruction count time series: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getProgramActiveUsers(programAddress: string, range: string): Promise<ProgramActiveUsers[]> {
+        const query = new URLSearchParams();
+        query.append('range', range);
+
+        const url = `/program/${programAddress}/active-users-ts?${query}`;
+
+        this.logger.debug(`Fetching active users time series for program ${programAddress} with range: ${range}`);
+
+        try {
+            const response = await this.vybeApi.get<{ data: ProgramActiveUsers[] }>(url);
+            this.logger.debug(`Found ${response.data?.length || 0} active users data points`);
+            return response.data || [];
+        } catch (error) {
+            this.logger.error(`Failed to fetch active users time series: ${error.message}`, error.stack);
             throw error;
         }
     }

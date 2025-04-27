@@ -7,6 +7,7 @@ import { Commands } from '../../enums/commands.enum';
 import { PROGRAMS_SCENE_ID } from './programs.scene';
 import { PROGRAM_TX_COUNT_SCENE_ID } from './program-tx-count.scene';
 import { PROGRAM_IX_COUNT_SCENE_ID } from './program-ix-count.scene';
+import { PROGRAM_ACTIVE_USERS_TS_SCENE_ID } from './program-active-users-ts.scene';
 
 @Update()
 export class ProgramsUpdate {
@@ -87,6 +88,32 @@ export class ProgramsUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling program ix count command: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.PROGRAM_ACTIVE_USERS_TS)
+    async onProgramActiveUsersTs(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📈 Accessing active users time series...');
+            await ctx.scene.enter(PROGRAM_ACTIVE_USERS_TS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering program active users time series scene: ${error.message}`);
+        }
+    }
+
+    @Command(Commands.ProgramActiveUsersTs)
+    async handleProgramActiveUsersTs(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('📈 Opening active users time series explorer...'),
+                ctx.scene.enter(PROGRAM_ACTIVE_USERS_TS_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling program active users time series command: ${error.message}`);
         }
     }
 }
