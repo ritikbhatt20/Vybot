@@ -54,6 +54,15 @@ export class KnownAccountsScene {
         return;
     }
 
+    @Action(SceneActions.MAIN_MENU_BUTTON)
+    async onMainMenu(@Ctx() ctx: WizardContext) {
+        await ctx.answerCbQuery('Returning to main menu');
+        await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU,
+            { reply_markup: this.keyboard.getMainKeyboard().reply_markup }
+        );
+        await ctx.scene.leave();
+    }
+
     @WizardStep(2)
     async handleFilter(@Ctx() ctx: WizardContext) {
         try {

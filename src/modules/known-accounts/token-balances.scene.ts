@@ -1,4 +1,3 @@
-// modules/known-accounts/token-balances.scene.ts
 import { Wizard, WizardStep, Ctx, Action, Command } from 'nestjs-telegraf';
 import { WizardContext } from 'telegraf/typings/scenes';
 import { Markup } from 'telegraf';
@@ -102,6 +101,15 @@ export class TokenBalancesScene {
     async onCancel(@Ctx() ctx: WizardContext) {
         await ctx.answerCbQuery('Operation cancelled');
         await ctx.replyWithHTML(BOT_MESSAGES.CANCEL, {
+            reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+        });
+        await ctx.scene.leave();
+    }
+
+    @Action(SceneActions.MAIN_MENU_BUTTON)
+    async onMainMenu(@Ctx() ctx: WizardContext) {
+        await ctx.answerCbQuery('Returning to main menu');
+        await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
         });
         await ctx.scene.leave();
