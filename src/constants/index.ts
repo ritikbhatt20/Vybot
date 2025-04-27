@@ -18,6 +18,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.ProgramTxCount]: '/programtxcount - 📈 View transaction count time series for a Solana program',
     [Commands.ProgramIxCount]: '/programixcount - 📈 View instruction count time series for a Solana program',
     [Commands.ProgramActiveUsersTs]: '/programactiveusersts - 📈 View active users time series for a Solana program',
+    [Commands.ProgramActiveUsers]: '/programactiveusers - 📈 View active users for a Solana program',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -30,7 +31,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, /programixcount to view program instruction counts, /programactiveusersts to view program active users time series, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, /programixcount to view program instruction counts, /programactiveusersts to view program active users time series, /programactiveusers to view program active users, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -49,6 +50,7 @@ Choose an option below or type a command:`,
         INVALID_AMOUNT: '❌ Invalid amount. Please provide a valid number.',
         INVALID_RESOLUTION: '❌ Invalid resolution. Please select Hourly, Daily, Weekly, Monthly, or Yearly.',
         INVALID_RANGE: '❌ Invalid range. Please select a valid time range (4h, 12h, 24h, 1d, 7d, 30d).',
+        INVALID_DAYS: '❌ Invalid number of days. Please select a number between 1 and 30.',
     },
 
     KNOWN_ACCOUNTS: {
@@ -299,6 +301,28 @@ Options: 4 Hours, 12 Hours, 24 Hours, 1 Day, 7 Days, 30 Days`,
         SEARCHING: '🔍 <b>Fetching active users time series data...</b>',
         NO_RESULTS: '🔍 <b>No active users time series data found for this program and range</b>',
         RESULTS_HEADER: '📈 <b>Program Active Users Time Series</b>\n\n',
+    },
+
+    PROGRAM_ACTIVE_USERS: {
+        ASK_PROGRAM_ADDRESS: `📈 <b>Program Active Users</b>
+
+Enter a program address to view its active users:
+
+Example:
+• <code>SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf</code>`,
+        ASK_DAYS: `⏰ <b>Time Period</b>
+
+Select the number of previous days to include (1 to 30, default is 14):
+
+Options: 1 Day, 7 Days, 14 Days, 30 Days`,
+        ASK_SORT: `🔍 <b>Sort Order</b>
+
+Select how to sort the active users:
+
+Options: By Transaction Count or Instruction Count, High to Low or Low to High`,
+        SEARCHING: '🔍 <b>Fetching active users data...</b>',
+        NO_RESULTS: '🔍 <b>No active users found for this program and period</b>',
+        RESULTS_HEADER: '📈 <b>Program Active Users</b>\n\n',
     },
 
     CANCEL: '🚫 <b>Operation cancelled</b>',

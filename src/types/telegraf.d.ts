@@ -1,9 +1,9 @@
-import { TokenVolumeWizardState, TokenHoldersWizardState, TokenTransfersWizardState, TokenTradesWizardState, ProgramsWizardState, ProgramTxCountWizardState, ProgramIxCountWizardState, ProgramActiveUsersTsWizardState } from './index';
+import { TokenVolumeWizardState, TokenHoldersWizardState, TokenTransfersWizardState, TokenTradesWizardState, ProgramsWizardState, ProgramTxCountWizardState, ProgramIxCountWizardState, ProgramActiveUsersTsWizardState, ProgramActiveUsersWizardState } from './index';
 
 declare module 'telegraf/typings/scenes' {
     interface WizardContext {
         wizard: {
-            state: TokenVolumeWizardState & TokenHoldersWizardState & TokenTransfersWizardState & TokenTradesWizardState & ProgramsWizardState & ProgramTxCountWizardState & ProgramIxCountWizardState & ProgramActiveUsersTsWizardState;
+            state: TokenVolumeWizardState & TokenHoldersWizardState & TokenTransfersWizardState & TokenTradesWizardState & ProgramsWizardState & ProgramTxCountWizardState & ProgramIxCountWizardState & ProgramActiveUsersTsWizardState & ProgramActiveUsersWizardState;
         };
     }
 }

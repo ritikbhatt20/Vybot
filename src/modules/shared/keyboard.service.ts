@@ -38,7 +38,10 @@ export class KeyboardService {
                 Markup.button.callback('📈 Program Ix Count', Actions.PROGRAM_IX_COUNT),
                 Markup.button.callback('📈 Program Active Users TS', Actions.PROGRAM_ACTIVE_USERS_TS),
             ],
-            [Markup.button.callback('❓ Help', Actions.HELP)],
+            [
+                Markup.button.callback('📈 Program Active Users', Actions.PROGRAM_ACTIVE_USERS),
+                Markup.button.callback('❓ Help', Actions.HELP),
+            ],
         ]);
     }
 
@@ -124,6 +127,12 @@ export class KeyboardService {
     }
 
     getProgramActiveUsersTsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
+        ]);
+    }
+
+    getProgramActiveUsersKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
         ]);
@@ -233,6 +242,14 @@ export class KeyboardService {
     getProgramActiveUsersTsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Active Users TS Again', SceneActions.PROGRAM_ACTIVE_USERS_TS_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
+        ]);
+    }
+
+    getProgramActiveUsersResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Check Active Users Again', SceneActions.PROGRAM_ACTIVE_USERS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
         ]);

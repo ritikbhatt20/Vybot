@@ -19,6 +19,7 @@ import { PROGRAMS_SCENE_ID } from './modules/programs/programs.scene';
 import { PROGRAM_TX_COUNT_SCENE_ID } from './modules/programs/program-tx-count.scene';
 import { PROGRAM_IX_COUNT_SCENE_ID } from './modules/programs/program-ix-count.scene';
 import { PROGRAM_ACTIVE_USERS_TS_SCENE_ID } from './modules/programs/program-active-users-ts.scene';
+import { PROGRAM_ACTIVE_USERS_SCENE_ID } from './modules/programs/program-active-users.scene';
 
 @Update()
 export class AppUpdate {
@@ -215,6 +216,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('PROGRAM_ACTIVE_USERS_AGAIN')
+    async handleProgramActiveUsersAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing program active users query...');
+            await ctx.scene.enter(PROGRAM_ACTIVE_USERS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in program active users again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -341,6 +353,16 @@ export class AppUpdate {
             await ctx.scene.enter(PROGRAM_ACTIVE_USERS_TS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering program active users time series scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.ProgramActiveUsers)
+    async handleProgramActiveUsers(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(PROGRAM_ACTIVE_USERS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering program active users scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

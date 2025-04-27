@@ -5,11 +5,20 @@ import { ProgramsScene } from './programs.scene';
 import { ProgramTxCountScene } from './program-tx-count.scene';
 import { ProgramIxCountScene } from './program-ix-count.scene';
 import { ProgramActiveUsersTsScene } from './program-active-users-ts.scene';
+import { ProgramActiveUsersScene } from './program-active-users.scene';
 import { SharedModule } from '../shared/shared.module';
 
 @Module({
     imports: [SharedModule],
-    providers: [ProgramsService, ProgramsUpdate, ProgramsScene, ProgramTxCountScene, ProgramIxCountScene, ProgramActiveUsersTsScene],
+    providers: [
+        ProgramsService,
+        ProgramsUpdate,
+        ProgramsScene,
+        ProgramTxCountScene,
+        ProgramIxCountScene,
+        ProgramActiveUsersTsScene,
+        ProgramActiveUsersScene,
+    ],
     exports: [ProgramsService],
 })
 export class ProgramsModule { }

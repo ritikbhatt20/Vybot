@@ -184,6 +184,13 @@ export interface ProgramActiveUsers {
     blockTime: number;
 }
 
+export interface ProgramActiveUser {
+    programId: string;
+    wallet: string;
+    transactions: number;
+    instructions: number;
+}
+
 export interface TokenVolumeWizardState {
     mintAddress?: string;
     startTime?: number;
@@ -229,4 +236,11 @@ export interface ProgramIxCountWizardState {
 export interface ProgramActiveUsersTsWizardState {
     programAddress?: string;
     range?: string;
+}
+
+export interface ProgramActiveUsersWizardState {
+    programAddress?: string;
+    days?: number;
+    sortByAsc?: string;
+    sortByDesc?: string;
 }

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { Program, ProgramTxCount, ProgramIxCount, ProgramActiveUsers } from '../../types';
+import { Program, ProgramTxCount, ProgramIxCount, ProgramActiveUsers, ProgramActiveUser } from '../../types';
 
 @Injectable()
 export class ProgramsService {
@@ -89,6 +89,33 @@ export class ProgramsService {
             return response.data || [];
         } catch (error) {
             this.logger.error(`Failed to fetch active users time series: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getProgramActiveUsersList(programAddress: string, params: {
+        days?: number;
+        limit?: number;
+        sortByAsc?: string;
+        sortByDesc?: string;
+    } = {}): Promise<ProgramActiveUser[]> {
+        const query = new URLSearchParams();
+
+        if (params.days) query.append('days', params.days.toString());
+        if (params.limit) query.append('limit', params.limit.toString());
+        if (params.sortByAsc) query.append('sortByAsc', params.sortByAsc);
+        if (params.sortByDesc) query.append('sortByDesc', params.sortByDesc);
+
+        const url = `/program/${programAddress}/active-users${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching active users for program ${programAddress} with params: ${JSON.stringify(params)}`);
+
+        try {
+            const response = await this.vybeApi.get<{ data: ProgramActiveUser[] }>(url);
+            this.logger.debug(`Found ${response.data?.length || 0} active users`);
+            return response.data || [];
+        } catch (error) {
+            this.logger.error(`Failed to fetch active users: ${error.message}`, error.stack);
             throw error;
         }
     }
