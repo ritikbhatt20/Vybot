@@ -111,6 +111,15 @@ export class TokenHoldersScene {
         await ctx.scene.leave();
     }
 
+    @Action(SceneActions.MAIN_MENU_BUTTON)
+    async onMainMenu(@Ctx() ctx: WizardContext) {
+        await ctx.answerCbQuery('Returning to main menu');
+        await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
+            reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+        });
+        await ctx.scene.leave();
+    }
+
     @Command(Commands.Cancel)
     async cancelCommand(@Ctx() ctx: WizardContext) {
         try {
