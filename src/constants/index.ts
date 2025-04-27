@@ -41,7 +41,6 @@ Use /knownaccounts to explore labeled accounts, /tokenbalances to check token ba
 What would you like to explore today?
 
 Choose an option below or type a command:`,
-
     ERROR: {
         GENERIC: '❌ Something went wrong. Please try again later.',
         API_ERROR: '❌ Failed to fetch data from the API. Please try again later.',

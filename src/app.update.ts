@@ -67,11 +67,20 @@ export class AppUpdate {
     }
 
     @Action(Actions.MAIN_MENU)
-    async handleMainMenuAction(@Ctx() ctx: Context) {
-        await ctx.answerCbQuery();
-        await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
-            reply_markup: this.keyboard.getMainKeyboard().reply_markup,
-        });
+    @Action('MAIN_MENU_BUTTON')
+    async handleMainMenuAction(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('Returning to main menu');
+            if (ctx.scene && ctx.scene.current) {
+                await ctx.scene.leave();
+            }
+            await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
+                reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+            });
+        } catch (error) {
+            this.logger.error(`Error in main menu action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
     }
 
     @Action('FILTER_AGAIN')
