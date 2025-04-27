@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
 import { KnownAccount, TokenBalanceResponse, TokenBalanceTimeSeries } from '../../types';
+import { WalletPnlResponse } from '../../types';
 
 @Injectable()
 export class KnownAccountsService {
@@ -104,6 +105,40 @@ export class KnownAccountsService {
             return response.data || [];
         } catch (error) {
             this.logger.error(`Failed to fetch token balances time series: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getWalletPnl(
+        ownerAddress: string,
+        params: {
+            resolution?: '1d' | '7d' | '30d';
+            tokenAddress?: string;
+            sortByAsc?: string;
+            sortByDesc?: string;
+            limit?: number;
+            page?: number;
+        } = {}
+    ): Promise<WalletPnlResponse> {
+        const query = new URLSearchParams();
+
+        if (params.resolution) query.append('resolution', params.resolution);
+        if (params.tokenAddress) query.append('tokenAddress', params.tokenAddress);
+        if (params.sortByAsc) query.append('sortByAsc', params.sortByAsc);
+        if (params.sortByDesc) query.append('sortByDesc', params.sortByDesc);
+        if (params.limit) query.append('limit', params.limit.toString());
+        if (params.page) query.append('page', params.page.toString());
+
+        const url = `/account/pnl/${ownerAddress}${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching wallet PnL for ${ownerAddress} with params: ${JSON.stringify(params)}`);
+
+        try {
+            const response = await this.vybeApi.get<WalletPnlResponse>(url);
+            this.logger.debug(`Found wallet PnL data with ${response.tokenMetrics?.length || 0} token metrics`);
+            return response;
+        } catch (error) {
+            this.logger.error(`Failed to fetch wallet PnL: ${error.message}`, error.stack);
             throw error;
         }
     }

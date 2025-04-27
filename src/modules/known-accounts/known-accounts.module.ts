@@ -4,6 +4,7 @@ import { KnownAccountsUpdate } from './known-accounts.update';
 import { KnownAccountsScene } from './known-accounts.scene';
 import { TokenBalancesScene } from './token-balances.scene';
 import { TokenBalancesTsScene } from './token-balances-ts.scene';
+import { WalletPnlScene } from './wallet-pnl.scene';
 import { SharedModule } from '../shared/shared.module';
 
 @Module({
@@ -14,6 +15,7 @@ import { SharedModule } from '../shared/shared.module';
         KnownAccountsScene,
         TokenBalancesScene,
         TokenBalancesTsScene,
+        WalletPnlScene,
     ],
     exports: [KnownAccountsService],
 })

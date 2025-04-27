@@ -9,6 +9,7 @@ import { BOT_MESSAGES, commandDescriptions } from './constants';
 import { KNOWN_ACCOUNTS_SCENE_ID } from './modules/known-accounts/known-accounts.scene';
 import { TOKEN_BALANCES_SCENE_ID } from './modules/known-accounts/token-balances.scene';
 import { TOKEN_BALANCES_TS_SCENE_ID } from './modules/known-accounts/token-balances-ts.scene';
+import { WALLET_PNL_SCENE_ID } from './modules/known-accounts/wallet-pnl.scene';
 import { TOKENS_SCENE_ID } from './modules/tokens/tokens.scene';
 import { TOKEN_HOLDERS_SCENE_ID } from './modules/tokens/token-holders.scene';
 import { TOKEN_DETAILS_SCENE_ID } from './modules/tokens/token-details.scene';
@@ -125,6 +126,28 @@ export class AppUpdate {
             await ctx.scene.enter(TOKEN_BALANCES_TS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error in token balances time series again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action('WALLET_PNL')
+    async handleWalletPnl(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📊 Accessing wallet PnL analysis...');
+            await ctx.scene.enter(WALLET_PNL_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in wallet PnL action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action('WALLET_PNL_AGAIN')
+    async handleWalletPnlAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing wallet PnL query...');
+            await ctx.scene.enter(WALLET_PNL_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in wallet PnL again action: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

@@ -2,6 +2,7 @@ export enum Commands {
     KnownAccounts = 'knownaccounts',
     TokenBalances = 'tokenbalances',
     TokenBalancesTs = 'tokenbalancests',
+    WalletPnl = 'walletpnl',
     Tokens = 'tokens',
     TokenHolders = 'tokenholders',
     TokenDetails = 'tokendetails',

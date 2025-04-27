@@ -274,3 +274,37 @@ export interface TokenBalancesTsWizardState {
     ownerAddress?: string;
     days?: number;
 }
+
+export interface WalletPnlResponse {
+    summary: {
+        winRate: number;
+        realizedPnlUsd: number;
+        unrealizedPnlUsd: number;
+        uniqueTokensTraded: number;
+        averageTradeUsd: number;
+        tradesCount: number;
+        winningTradesCount: number;
+        losingTradesCount: number;
+        tradesVolumeUsd: number;
+        bestPerformingToken: string | null;
+        worstPerformingToken: string | null;
+        pnlTrendSevenDays: number[];
+    };
+    tokenMetrics: Array<{
+        tokenAddress: string;
+        tokenSymbol: string;
+        buysTransactionCount: number;
+        buysTokenAmount: number;
+        buysVolumeUsd: number;
+        sellsTransactionCount: number;
+        sellsTokenAmount: number;
+        sellsVolumeUsd: number;
+        realizedPnlUsd: number;
+        unrealizedPnlUsd: number;
+    }>;
+}
+
+export interface WalletPnlWizardState {
+    ownerAddress?: string;
+    resolution?: '1d' | '7d' | '30d';
+}
