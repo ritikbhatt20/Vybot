@@ -10,6 +10,7 @@ import { KNOWN_ACCOUNTS_SCENE_ID } from './modules/known-accounts/known-accounts
 import { TOKEN_BALANCES_SCENE_ID } from './modules/known-accounts/token-balances.scene';
 import { TOKEN_BALANCES_TS_SCENE_ID } from './modules/known-accounts/token-balances-ts.scene';
 import { WALLET_PNL_SCENE_ID } from './modules/known-accounts/wallet-pnl.scene';
+import { NFT_COLLECTION_OWNERS_SCENE_ID } from './modules/nft/nft-collection-owners.scene';
 import { TOKENS_SCENE_ID } from './modules/tokens/tokens.scene';
 import { TOKEN_HOLDERS_SCENE_ID } from './modules/tokens/token-holders.scene';
 import { TOKEN_DETAILS_SCENE_ID } from './modules/tokens/token-details.scene';
@@ -148,6 +149,28 @@ export class AppUpdate {
             await ctx.scene.enter(WALLET_PNL_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error in wallet PnL again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action('NFT_OWNERS')
+    async handleNftOwners(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🎨 Accessing NFT collection owners...');
+            await ctx.scene.enter(NFT_COLLECTION_OWNERS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in NFT owners action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action('NFT_OWNERS_AGAIN')
+    async handleNftOwnersAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing NFT owners query...');
+            await ctx.scene.enter(NFT_COLLECTION_OWNERS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in NFT owners again action: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

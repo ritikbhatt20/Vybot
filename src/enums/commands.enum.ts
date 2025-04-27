@@ -3,6 +3,7 @@ export enum Commands {
     TokenBalances = 'tokenbalances',
     TokenBalancesTs = 'tokenbalancests',
     WalletPnl = 'walletpnl',
+    NftOwners = 'nftowners',
     Tokens = 'tokens',
     TokenHolders = 'tokenholders',
     TokenDetails = 'tokendetails',

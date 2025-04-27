@@ -9,6 +9,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.TokenBalances]: '/tokenbalances - 💰 View token balances for a Solana account',
     [Commands.TokenBalancesTs]: '/tokenbalancests - 📈 View token balances time series for a Solana account',
     [Commands.WalletPnl]: '/walletpnl - 📊 View wallet trading performance and PnL analysis',
+    [Commands.NftOwners]: '/nftowners - 🎨 View owners of an NFT collection',
     [Commands.Tokens]: '/tokens - 📊 View a list of tracked Solana tokens',
     [Commands.TokenHolders]: '/tokenholders - 👥 View top token holders for a Solana token',
     [Commands.TokenDetails]: '/tokendetails - 📋 View detailed information for a Solana token',
@@ -35,7 +36,7 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokenbalancests to check token balances time series, /walletpnl to analyze wallet trading performance, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, /programixcount to view program instruction counts, /programactiveusersts to view program active users time series, /programactiveusers to view program active users, /programdetails to view program details, /programranking to view top-ranked programs, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokenbalancests to check token balances time series, /walletpnl to analyze wallet trading performance, /nftowners to view NFT collection owners, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, /programixcount to view program instruction counts, /programactiveusersts to view program active users time series, /programactiveusers to view program active users, /programdetails to view program details, /programranking to view top-ranked programs, or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -116,6 +117,18 @@ Options: 1 Day, 7 Days, 30 Days`,
         SEARCHING: '🔍 <b>Fetching wallet PnL data...</b>',
         NO_RESULTS: '🔍 <b>No PnL data found for this address</b>',
         RESULTS_HEADER: '📊 <b>Wallet PnL Analysis</b>\n\n',
+    },
+
+    NFT_OWNERS: {
+        ASK_ADDRESS: `🎨 <b>NFT Collection Owners</b>
+
+Enter an NFT collection address to view its owners:
+
+Example:
+• <code>J1S9H3QjnRtBbbuD4HjPV6RpRhwuk4zKbxsnCHuTgh9w</code>`,
+        SEARCHING: '🔍 <b>Fetching NFT collection owners...</b>',
+        NO_RESULTS: '🔍 <b>No owners found for this collection</b>',
+        RESULTS_HEADER: '🎨 <b>NFT Collection Owners</b>\n\n',
     },
 
     TOKENS: {

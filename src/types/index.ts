@@ -308,3 +308,8 @@ export interface WalletPnlWizardState {
     ownerAddress?: string;
     resolution?: '1d' | '7d' | '30d';
 }
+
+export interface NftCollectionOwner {
+    owner: string;
+    amount: number;
+}

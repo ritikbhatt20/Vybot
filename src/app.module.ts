@@ -9,6 +9,7 @@ import { SharedModule } from './modules/shared/shared.module';
 import { KnownAccountsModule } from './modules/known-accounts/known-accounts.module';
 import { TokensModule } from './modules/tokens/tokens.module';
 import { ProgramsModule } from './modules/programs/programs.module';
+import { NftModule } from './modules/nft/nft.module';
 import { PostgresSessionStore } from './utils/pg-session-store';
 
 @Module({
@@ -50,6 +51,7 @@ import { PostgresSessionStore } from './utils/pg-session-store';
     KnownAccountsModule,
     TokensModule,
     ProgramsModule,
+    NftModule,
   ],
   providers: [AppUpdate],
 })

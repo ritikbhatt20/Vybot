@@ -17,34 +17,35 @@ export class KeyboardService {
                 Markup.button.callback('📊 Wallet PnL', Actions.WALLET_PNL),
             ],
             [
+                Markup.button.callback('🎨 NFT Owners', Actions.NFT_OWNERS),
                 Markup.button.callback('📊 Tokens', Actions.TOKENS),
+            ],
+            [
                 Markup.button.callback('👥 Top Holders', Actions.TOKEN_HOLDERS),
-            ],
-            [
                 Markup.button.callback('📋 Token Details', Actions.TOKEN_DETAILS),
+            ],
+            [
                 Markup.button.callback('📈 Volume Trends', Actions.TOKEN_VOLUME),
-            ],
-            [
                 Markup.button.callback('📊 Holders Trends', Actions.TOKEN_HOLDERS_TS),
+            ],
+            [
                 Markup.button.callback('💸 Transfers', Actions.TOKEN_TRANSFERS),
-            ],
-            [
                 Markup.button.callback('📊 Trades', Actions.TOKEN_TRADES),
+            ],
+            [
                 Markup.button.callback('🛠️ Programs', Actions.PROGRAMS),
-            ],
-            [
                 Markup.button.callback('🏆 Program Ranking', Actions.PROGRAM_RANKING),
+            ],
+            [
                 Markup.button.callback('📈 Program Tx Count', Actions.PROGRAM_TX_COUNT),
-            ],
-            [
                 Markup.button.callback('📈 Program Ix Count', Actions.PROGRAM_IX_COUNT),
+            ],
+            [
                 Markup.button.callback('📈 Program Active Users TS', Actions.PROGRAM_ACTIVE_USERS_TS),
-            ],
-            [
                 Markup.button.callback('📈 Program Active Users', Actions.PROGRAM_ACTIVE_USERS),
-                Markup.button.callback('📋 Program Details', Actions.PROGRAM_DETAILS),
             ],
             [
+                Markup.button.callback('📋 Program Details', Actions.PROGRAM_DETAILS),
                 Markup.button.callback('❓ Help', Actions.HELP),
             ],
         ]);
@@ -119,6 +120,26 @@ export class KeyboardService {
     getWalletPnlResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Wallet PnL Again', SceneActions.WALLET_PNL_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+            ],
+        ]);
+    }
+
+    getNftCollectionOwnersKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [
+                Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+            ],
+        ]);
+    }
+
+    getNftCollectionOwnersResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Check NFT Owners Again', SceneActions.NFT_OWNERS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
