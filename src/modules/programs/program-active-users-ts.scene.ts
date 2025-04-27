@@ -71,7 +71,10 @@ export class ProgramActiveUsersTsScene {
                             Markup.button.callback('7 Days', 'range:7d'),
                             Markup.button.callback('30 Days', 'range:30d'),
                         ],
-                        [Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON)],
+                        [
+                            Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
+                            Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                        ],
                     ]).reply_markup,
                 }
             );
@@ -177,6 +180,15 @@ export class ProgramActiveUsersTsScene {
     async onCancel(@Ctx() ctx: WizardContext & { wizard: { state: ProgramActiveUsersTsWizardState } }) {
         await ctx.answerCbQuery('Operation cancelled');
         await ctx.replyWithHTML(BOT_MESSAGES.CANCEL, {
+            reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+        });
+        await ctx.scene.leave();
+    }
+
+    @Action(SceneActions.MAIN_MENU_BUTTON)
+    async onMainMenu(@Ctx() ctx: WizardContext & { wizard: { state: ProgramActiveUsersTsWizardState } }) {
+        await ctx.answerCbQuery('Returning to main menu');
+        await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
         });
         await ctx.scene.leave();
