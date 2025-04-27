@@ -39,6 +39,21 @@ export class ProgramsService {
         }
     }
 
+    async getProgramDetails(programAddress: string): Promise<Program> {
+        const url = `/program/${programAddress}`;
+
+        this.logger.debug(`Fetching details for program ${programAddress}`);
+
+        try {
+            const response = await this.vybeApi.get<Program>(url);
+            this.logger.debug(`Found program details for ${programAddress}`);
+            return response;
+        } catch (error) {
+            this.logger.error(`Failed to fetch program details: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
     async getProgramTxCount(programAddress: string, range: string): Promise<ProgramTxCount[]> {
         const query = new URLSearchParams();
         query.append('range', range);

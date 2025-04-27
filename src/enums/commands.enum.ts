@@ -13,6 +13,7 @@ export enum Commands {
     ProgramIxCount = 'programixcount',
     ProgramActiveUsersTs = 'programactiveusersts',
     ProgramActiveUsers = 'programactiveusers',
+    ProgramDetails = 'programdetails',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',

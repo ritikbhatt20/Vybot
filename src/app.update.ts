@@ -20,6 +20,7 @@ import { PROGRAM_TX_COUNT_SCENE_ID } from './modules/programs/program-tx-count.s
 import { PROGRAM_IX_COUNT_SCENE_ID } from './modules/programs/program-ix-count.scene';
 import { PROGRAM_ACTIVE_USERS_TS_SCENE_ID } from './modules/programs/program-active-users-ts.scene';
 import { PROGRAM_ACTIVE_USERS_SCENE_ID } from './modules/programs/program-active-users.scene';
+import { PROGRAM_DETAILS_SCENE_ID } from './modules/programs/program-details.scene';
 
 @Update()
 export class AppUpdate {
@@ -227,6 +228,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('PROGRAM_DETAILS_AGAIN')
+    async handleProgramDetailsAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing program details query...');
+            await ctx.scene.enter(PROGRAM_DETAILS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in program details again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -363,6 +375,16 @@ export class AppUpdate {
             await ctx.scene.enter(PROGRAM_ACTIVE_USERS_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering program active users scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.ProgramDetails)
+    async handleProgramDetails(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(PROGRAM_DETAILS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering program details scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

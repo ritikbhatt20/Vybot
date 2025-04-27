@@ -244,3 +244,7 @@ export interface ProgramActiveUsersWizardState {
     sortByAsc?: string;
     sortByDesc?: string;
 }
+
+export interface ProgramDetailsWizardState {
+    programAddress?: string;
+}
