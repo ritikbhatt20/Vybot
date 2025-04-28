@@ -124,7 +124,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -134,7 +134,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Token Balances Again', SceneActions.TOKEN_BALANCES_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
@@ -144,7 +144,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -154,7 +154,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Balances TS Again', SceneActions.TOKEN_BALANCES_TS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
@@ -164,7 +164,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -174,7 +174,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Wallet PnL Again', SceneActions.WALLET_PNL_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
@@ -184,7 +184,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to NFTs Menu', SceneActions.NFTS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -194,7 +194,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check NFT Owners Again', SceneActions.NFT_OWNERS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to NFTs Menu', SceneActions.NFTS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
@@ -208,7 +208,7 @@ export class KeyboardService {
             ],
             [
                 Markup.button.url('📊 More Analytics', 'https://alphavybe.com'),
-                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
             [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
         ]);
@@ -283,7 +283,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -292,7 +292,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -301,7 +301,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -310,7 +310,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -319,7 +319,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -333,7 +333,7 @@ export class KeyboardService {
             ],
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -343,7 +343,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Rankings Again', SceneActions.PROGRAM_RANKING_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
@@ -420,7 +420,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Filter Programs Again', SceneActions.PROGRAMS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
@@ -431,7 +431,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Tx Count Again', SceneActions.PROGRAM_TX_COUNT_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
@@ -442,7 +442,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Ix Count Again', SceneActions.PROGRAM_IX_COUNT_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
@@ -453,7 +453,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Active Users TS Again', SceneActions.PROGRAM_ACTIVE_USERS_TS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
@@ -464,7 +464,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Active Users Again', SceneActions.PROGRAM_ACTIVE_USERS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
@@ -475,7 +475,7 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Program Details Again', SceneActions.PROGRAM_DETAILS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
