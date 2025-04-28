@@ -16,7 +16,6 @@ async function bootstrap() {
   app.enableCors({ origin: '*' });
   app.setGlobalPrefix('api');
   app.use(helmet());
-  // app.use(compression());
   app.enableShutdownHooks();
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 

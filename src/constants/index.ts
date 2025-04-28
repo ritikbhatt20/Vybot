@@ -132,6 +132,7 @@ Example:
     },
 
     TOKENS: {
+        MENU: '📊 Select a Tokens feature:',
         ASK_FILTER: `📊 <b>Tokens Filter</b>
 
 Enter a filter or press Fetch All to see all tracked tokens:
@@ -141,7 +142,7 @@ Examples:
 • <code>sortByDesc=price</code> - Sort by price descending
 • <code>limit=5,page=0</code> - Limit to 5 tokens, first page`,
         SEARCHING: '🔍 <b>Fetching tokens...</b>',
-        NO_RESULTS: '🔍 <b>No tokens found matching your criteria</b>',
+        NO_RESULTS: '❌ <b>No tokens found for the given criteria</b>',
         RESULTS_HEADER: '📊 <b>Tracked Solana Tokens</b>\n\n',
     },
 
@@ -412,5 +413,5 @@ Example:
         RESULTS_HEADER: '🏆 <b>Top Program Rankings</b>\n\n',
     },
 
-    CANCEL: '🚫 <b>Operation cancelled</b>',
+    CANCEL: '🚫 <b>Operation cancelled. What would you like to do next?</b>',
 };

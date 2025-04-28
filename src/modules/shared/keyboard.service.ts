@@ -8,21 +8,54 @@ export class KeyboardService {
     getMainKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [
-                Markup.button.callback('👤 Known Accounts', Actions.KNOWN_ACCOUNTS),
-                Markup.button.url('🌐 Vybe Network', 'https://www.vybenetwork.com'),
+                Markup.button.callback('👤 Accounts', Actions.ACCOUNTS_MENU),
+                Markup.button.callback('🎨 NFTs', Actions.NFTS_MENU),
             ],
             [
+                Markup.button.callback('📊 Tokens', Actions.TOKENS_MENU),
+                Markup.button.callback('🛠️ Programs', Actions.PROGRAMS_MENU),
+            ],
+            [
+                Markup.button.url('🌐 Vybe Network', 'https://www.vybenetwork.com'),
+                Markup.button.callback('❓ Help', Actions.HELP),
+            ],
+        ]);
+    }
+
+    getAccountsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [
+                Markup.button.callback('👤 Known Accounts', Actions.KNOWN_ACCOUNTS),
                 Markup.button.callback('💰 Token Balances', Actions.TOKEN_BALANCES),
+            ],
+            [
                 Markup.button.callback('📈 Token Balances TS', Actions.TOKEN_BALANCES_TS),
                 Markup.button.callback('📊 Wallet PnL', Actions.WALLET_PNL),
             ],
             [
+                Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getNftsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [
                 Markup.button.callback('🎨 NFT Owners', Actions.NFT_OWNERS),
-                Markup.button.callback('📊 Tokens', Actions.TOKENS),
             ],
             [
-                Markup.button.callback('👥 Top Holders', Actions.TOKEN_HOLDERS),
+                Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getTokensKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [
                 Markup.button.callback('📋 Token Details', Actions.TOKEN_DETAILS),
+                Markup.button.callback('👥 Top Holders', Actions.TOKEN_HOLDERS),
             ],
             [
                 Markup.button.callback('📈 Volume Trends', Actions.TOKEN_VOLUME),
@@ -32,6 +65,18 @@ export class KeyboardService {
                 Markup.button.callback('💸 Transfers', Actions.TOKEN_TRANSFERS),
                 Markup.button.callback('📊 Trades', Actions.TOKEN_TRADES),
             ],
+            [
+                Markup.button.callback('📊 All Tokens', Actions.TOKENS),
+            ],
+            [
+                Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getProgramsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🛠️ Programs', Actions.PROGRAMS),
                 Markup.button.callback('🏆 Program Ranking', Actions.PROGRAM_RANKING),
@@ -46,7 +91,10 @@ export class KeyboardService {
             ],
             [
                 Markup.button.callback('📋 Program Details', Actions.PROGRAM_DETAILS),
-                Markup.button.callback('❓ Help', Actions.HELP),
+            ],
+            [
+                Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
     }
@@ -54,7 +102,7 @@ export class KeyboardService {
     getCloseKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('❌ Close', Actions.CLOSE)],
-            [Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON)],
+            [Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON)],
         ]);
     }
 
@@ -63,7 +111,7 @@ export class KeyboardService {
             [Markup.button.callback('📥 Fetch All', SceneActions.FETCH_ALL)],
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -72,7 +120,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
             ],
         ]);
     }
@@ -82,8 +130,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Token Balances Again', SceneActions.TOKEN_BALANCES_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -92,7 +140,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
             ],
         ]);
     }
@@ -102,8 +150,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Balances TS Again', SceneActions.TOKEN_BALANCES_TS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -112,7 +160,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
             ],
         ]);
     }
@@ -122,8 +170,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Wallet PnL Again', SceneActions.WALLET_PNL_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -132,7 +180,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to NFTs Menu', SceneActions.NFTS_MENU_BUTTON),
             ],
         ]);
     }
@@ -142,8 +190,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check NFT Owners Again', SceneActions.NFT_OWNERS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to NFTs Menu', SceneActions.NFTS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -156,18 +204,19 @@ export class KeyboardService {
             ],
             [
                 Markup.button.url('📊 More Analytics', 'https://alphavybe.com'),
-                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+                Markup.button.callback('🏠 Back to Accounts Menu', SceneActions.ACCOUNTS_MENU_BUTTON),
             ],
-            [Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON)],
+            [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
         ]);
     }
 
-    getTokensKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+    getTokensResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
-            [Markup.button.callback('📥 Fetch All', SceneActions.FETCH_ALL)],
+            [Markup.button.callback('🔄 Filter Tokens Again', SceneActions.TOKENS_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
     }
@@ -226,21 +275,11 @@ export class KeyboardService {
         ]);
     }
 
-    getProgramsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
-        return Markup.inlineKeyboard([
-            [Markup.button.callback('📥 Fetch All', SceneActions.FETCH_ALL)],
-            [
-                Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
-            ],
-        ]);
-    }
-
     getProgramTxCountKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
             ],
         ]);
     }
@@ -249,7 +288,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
             ],
         ]);
     }
@@ -258,7 +297,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
             ],
         ]);
     }
@@ -267,7 +306,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
             ],
         ]);
     }
@@ -276,7 +315,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
             ],
         ]);
     }
@@ -290,7 +329,7 @@ export class KeyboardService {
             ],
             [
                 Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
             ],
         ]);
     }
@@ -300,19 +339,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Rankings Again', SceneActions.PROGRAM_RANKING_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
-            ],
-        ]);
-    }
-
-    getTokensResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
-        return Markup.inlineKeyboard([
-            [Markup.button.callback('🔄 Filter Tokens Again', SceneActions.TOKENS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
-            [
-                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -322,8 +350,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Top Holders Again', SceneActions.TOKEN_HOLDERS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
     }
@@ -333,8 +361,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Token Details Again', SceneActions.TOKEN_DETAILS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
     }
@@ -344,8 +372,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Volume Again', SceneActions.TOKEN_VOLUME_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
     }
@@ -355,8 +383,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Holders Trends Again', SceneActions.TOKEN_HOLDERS_TS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
     }
@@ -366,8 +394,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Transfers Again', SceneActions.TOKEN_TRANSFERS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
     }
@@ -377,8 +405,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Trades Again', SceneActions.TOKEN_TRADES_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
-                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
     }
@@ -388,8 +416,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Filter Programs Again', SceneActions.PROGRAMS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -399,8 +427,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Tx Count Again', SceneActions.PROGRAM_TX_COUNT_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -410,8 +438,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Ix Count Again', SceneActions.PROGRAM_IX_COUNT_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -421,8 +449,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Active Users TS Again', SceneActions.PROGRAM_ACTIVE_USERS_TS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -432,8 +460,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Active Users Again', SceneActions.PROGRAM_ACTIVE_USERS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
@@ -443,8 +471,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Check Program Details Again', SceneActions.PROGRAM_DETAILS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
+                Markup.button.callback('🏠 Back to Programs Menu', SceneActions.PROGRAMS_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
-                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
         ]);
     }
