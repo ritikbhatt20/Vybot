@@ -187,7 +187,7 @@ export class ProgramRankingScene {
             const message = rankings
                 .map((ranking: ProgramRanking, i: number) => {
                     const name = escapeMarkdownV2(ranking.programName || 'Unknown Program');
-                    const programId = formatAddress(ranking.programId);
+                    const programId = ranking.programId;
                     const score = ranking.score.toFixed(4);
                     const rank = ranking.programRank;
 

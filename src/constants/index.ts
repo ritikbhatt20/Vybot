@@ -24,6 +24,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.ProgramActiveUsers]: '/programactiveusers - 📈 View active users for a Solana program',
     [Commands.ProgramDetails]: '/programdetails - 📋 View details for a Solana program',
     [Commands.ProgramRanking]: '/programranking - 🏆 View top-ranked Solana programs',
+    [Commands.PythAccounts]: '/pythaccounts - 📈 View Pyth oracle price accounts',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -55,6 +56,7 @@ Use /knownaccounts to explore labeled accounts
 /programactiveusers to view program active users
 /programdetails to view program details
 /programranking to view top-ranked programs
+/pythaccounts to view Pyth oracle price accounts
 or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
@@ -148,6 +150,22 @@ Example:
         SEARCHING: '🔍 <b>Fetching NFT collection owners...</b>',
         NO_RESULTS: '🔍 <b>No owners found for this collection</b>',
         RESULTS_HEADER: '🎨 <b>NFT Collection Owners</b>\n\n',
+    },
+
+    PRICES: {
+        PYTH_ACCOUNTS: {
+            ASK_FILTER: `📈 <b>Pyth Accounts</b>
+
+Enter a filter to search for Pyth oracle price accounts or press Fetch All to see all accounts:
+
+Examples:
+• <code>productId=6bQMDtuAmRgjvymdWk9w4tTc9YyuXcjMxF8MyPHXejsx</code>
+• <code>priceFeedId=FNNvb1AFDnDVPkocEri8mWbJ1952HQZtFLuwPiUjSJQ</code>
+• <code>symbol=Crypto.APT/USD</code>`,
+            SEARCHING: '🔍 <b>Fetching Pyth accounts...</b>',
+            NO_RESULTS: '🔍 <b>No Pyth accounts found matching your criteria</b>',
+            RESULTS_HEADER: '📈 <b>Pyth Oracle Price Accounts</b>\n\n',
+        },
     },
 
     TOKENS: {

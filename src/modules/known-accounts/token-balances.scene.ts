@@ -64,7 +64,7 @@ export class TokenBalancesScene {
                 .map((token, i) => {
                     return (
                         `<b>${i + 1}. ${token.name} (${token.symbol})</b>\n` +
-                        `📍 <b>Address:</b> <code>${formatAddress(token.mintAddress)}</code>\n` +
+                        `📍 <b>Address:</b> <code>${token.mintAddress}</code>\n` +
                         `💰 <b>Amount:</b> ${token.amount}\n` +
                         `💵 <b>Value (USD):</b> $${token.valueUsd}\n` +
                         `📈 <b>1d Change:</b> ${token.valueUsd1dChange}\n`

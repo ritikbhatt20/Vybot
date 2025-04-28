@@ -8,7 +8,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, isValidSolanaAddress, escapeMarkdownV2 } from '../../utils';
+import { handleErrorResponse, isValidSolanaAddress, escapeMarkdownV2 } from '../../utils';
 
 export const NFT_COLLECTION_OWNERS_SCENE_ID = 'NFT_COLLECTION_OWNERS_SCENE';
 

@@ -8,7 +8,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, isValidSolanaAddress, escapeMarkdownV2 } from '../../utils';
+import { handleErrorResponse, isValidSolanaAddress, escapeMarkdownV2 } from '../../utils';
 import { WalletPnlWizardState } from '../../types';
 
 export const WALLET_PNL_SCENE_ID = 'WALLET_PNL_SCENE';
@@ -152,7 +152,7 @@ export class WalletPnlScene {
                 .slice(0, 5)
                 .map((metric, i) => {
                     return [
-                        `<b>${i + 1}. Token: ${escapeMarkdownV2(metric.tokenSymbol)} (${formatAddress(metric.tokenAddress)})</b>`,
+                        `<b>${i + 1}. Token: ${escapeMarkdownV2(metric.tokenSymbol)} (${metric.tokenAddress})</b>`,
                         `📈 <b>Buys:</b> ${escapeMarkdownV2(metric.buysTransactionCount.toString())} trades, $${escapeMarkdownV2(metric.buysVolumeUsd.toFixed(2))}`,
                         `📉 <b>Sells:</b> ${escapeMarkdownV2(metric.sellsTransactionCount.toString())} trades, $${escapeMarkdownV2(metric.sellsVolumeUsd.toFixed(2))}`,
                         `💰 <b>Realized PnL:</b> $${escapeMarkdownV2(metric.realizedPnlUsd.toFixed(2))}`,

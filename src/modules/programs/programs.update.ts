@@ -72,6 +72,18 @@ export class ProgramsUpdate {
         }
     }
 
+    @Action(Actions.PRICES_MENU)
+    async onPricesMenu(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📈 Accessing Prices menu...');
+            await ctx.replyWithHTML(
+                '📈 Explore Prices Insights:',
+                { reply_markup: this.keyboard.getPricesKeyboard().reply_markup }
+            );
+        } catch (error) {
+            this.logger.error(`Error entering Prices menu: ${error.message}`);
+        }
+    }
 
     @Action(Actions.PROGRAMS)
     async onPrograms(@Ctx() ctx: Context & SceneContext) {

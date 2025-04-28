@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress } from '../../utils';
+import { handleErrorResponse } from '../../utils';
 
 export const KNOWN_ACCOUNTS_SCENE_ID = 'KNOWN_ACCOUNTS_SCENE';
 

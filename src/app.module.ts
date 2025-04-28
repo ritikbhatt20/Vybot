@@ -1,4 +1,3 @@
-// app.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TelegrafModule } from 'nestjs-telegraf';
@@ -10,6 +9,7 @@ import { KnownAccountsModule } from './modules/known-accounts/known-accounts.mod
 import { TokensModule } from './modules/tokens/tokens.module';
 import { ProgramsModule } from './modules/programs/programs.module';
 import { NftModule } from './modules/nft/nft.module';
+import { PricesModule } from './modules/prices/prices.module';
 import { PostgresSessionStore } from './utils/pg-session-store';
 
 @Module({
@@ -52,6 +52,7 @@ import { PostgresSessionStore } from './utils/pg-session-store';
     TokensModule,
     ProgramsModule,
     NftModule,
+    PricesModule,
   ],
   providers: [AppUpdate],
 })

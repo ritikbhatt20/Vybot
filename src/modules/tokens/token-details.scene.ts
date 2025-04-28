@@ -69,7 +69,7 @@ export class TokenDetailsScene {
 
             const message =
                 `<b>${name} (${symbol})</b>\n` +
-                `📍 <b>Mint:</b> <code>${formatAddress(token.mintAddress)}</code>\n` +
+                `📍 <b>Mint:</b> <code>${token.mintAddress}</code>\n` +
                 `💰 <b>Price:</b> ${price}\n` +
                 `📈 <b>Market Cap:</b> ${marketCap}\n` +
                 `💸 <b>Supply:</b> ${supply}\n` +

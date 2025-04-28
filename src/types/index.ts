@@ -313,3 +313,13 @@ export interface NftCollectionOwner {
     owner: string;
     amount: number;
 }
+
+export interface PythAccount {
+    productId: string;
+    priceFeedId: string;
+    symbol: string;
+}
+
+export interface PythAccountsResponse {
+    data: PythAccount[];
+}

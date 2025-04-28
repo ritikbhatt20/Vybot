@@ -16,11 +16,14 @@ export class KeyboardService {
                 Markup.button.callback('🛠️ Programs', Actions.PROGRAMS_MENU),
             ],
             [
+                Markup.button.callback('📈 Prices', Actions.PRICES_MENU),
+                Markup.button.url('💬 Support', 'https://t.me/VybeNetwork_Official'),
+            ],
+            [
                 Markup.button.url('🌐 Vybe Network', 'https://www.vybenetwork.com'),
                 Markup.button.url('📃 Vybe Documentation', 'docs.vybenetwork.com/docs'),
             ],
             [
-                Markup.button.url('💬 Support', 'https://t.me/VybeNetwork_Official'),
                 Markup.button.callback('❓ Help', Actions.HELP),
             ],
         ]);
@@ -95,6 +98,18 @@ export class KeyboardService {
             [
                 Markup.button.callback('📈 Program Active Users TS', Actions.PROGRAM_ACTIVE_USERS_TS),
                 Markup.button.callback('📈 Program Active Users', Actions.PROGRAM_ACTIVE_USERS),
+            ],
+            [
+                Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getPricesKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [
+                Markup.button.callback('📈 Pyth Accounts', Actions.PYTH_ACCOUNTS),
             ],
             [
                 Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
@@ -473,6 +488,17 @@ export class KeyboardService {
     getProgramDetailsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Program Details Again', SceneActions.PROGRAM_DETAILS_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getPythAccountsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Filter Pyth Accounts Again', SceneActions.PYTH_ACCOUNTS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),

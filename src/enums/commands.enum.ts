@@ -18,6 +18,7 @@ export enum Commands {
     ProgramActiveUsers = 'programactiveusers',
     ProgramDetails = 'programdetails',
     ProgramRanking = 'programranking',
+    PythAccounts = 'pythaccounts',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',

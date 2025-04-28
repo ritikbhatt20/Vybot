@@ -69,7 +69,7 @@ export class TokenHoldersScene {
 
                     return (
                         `<b>${i + 1}. ${ownerName} (Rank ${holder.rank})</b>\n` +
-                        `📍 <b>Address:</b> <code>${formatAddress(holder.ownerAddress)}</code>\n` +
+                        `📍 <b>Address:</b> <code>${holder.ownerAddress}</code>\n` +
                         `💰 <b>Balance:</b> ${balance} ${holder.tokenSymbol}\n` +
                         `💵 <b>Value (USD):</b> $${valueUsd}\n` +
                         `📊 <b>Supply Held:</b> ${percentage}%\n`

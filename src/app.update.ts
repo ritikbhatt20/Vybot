@@ -25,6 +25,7 @@ import { PROGRAM_ACTIVE_USERS_TS_SCENE_ID } from './modules/programs/program-act
 import { PROGRAM_ACTIVE_USERS_SCENE_ID } from './modules/programs/program-active-users.scene';
 import { PROGRAM_DETAILS_SCENE_ID } from './modules/programs/program-details.scene';
 import { PROGRAM_RANKING_SCENE_ID } from './modules/programs/program-ranking.scene';
+import { PYTH_ACCOUNTS_SCENE_ID } from './modules/prices/pyth-accounts.scene';
 
 @Update()
 export class AppUpdate {
@@ -83,6 +84,19 @@ export class AppUpdate {
             });
         } catch (error) {
             this.logger.error(`Error in main menu action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action(Actions.PRICES)
+    async handlePrices(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📈 Accessing prices menu...');
+            await ctx.reply('📈 Prices Menu', {
+                reply_markup: this.keyboard.getPricesKeyboard().reply_markup,
+            });
+        } catch (error) {
+            this.logger.error(`Error in prices action: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }
@@ -329,6 +343,17 @@ export class AppUpdate {
         }
     }
 
+    @Action('PYTH_ACCOUNTS_AGAIN')
+    async handlePythAccountsAgain(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Preparing Pyth accounts query...');
+            await ctx.scene.enter(PYTH_ACCOUNTS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error in Pyth accounts again action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
     @Command(Commands.KnownAccounts)
     async handleKnownAccounts(@Ctx() ctx: Context & SceneContext) {
         try {
@@ -345,6 +370,16 @@ export class AppUpdate {
             await ctx.scene.enter(TOKEN_BALANCES_SCENE_ID);
         } catch (error) {
             this.logger.error(`Error entering token balances scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.PythAccounts)
+    async handlePythAccounts(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.scene.enter(PYTH_ACCOUNTS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering Pyth accounts scene: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }
