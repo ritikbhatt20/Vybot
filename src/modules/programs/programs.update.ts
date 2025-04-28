@@ -11,10 +11,67 @@ import { PROGRAM_ACTIVE_USERS_TS_SCENE_ID } from './program-active-users-ts.scen
 import { PROGRAM_ACTIVE_USERS_SCENE_ID } from './program-active-users.scene';
 import { PROGRAM_DETAILS_SCENE_ID } from './program-details.scene';
 import { PROGRAM_RANKING_SCENE_ID } from './program-ranking.scene';
+import { KeyboardService } from '../shared/keyboard.service';
+import { BOT_MESSAGES } from '../../constants';
 
 @Update()
 export class ProgramsUpdate {
     private readonly logger = new Logger(ProgramsUpdate.name);
+
+    constructor(private readonly keyboard: KeyboardService) { }
+
+    @Action(Actions.TOKENS_MENU)
+    async onTokensMenu(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📊 Accessing Tokens menu...');
+            await ctx.replyWithHTML(
+                BOT_MESSAGES.TOKENS.MENU,
+                { reply_markup: this.keyboard.getTokensKeyboard().reply_markup }
+            );
+        } catch (error) {
+            this.logger.error(`Error entering Tokens menu: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.ACCOUNTS_MENU)
+    async onAccountsMenu(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('👤 Accessing Accounts menu...');
+            await ctx.replyWithHTML(
+                '👤 Discover Accounts Insights:',
+                { reply_markup: this.keyboard.getAccountsKeyboard().reply_markup }
+            );
+        } catch (error) {
+            this.logger.error(`Error entering Accounts menu: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.NFTS_MENU)
+    async onNftsMenu(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🎨 Accessing NFTs menu...');
+            await ctx.replyWithHTML(
+                '🎨 Dive into NFTs features:',
+                { reply_markup: this.keyboard.getNftsKeyboard().reply_markup }
+            );
+        } catch (error) {
+            this.logger.error(`Error entering NFTs menu: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.PROGRAMS_MENU)
+    async onProgramsMenu(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🛠️ Accessing Programs menu...');
+            await ctx.replyWithHTML(
+                '🛠️ Access Programs Utilities:',
+                { reply_markup: this.keyboard.getProgramsKeyboard().reply_markup }
+            );
+        } catch (error) {
+            this.logger.error(`Error entering Programs menu: ${error.message}`);
+        }
+    }
+
 
     @Action(Actions.PROGRAMS)
     async onPrograms(@Ctx() ctx: Context & SceneContext) {

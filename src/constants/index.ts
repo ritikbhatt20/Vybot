@@ -36,7 +36,26 @@ export const BOT_MESSAGES = {
 
 VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
 
-Use /knownaccounts to explore labeled accounts, /tokenbalances to check token balances, /tokenbalancests to check token balances time series, /walletpnl to analyze wallet trading performance, /nftowners to view NFT collection owners, /tokens to view tracked tokens, /tokenholders to see top token holders, /tokendetails to view token details, /tokenvolume to view token volume trends, /tokenholdersts to view token holders trends, /tokentransfers to view token transfers, /tokentrades to view token trades, /programs to view Solana programs, /programtxcount to view program transaction counts, /programixcount to view program instruction counts, /programactiveusersts to view program active users time series, /programactiveusers to view program active users, /programdetails to view program details, /programranking to view top-ranked programs, or type /help to see all available commands.`,
+Use /knownaccounts to explore labeled accounts
+/tokenbalances to check token balances
+/tokenbalancests to check token balances time series
+/walletpnl to analyze wallet trading performance
+/nftowners to view NFT collection owners
+/tokens to view tracked tokens
+/tokenholders to see top token holders
+/tokendetails to view token details
+/tokenvolume to view token volume trends
+/tokenholdersts to view token holders trends
+/tokentransfers to view token transfers
+/tokentrades to view token trades
+/programs to view Solana programs
+/programtxcount to view program transaction counts
+/programixcount to view program instruction counts
+/programactiveusersts to view program active users time series
+/programactiveusers to view program active users
+/programdetails to view program details
+/programranking to view top-ranked programs
+or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
@@ -132,7 +151,7 @@ Example:
     },
 
     TOKENS: {
-        MENU: '📊 Select a Tokens feature:',
+        MENU: '📊 Discover Tokens Insights:',
         ASK_FILTER: `📊 <b>Tokens Filter</b>
 
 Enter a filter or press Fetch All to see all tracked tokens:

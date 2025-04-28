@@ -17,6 +17,10 @@ export class KeyboardService {
             ],
             [
                 Markup.button.url('🌐 Vybe Network', 'https://www.vybenetwork.com'),
+                Markup.button.url('📃 Vybe Documentation', 'docs.vybenetwork.com/docs'),
+            ],
+            [
+                Markup.button.url('💬 Support', 'https://t.me/VybeNetwork_Official'),
                 Markup.button.callback('❓ Help', Actions.HELP),
             ],
         ]);
@@ -54,6 +58,9 @@ export class KeyboardService {
     getTokensKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [
+                Markup.button.callback('📊 All Tokens', Actions.TOKENS),
+            ],
+            [
                 Markup.button.callback('📋 Token Details', Actions.TOKEN_DETAILS),
                 Markup.button.callback('👥 Top Holders', Actions.TOKEN_HOLDERS),
             ],
@@ -66,9 +73,6 @@ export class KeyboardService {
                 Markup.button.callback('📊 Trades', Actions.TOKEN_TRADES),
             ],
             [
-                Markup.button.callback('📊 All Tokens', Actions.TOKENS),
-            ],
-            [
                 Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
@@ -78,7 +82,10 @@ export class KeyboardService {
     getProgramsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [
-                Markup.button.callback('🛠️ Programs', Actions.PROGRAMS),
+                Markup.button.callback('🛠️ All Programs', Actions.PROGRAMS),
+            ],
+            [
+                Markup.button.callback('📋 Program Details', Actions.PROGRAM_DETAILS),
                 Markup.button.callback('🏆 Program Ranking', Actions.PROGRAM_RANKING),
             ],
             [
@@ -88,9 +95,6 @@ export class KeyboardService {
             [
                 Markup.button.callback('📈 Program Active Users TS', Actions.PROGRAM_ACTIVE_USERS_TS),
                 Markup.button.callback('📈 Program Active Users', Actions.PROGRAM_ACTIVE_USERS),
-            ],
-            [
-                Markup.button.callback('📋 Program Details', Actions.PROGRAM_DETAILS),
             ],
             [
                 Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
