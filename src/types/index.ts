@@ -384,6 +384,15 @@ export interface PythProduct {
     genericSymbol: string;
 }
 
+export interface DexAmmProgram {
+    programId: string;
+    programName: string;
+}
+
+export interface DexAmmResponse {
+    data: DexAmmProgram[];
+}
+
 export interface PythPriceError {
     code: number;
     message: string;

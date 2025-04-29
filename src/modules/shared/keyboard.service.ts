@@ -119,6 +119,7 @@ export class KeyboardService {
             ],
             [
                 Markup.button.callback('📋 Pyth Product', Actions.PYTH_PRODUCT),
+                Markup.button.callback('🛠️ DEX & AMM', Actions.DEX_AMM),
             ],
             [
                 Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
@@ -156,7 +157,7 @@ export class KeyboardService {
     getTokenBalancesResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Token Balances Again', SceneActions.TOKEN_BALANCES_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -176,7 +177,7 @@ export class KeyboardService {
     getTokenBalancesTsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Balances TS Again', SceneActions.TOKEN_BALANCES_TS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -196,7 +197,7 @@ export class KeyboardService {
     getWalletPnlResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Wallet PnL Again', SceneActions.WALLET_PNL_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -216,7 +217,7 @@ export class KeyboardService {
     getNftCollectionOwnersResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check NFT Owners Again', SceneActions.NFT_OWNERS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -231,7 +232,7 @@ export class KeyboardService {
                 Markup.button.callback('💰 Check Token Balances', SceneActions.TOKEN_BALANCES_AGAIN),
             ],
             [
-                Markup.button.url('📊 More Analytics', 'https://alphavybe.com'),
+                Markup.button.url('📊 More Analytics', 'https://docs.vybenetwork.com'),
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
             ],
             [Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON)],
@@ -241,7 +242,7 @@ export class KeyboardService {
     getTokensResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Filter Tokens Again', SceneActions.TOKENS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -365,7 +366,7 @@ export class KeyboardService {
     getProgramRankingResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Rankings Again', SceneActions.PROGRAM_RANKING_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -376,7 +377,7 @@ export class KeyboardService {
     getTokenHoldersResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Top Holders Again', SceneActions.TOKEN_HOLDERS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -387,7 +388,7 @@ export class KeyboardService {
     getTokenDetailsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Token Details Again', SceneActions.TOKEN_DETAILS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -398,7 +399,7 @@ export class KeyboardService {
     getTokenVolumeResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Volume Again', SceneActions.TOKEN_VOLUME_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -409,7 +410,7 @@ export class KeyboardService {
     getTokenHoldersTsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Holders Trends Again', SceneActions.TOKEN_HOLDERS_TS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -420,7 +421,7 @@ export class KeyboardService {
     getTokenTransfersResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Transfers Again', SceneActions.TOKEN_TRANSFERS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -431,7 +432,7 @@ export class KeyboardService {
     getTokenTradesResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Trades Again', SceneActions.TOKEN_TRADES_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -442,7 +443,7 @@ export class KeyboardService {
     getProgramsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Filter Programs Again', SceneActions.PROGRAMS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -453,7 +454,7 @@ export class KeyboardService {
     getProgramTxCountResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Tx Count Again', SceneActions.PROGRAM_TX_COUNT_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -464,7 +465,7 @@ export class KeyboardService {
     getProgramIxCountResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Ix Count Again', SceneActions.PROGRAM_IX_COUNT_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -475,7 +476,7 @@ export class KeyboardService {
     getProgramActiveUsersTsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Active Users TS Again', SceneActions.PROGRAM_ACTIVE_USERS_TS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -486,7 +487,7 @@ export class KeyboardService {
     getProgramActiveUsersResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Active Users Again', SceneActions.PROGRAM_ACTIVE_USERS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -497,7 +498,7 @@ export class KeyboardService {
     getProgramDetailsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Check Program Details Again', SceneActions.PROGRAM_DETAILS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -508,7 +509,7 @@ export class KeyboardService {
     getPythAccountsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Filter Pyth Accounts Again', SceneActions.PYTH_ACCOUNTS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -519,7 +520,7 @@ export class KeyboardService {
     getPythPriceResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Try Again', SceneActions.PYTH_PRICE_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -530,7 +531,7 @@ export class KeyboardService {
     getPythPriceTsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Try Again', SceneActions.PYTH_PRICE_TS_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -541,7 +542,7 @@ export class KeyboardService {
     getPythPriceOhlcResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Try Again', SceneActions.PYTH_PRICE_OHLC_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -552,7 +553,7 @@ export class KeyboardService {
     getTokenOhlcvResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Try Again', SceneActions.TOKEN_OHLCV_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -563,7 +564,18 @@ export class KeyboardService {
     getPythProductResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Try Again', SceneActions.PYTH_PRODUCT_AGAIN)],
-            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
+            [
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getDexAmmResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Fetch Again', SceneActions.DEX_AMM_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),

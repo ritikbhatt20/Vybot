@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { PythAccount, PythAccountsResponse, PythPrice, PythPriceTsResponse, PythPriceOhlcResponse, PythProduct, PythPriceError, PythPriceOhlc } from '../../types';
+import { PythAccount, PythAccountsResponse, PythPrice, PythPriceTsResponse, PythPriceOhlcResponse, PythProduct, DexAmmResponse, PythPriceError, DexAmmProgram, PythPriceOhlc } from '../../types';
 
 @Injectable()
 export class PricesService {
@@ -115,6 +115,21 @@ export class PricesService {
             return response as PythProduct;
         } catch (error) {
             this.logger.error(`Failed to fetch Pyth product metadata: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getDexAmmPrograms(): Promise<DexAmmProgram[]> {
+        const url = `/price/programs`;
+
+        this.logger.debug(`Fetching DEX and AMM programs`);
+
+        try {
+            const response = await this.vybeApi.get<DexAmmResponse>(url);
+            this.logger.debug(`Fetched ${response.data?.length || 0} DEX and AMM programs`);
+            return response.data || [];
+        } catch (error) {
+            this.logger.error(`Failed to fetch DEX and AMM programs: ${error.message}`, error.stack);
             throw error;
         }
     }

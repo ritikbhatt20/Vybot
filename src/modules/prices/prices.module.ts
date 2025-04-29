@@ -6,6 +6,7 @@ import { PythPriceScene } from './pyth-price.scene';
 import { PythPriceTsScene } from './pyth-price-ts.scene';
 import { PythPriceOhlcScene } from './pyth-price-olhc.scene';
 import { PythProductScene } from './pyth-product.scene';
+import { DexAmmScene } from './dex-amm.scene';
 import { SharedModule } from '../shared/shared.module';
 
 @Module({
@@ -18,6 +19,7 @@ import { SharedModule } from '../shared/shared.module';
         PythPriceTsScene,
         PythPriceOhlcScene,
         PythProductScene,
+        DexAmmScene,
     ],
     exports: [PricesService],
 })

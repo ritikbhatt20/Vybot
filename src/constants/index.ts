@@ -30,6 +30,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.PythPriceOhlc]: '/pythpriceohlc - 📊 View Pyth oracle OHLC price data',
     [Commands.TokenOhlcv]: '/tokenohlcv - 📊 View token OHLCV price data',
     [Commands.PythProduct]: '/pythproduct - 📋 View Pyth oracle product metadata',
+    [Commands.DexAmm]: '/dexamm - 🛠️ View DEX and AMM programs for trades and prices',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -67,6 +68,7 @@ Use /knownaccounts to explore labeled accounts
 /pythpriceohlc to view Pyth oracle OHLC price data
 /tokenohlcv to view token OHLCV price data
 /pythproduct to view Pyth oracle product metadata
+/dexamm to view DEX and AMM programs
 or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
@@ -253,6 +255,11 @@ Example:
             SEARCHING: '🔍 <b>Fetching Pyth product metadata...</b>',
             NO_RESULTS: '🔍 <b>No product metadata found for this product ID</b>',
             RESULTS_HEADER: '📋 <b>Pyth Product Metadata</b>\n\n',
+        },
+        DEX_AMM: {
+            SEARCHING: '🔍 <b>Fetching DEX and AMM programs...</b>',
+            NO_RESULTS: '🔍 <b>No DEX or AMM programs found</b>',
+            RESULTS_HEADER: '🛠️ <b>DEX and AMM Programs</b>\n\n',
         },
     },
 

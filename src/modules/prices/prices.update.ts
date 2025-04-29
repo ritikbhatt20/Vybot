@@ -10,6 +10,7 @@ import { PYTH_PRICE_SCENE_ID } from './pyth-price.scene';
 import { PYTH_PRICE_TS_SCENE_ID } from './pyth-price-ts.scene';
 import { PYTH_PRICE_OHLC_SCENE_ID } from './pyth-price-olhc.scene';
 import { PYTH_PRODUCT_SCENE_ID } from './pyth-product.scene';
+import { DEX_AMM_SCENE_ID } from './dex-amm.scene';
 import { BOT_MESSAGES } from '../../constants';
 
 @Update()
@@ -167,6 +168,34 @@ export class PricesUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling Pyth product command: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action(Actions.DEX_AMM)
+    async onDexAmm(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🛠️ Accessing DEX and AMM programs explorer...');
+            await ctx.scene.enter(DEX_AMM_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering DEX AMM scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.DexAmm)
+    async handleDexAmm(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('🛠️ Opening DEX and AMM programs explorer...'),
+                ctx.scene.enter(DEX_AMM_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling DEX AMM command: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }
