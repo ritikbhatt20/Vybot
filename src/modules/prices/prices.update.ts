@@ -8,6 +8,7 @@ import { Commands } from '../../enums/commands.enum';
 import { PYTH_ACCOUNTS_SCENE_ID } from './pyth-accounts.scene';
 import { PYTH_PRICE_SCENE_ID } from './pyth-price.scene';
 import { PYTH_PRICE_TS_SCENE_ID } from './pyth-price-ts.scene';
+import { PYTH_PRICE_OHLC_SCENE_ID } from './pyth-price-olhc.scene';
 import { BOT_MESSAGES } from '../../constants';
 
 @Update()
@@ -109,6 +110,34 @@ export class PricesUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling Pyth price time series command: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action(Actions.PYTH_PRICE_OHLC)
+    async onPythPriceOhlc(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📊 Accessing Pyth OHLC explorer...');
+            await ctx.scene.enter(PYTH_PRICE_OHLC_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering Pyth OHLC scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.PythPriceOhlc)
+    async handlePythPriceOhlc(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('📊 Opening Pyth OHLC explorer...'),
+                ctx.scene.enter(PYTH_PRICE_OHLC_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling Pyth OHLC command: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

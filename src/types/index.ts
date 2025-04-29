@@ -344,6 +344,20 @@ export interface PythPriceTsResponse {
     data: PythPrice[];
 }
 
+export interface PythPriceOhlc {
+    timeBucketStart: number;
+    open: string;
+    high: string;
+    low: string;
+    close: string;
+    avgPrice: string;
+    avgConf: string;
+}
+
+export interface PythPriceOhlcResponse {
+    data: PythPriceOhlc[];
+}
+
 export interface PythPriceError {
     code: number;
     message: string;
