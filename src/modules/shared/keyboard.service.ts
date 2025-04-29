@@ -17,13 +17,14 @@ export class KeyboardService {
             ],
             [
                 Markup.button.callback('📈 Prices', Actions.PRICES_MENU),
-                Markup.button.url('💬 Support', 'https://t.me/VybeNetwork_Official'),
+                Markup.button.callback('📊 Markets', Actions.MARKETS_MENU),
             ],
             [
                 Markup.button.url('🌐 Vybe Network', 'https://www.vybenetwork.com'),
                 Markup.button.url('📃 Vybe Documentation', 'docs.vybenetwork.com/docs'),
             ],
             [
+                Markup.button.url('💬 Support', 'https://t.me/VybeNetwork_Official'),
                 Markup.button.callback('❓ Help', Actions.HELP),
             ],
         ]);
@@ -121,6 +122,16 @@ export class KeyboardService {
                 Markup.button.callback('📋 Pyth Product', Actions.PYTH_PRODUCT),
                 Markup.button.callback('🛠️ DEX & AMM', Actions.DEX_AMM),
             ],
+            [
+                Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getMarketsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('📊 Markets', Actions.MARKETS)],
             [
                 Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
@@ -575,6 +586,17 @@ export class KeyboardService {
     getDexAmmResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Fetch Again', SceneActions.DEX_AMM_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
+            [
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getMarketsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Try Again', SceneActions.MARKETS_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),

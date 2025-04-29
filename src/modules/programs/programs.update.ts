@@ -2,6 +2,7 @@ import { Action, Command, Ctx, Update } from 'nestjs-telegraf';
 import { Context } from 'telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
 import { Logger } from '@nestjs/common';
+import { KeyboardService } from '../shared/keyboard.service';
 import { Actions } from '../../enums/actions.enum';
 import { Commands } from '../../enums/commands.enum';
 import { PROGRAMS_SCENE_ID } from './programs.scene';
@@ -11,7 +12,6 @@ import { PROGRAM_ACTIVE_USERS_TS_SCENE_ID } from './program-active-users-ts.scen
 import { PROGRAM_ACTIVE_USERS_SCENE_ID } from './program-active-users.scene';
 import { PROGRAM_DETAILS_SCENE_ID } from './program-details.scene';
 import { PROGRAM_RANKING_SCENE_ID } from './program-ranking.scene';
-import { KeyboardService } from '../shared/keyboard.service';
 import { BOT_MESSAGES } from '../../constants';
 
 @Update()
@@ -82,6 +82,19 @@ export class ProgramsUpdate {
             );
         } catch (error) {
             this.logger.error(`Error entering Prices menu: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.MARKETS_MENU)
+    async onMarketsMenu(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📊 Accessing Markets menu...');
+            await ctx.replyWithHTML(
+                BOT_MESSAGES.MARKETS.MENU,
+                { reply_markup: this.keyboard.getMarketsKeyboard().reply_markup }
+            );
+        } catch (error) {
+            this.logger.error(`Error entering Markets menu: ${error.message}`);
         }
     }
 

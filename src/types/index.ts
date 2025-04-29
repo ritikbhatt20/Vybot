@@ -393,6 +393,24 @@ export interface DexAmmResponse {
     data: DexAmmProgram[];
 }
 
+export interface Market {
+    marketId: string;
+    marketName: string;
+    programId: string;
+    programName: string;
+    baseTokenSymbol: string;
+    quoteTokenSymbol: string;
+    baseTokenMint: string;
+    quoteTokenMint: string;
+    baseTokenName: string;
+    quoteTokenName: string;
+    updatedAt: number;
+}
+
+export interface MarketsResponse {
+    data: Market[];
+}
+
 export interface PythPriceError {
     code: number;
     message: string;

@@ -10,6 +10,7 @@ import { TokensModule } from './modules/tokens/tokens.module';
 import { ProgramsModule } from './modules/programs/programs.module';
 import { NftModule } from './modules/nft/nft.module';
 import { PricesModule } from './modules/prices/prices.module';
+import { MarketsModule } from './modules/markets/markets.module';
 import { PostgresSessionStore } from './utils/pg-session-store';
 
 @Module({
@@ -53,6 +54,7 @@ import { PostgresSessionStore } from './utils/pg-session-store';
     ProgramsModule,
     NftModule,
     PricesModule,
+    MarketsModule,
   ],
   providers: [AppUpdate],
 })

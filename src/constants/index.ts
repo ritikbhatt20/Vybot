@@ -31,6 +31,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.TokenOhlcv]: '/tokenohlcv - 📊 View token OHLCV price data',
     [Commands.PythProduct]: '/pythproduct - 📋 View Pyth oracle product metadata',
     [Commands.DexAmm]: '/dexamm - 🛠️ View DEX and AMM programs for trades and prices',
+    [Commands.Markets]: '/markets - 📊 View available markets for a Solana program',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -69,6 +70,7 @@ Use /knownaccounts to explore labeled accounts
 /tokenohlcv to view token OHLCV price data
 /pythproduct to view Pyth oracle product metadata
 /dexamm to view DEX and AMM programs
+/markets to view available markets
 or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
@@ -90,6 +92,7 @@ Choose an option below or type a command:`,
         INVALID_RANGE: '❌ Invalid range. Please select a valid time range (4h, 12h, 24h, 1d, 7d, 30d).',
         INVALID_DAYS: '❌ Invalid number of days. Please select a number between 1 and 30.',
         INVALID_LIMIT: '❌ Invalid limit. Please provide a non-negative number.',
+        INVALID_PAGE: '❌ Invalid page. Please provide a non-negative number.',
     },
 
     KNOWN_ACCOUNTS: {
@@ -261,6 +264,31 @@ Example:
             NO_RESULTS: '🔍 <b>No DEX or AMM programs found</b>',
             RESULTS_HEADER: '🛠️ <b>DEX and AMM Programs</b>\n\n',
         },
+    },
+
+    MARKETS: {
+        MENU: '📊 Discover Markets Insights:',
+        ASK_PROGRAM_ID: `📊 <b>Markets</b>
+
+Enter a Solana program ID to view its available markets:
+
+Example:
+• <code>Gswppe6ERWKpUTXvRPfXdzHhiCyJvLadVvXGfdpBqcE1</code>`,
+        ASK_PAGE: `📄 <b>Page</b>
+
+Enter the page number (0 or higher, default is 0):
+
+Example:
+• <code>0</code>`,
+        ASK_LIMIT: `📏 <b>Limit</b>
+
+Enter the maximum number of markets to retrieve (default is 10):
+
+Example:
+• <code>5</code>`,
+        SEARCHING: '🔍 <b>Fetching markets...</b>',
+        NO_RESULTS: '🔍 <b>No markets found for this program ID</b>',
+        RESULTS_HEADER: '📊 <b>Available Markets</b>\n\n',
     },
 
     TOKENS: {
