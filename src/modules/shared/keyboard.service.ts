@@ -110,6 +110,7 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [
                 Markup.button.callback('📈 Pyth Accounts', Actions.PYTH_ACCOUNTS),
+                Markup.button.callback('💸 Pyth Price', Actions.PYTH_PRICE),
             ],
             [
                 Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
@@ -499,6 +500,17 @@ export class KeyboardService {
     getPythAccountsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Filter Pyth Accounts Again', SceneActions.PYTH_ACCOUNTS_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getPythPriceResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Try Again', SceneActions.PYTH_PRICE_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),

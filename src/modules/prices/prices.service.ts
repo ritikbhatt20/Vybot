@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { PythAccount, PythAccountsResponse } from '../../types';
+import { PythAccount, PythAccountsResponse, PythPrice, PythPriceError } from '../../types';
 
 @Injectable()
 export class PricesService {
@@ -27,6 +27,21 @@ export class PricesService {
             return response.data || [];
         } catch (error) {
             this.logger.error(`Failed to fetch Pyth accounts: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getPythPrice(priceFeedId: string): Promise<PythPrice> {
+        const url = `/price/${priceFeedId}/pyth-price`;
+
+        this.logger.debug(`Fetching Pyth price for priceFeedId: ${priceFeedId}`);
+
+        try {
+            const response = await this.vybeApi.get<PythPrice | PythPriceError>(url);
+            this.logger.debug(`Fetched Pyth price data for ${priceFeedId}`);
+            return response as PythPrice;
+        } catch (error) {
+            this.logger.error(`Failed to fetch Pyth price: ${error.message}`, error.stack);
             throw error;
         }
     }

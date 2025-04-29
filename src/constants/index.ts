@@ -25,6 +25,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.ProgramDetails]: '/programdetails - 📋 View details for a Solana program',
     [Commands.ProgramRanking]: '/programranking - 🏆 View top-ranked Solana programs',
     [Commands.PythAccounts]: '/pythaccounts - 📈 View Pyth oracle price accounts',
+    [Commands.PythPrice]: '/pythprice - 💸 View Pyth oracle price data for a price feed', // New command
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -57,6 +58,7 @@ Use /knownaccounts to explore labeled accounts
 /programdetails to view program details
 /programranking to view top-ranked programs
 /pythaccounts to view Pyth oracle price accounts
+/pythprice to view Pyth oracle price data
 or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
@@ -165,6 +167,17 @@ Examples:
             SEARCHING: '🔍 <b>Fetching Pyth accounts...</b>',
             NO_RESULTS: '🔍 <b>No Pyth accounts found matching your criteria</b>',
             RESULTS_HEADER: '📈 <b>Pyth Oracle Price Accounts</b>\n\n',
+        },
+        PYTH_PRICE: {
+            ASK_PRICE_FEED_ID: `💸 <b>Pyth Price</b>
+
+Enter a Pyth price feed ID to view its price data:
+
+Example:
+• <code>JBu1AL4obBcCMqKBBxhpWCNUt136ijcuMZLFvTP7iWdB</code>`,
+            SEARCHING: '🔍 <b>Fetching Pyth price data...</b>',
+            NO_RESULTS: '🔍 <b>No price data found for this price feed ID</b>',
+            RESULTS_HEADER: '💸 <b>Pyth Price Data</b>\n\n',
         },
     },
 

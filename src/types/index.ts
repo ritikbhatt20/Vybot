@@ -323,3 +323,19 @@ export interface PythAccount {
 export interface PythAccountsResponse {
     data: PythAccount[];
 }
+
+export interface PythPrice {
+    priceFeedAccount: string;
+    lastUpdated: number;
+    validSlot: number;
+    price: string;
+    confidence: string;
+    emac1H: string;
+    emap1H: string;
+}
+
+export interface PythPriceError {
+    code: number;
+    message: string;
+    id: string;
+}

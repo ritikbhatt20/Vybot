@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { PricesService } from './prices.service';
 import { PricesUpdate } from './prices.update';
 import { PythAccountsScene } from './pyth-accounts.scene';
+import { PythPriceScene } from './pyth-price.scene';
 import { SharedModule } from '../shared/shared.module';
 
 @Module({
@@ -10,6 +11,7 @@ import { SharedModule } from '../shared/shared.module';
         PricesService,
         PricesUpdate,
         PythAccountsScene,
+        PythPriceScene,
     ],
     exports: [PricesService],
 })
