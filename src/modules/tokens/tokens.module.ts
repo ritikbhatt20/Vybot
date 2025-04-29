@@ -8,6 +8,7 @@ import { TokenVolumeScene } from './token-volume.scene';
 import { TokenHoldersTimeSeriesScene } from './token-holders-ts.scene';
 import { TokenTransfersScene } from './token-transfers.scene';
 import { TokenTradesScene } from './token-trades.scene';
+import { TokenOhlcvScene } from './token-ohlcv.scene';
 import { SharedModule } from '../shared/shared.module';
 
 @Module({
@@ -22,6 +23,7 @@ import { SharedModule } from '../shared/shared.module';
         TokenHoldersTimeSeriesScene,
         TokenTransfersScene,
         TokenTradesScene,
+        TokenOhlcvScene,
     ],
     exports: [TokensService],
 })

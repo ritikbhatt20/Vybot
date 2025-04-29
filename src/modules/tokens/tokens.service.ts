@@ -1,6 +1,6 @@
 import { Injectable, Logger, HttpException } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { Token, TokenHolder, TokenDetails, TokenVolume, TokenHoldersTimeSeries, TokenTransfer, TokenTrade } from '../../types';
+import { Token, TokenHolder, TokenDetails, TokenVolume, TokenHoldersTimeSeries, TokenTransfer, TokenTrade, TokenOhlcv, TokenOhlcvResponse } from '../../types';
 
 @Injectable()
 export class TokensService {
@@ -224,6 +224,35 @@ export class TokensService {
             return response.data || [];
         } catch (error) {
             this.logger.error(`Failed to fetch token trades: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getTokenOhlcv(mintAddress: string, params: {
+        resolution?: string;
+        timeStart?: number;
+        timeEnd?: number;
+        limit?: number;
+        page?: number;
+    } = {}): Promise<TokenOhlcv[]> {
+        const query = new URLSearchParams();
+
+        if (params.resolution) query.append('resolution', params.resolution);
+        if (params.timeStart) query.append('timeStart', params.timeStart.toString());
+        if (params.timeEnd) query.append('timeEnd', params.timeEnd.toString());
+        if (params.limit) query.append('limit', params.limit.toString());
+        if (params.page) query.append('page', params.page.toString());
+
+        const url = `/price/${mintAddress}/token-ohlcv${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching Token OHLCV for mintAddress: ${mintAddress} with params: ${JSON.stringify(params)}`);
+
+        try {
+            const response = await this.vybeApi.get<TokenOhlcvResponse>(url);
+            this.logger.debug(`Fetched ${response.data?.length || 0} Token OHLCV data points for ${mintAddress}`);
+            return response.data || [];
+        } catch (error) {
+            this.logger.error(`Failed to fetch Token OHLCV: ${error.message}`, error.stack);
             throw error;
         }
     }

@@ -28,6 +28,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.PythPrice]: '/pythprice - 💸 View Pyth oracle price data for a price feed',
     [Commands.PythPriceTs]: '/pythpricets - 📈 View Pyth oracle price time series data',
     [Commands.PythPriceOhlc]: '/pythpriceohlc - 📊 View Pyth oracle OHLC price data',
+    [Commands.TokenOhlcv]: '/tokenohlcv - 📊 View token OHLCV price data',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -63,6 +64,7 @@ Use /knownaccounts to explore labeled accounts
 /pythprice to view Pyth oracle price data
 /pythpricets to view Pyth oracle price time series
 /pythpriceohlc to view Pyth oracle OHLC price data
+/tokenohlcv to view token OHLCV price data
 or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
@@ -400,6 +402,35 @@ Options: Hourly, Daily, Weekly, Monthly, Yearly`,
         NO_RESULTS: '🔍 <b>No trade transactions found for this token and criteria</b>',
         RESULTS_HEADER: '📊 <b>Token Trade Transactions</b>\n\n',
         TIME_RANGE_TOO_LARGE: '⚠️ <b>Time range too large</b>\n\nPlease select a shorter time range and try again.',
+    },
+
+    TOKEN_OHLCV: {
+        ASK_MINT_ADDRESS: `📊 <b>Token OHLCV</b>
+
+Enter a token mint address to view its OHLCV data:
+
+Example:
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+        ASK_START_TIME: `📅 <b>Start Time</b>
+
+Enter the start time as a Unix timestamp (seconds):
+
+Example:
+• <code>1744934400</code> (2024-10-21 00:00:00 UTC)`,
+        ASK_END_TIME: `📅 <b>End Time</b>
+
+Enter the end time as a Unix timestamp (seconds):
+
+Example:
+• <code>1745625600</code> (2024-10-29 00:00:00 UTC)`,
+        ASK_RESOLUTION: `⏰ <b>Resolution</b>
+
+Select the time resolution for OHLCV data:
+
+Options: 1m, 5m, 15m, 30m, 1h, 4h, 1d, 1w, 1mo`,
+        SEARCHING: '🔍 <b>Fetching token OHLCV data...</b>',
+        NO_RESULTS: '🔍 <b>No OHLCV data found for this mint address and criteria</b>',
+        RESULTS_HEADER: '📊 <b>Token OHLCV Data</b>\n\n',
     },
 
     PROGRAMS: {

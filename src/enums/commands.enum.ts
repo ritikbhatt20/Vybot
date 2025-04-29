@@ -22,6 +22,7 @@ export enum Commands {
     PythPrice = 'pythprice',
     PythPriceTs = 'pythpricets',
     PythPriceOhlc = 'pythpriceohlc',
+    TokenOhlcv = 'tokenohlcv',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',

@@ -358,6 +358,21 @@ export interface PythPriceOhlcResponse {
     data: PythPriceOhlc[];
 }
 
+export interface TokenOhlcv {
+    time: number;
+    open: string;
+    high: string;
+    low: string;
+    close: string;
+    volume: string;
+    volumeUsd: string;
+    count: number;
+}
+
+export interface TokenOhlcvResponse {
+    data: TokenOhlcv[];
+}
+
 export interface PythPriceError {
     code: number;
     message: string;
