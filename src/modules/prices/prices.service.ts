@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
-import { PythAccount, PythAccountsResponse, PythPrice, PythPriceError } from '../../types';
+import { PythAccount, PythAccountsResponse, PythPrice, PythPriceTsResponse, PythPriceError } from '../../types';
 
 @Injectable()
 export class PricesService {
@@ -42,6 +42,35 @@ export class PricesService {
             return response as PythPrice;
         } catch (error) {
             this.logger.error(`Failed to fetch Pyth price: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
+
+    async getPythPriceTs(priceFeedId: string, params: {
+        resolution?: string;
+        timeStart?: number;
+        timeEnd?: number;
+        limit?: number;
+        page?: number;
+    } = {}): Promise<PythPrice[]> {
+        const query = new URLSearchParams();
+
+        if (params.resolution) query.append('resolution', params.resolution);
+        if (params.timeStart) query.append('timeStart', params.timeStart.toString());
+        if (params.timeEnd) query.append('timeEnd', params.timeEnd.toString());
+        if (params.limit) query.append('limit', params.limit.toString());
+        if (params.page) query.append('page', params.page.toString());
+
+        const url = `/price/${priceFeedId}/pyth-price-ts${query.toString() ? `?${query}` : ''}`;
+
+        this.logger.debug(`Fetching Pyth price time series for priceFeedId: ${priceFeedId} with params: ${JSON.stringify(params)}`);
+
+        try {
+            const response = await this.vybeApi.get<PythPriceTsResponse | PythPriceError>(url);
+            this.logger.debug(`Fetched ${response || 0} Pyth price time series data points for ${priceFeedId}`);
+            return (response as PythPriceTsResponse).data || [];
+        } catch (error) {
+            this.logger.error(`Failed to fetch Pyth price time series: ${error.message}`, error.stack);
             throw error;
         }
     }

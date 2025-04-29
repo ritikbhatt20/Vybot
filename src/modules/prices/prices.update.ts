@@ -7,6 +7,7 @@ import { Actions } from '../../enums/actions.enum';
 import { Commands } from '../../enums/commands.enum';
 import { PYTH_ACCOUNTS_SCENE_ID } from './pyth-accounts.scene';
 import { PYTH_PRICE_SCENE_ID } from './pyth-price.scene';
+import { PYTH_PRICE_TS_SCENE_ID } from './pyth-price-ts.scene';
 import { BOT_MESSAGES } from '../../constants';
 
 @Update()
@@ -80,6 +81,34 @@ export class PricesUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling Pyth price command: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action(Actions.PYTH_PRICE_TS)
+    async onPythPriceTs(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📈 Accessing Pyth price time series explorer...');
+            await ctx.scene.enter(PYTH_PRICE_TS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering Pyth price time series scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.PythPriceTs)
+    async handlePythPriceTs(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('📈 Opening Pyth price time series explorer...'),
+                ctx.scene.enter(PYTH_PRICE_TS_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling Pyth price time series command: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

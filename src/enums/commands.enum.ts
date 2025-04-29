@@ -20,6 +20,7 @@ export enum Commands {
     ProgramRanking = 'programranking',
     PythAccounts = 'pythaccounts',
     PythPrice = 'pythprice',
+    PythPriceTs = 'pythpricets',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',

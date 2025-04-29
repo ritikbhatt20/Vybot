@@ -3,6 +3,7 @@ import { PricesService } from './prices.service';
 import { PricesUpdate } from './prices.update';
 import { PythAccountsScene } from './pyth-accounts.scene';
 import { PythPriceScene } from './pyth-price.scene';
+import { PythPriceTsScene } from './pyth-price-ts.scene';
 import { SharedModule } from '../shared/shared.module';
 
 @Module({
@@ -12,6 +13,7 @@ import { SharedModule } from '../shared/shared.module';
         PricesUpdate,
         PythAccountsScene,
         PythPriceScene,
+        PythPriceTsScene,
     ],
     exports: [PricesService],
 })

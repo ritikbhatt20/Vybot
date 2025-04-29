@@ -25,7 +25,8 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.ProgramDetails]: '/programdetails - 📋 View details for a Solana program',
     [Commands.ProgramRanking]: '/programranking - 🏆 View top-ranked Solana programs',
     [Commands.PythAccounts]: '/pythaccounts - 📈 View Pyth oracle price accounts',
-    [Commands.PythPrice]: '/pythprice - 💸 View Pyth oracle price data for a price feed', // New command
+    [Commands.PythPrice]: '/pythprice - 💸 View Pyth oracle price data for a price feed',
+    [Commands.PythPriceTs]: '/pythpricets - 📈 View Pyth oracle price time series data',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -59,6 +60,7 @@ Use /knownaccounts to explore labeled accounts
 /programranking to view top-ranked programs
 /pythaccounts to view Pyth oracle price accounts
 /pythprice to view Pyth oracle price data
+/pythpricets to view Pyth oracle price time series
 or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
@@ -178,6 +180,34 @@ Example:
             SEARCHING: '🔍 <b>Fetching Pyth price data...</b>',
             NO_RESULTS: '🔍 <b>No price data found for this price feed ID</b>',
             RESULTS_HEADER: '💸 <b>Pyth Price Data</b>\n\n',
+        },
+        PYTH_PRICE_TS: {
+            ASK_PRICE_FEED_ID: `📈 <b>Pyth Price Time Series</b>
+
+Enter a Pyth price feed ID to view its historical price data:
+
+Example:
+• <code>JBu1AL4obBcCMqKBBxhpWCNUt136ijcuMZLFvTP7iWdB</code>`,
+            ASK_START_TIME: `📅 <b>Start Time</b>
+
+Enter the start time as a Unix timestamp (seconds):
+
+Example:
+• <code>1744934400</code> (2024-10-21 00:00:00 UTC)`,
+            ASK_END_TIME: `📅 <b>End Time</b>
+
+Enter the end time as a Unix timestamp (seconds):
+
+Example:
+• <code>1745625600</code> (2024-10-29 00:00:00 UTC)`,
+            ASK_RESOLUTION: `⏰ <b>Resolution</b>
+
+Select the time resolution for price data:
+
+Options: Hourly, Daily, Weekly, Monthly, Yearly`,
+            SEARCHING: '🔍 <b>Fetching Pyth price time series data...</b>',
+            NO_RESULTS: '🔍 <b>No price time series data found for this price feed ID and criteria</b>',
+            RESULTS_HEADER: '📈 <b>Pyth Price Time Series Data</b>\n\n',
         },
     },
 

@@ -339,3 +339,13 @@ export interface PythPriceError {
     message: string;
     id: string;
 }
+
+export interface PythPriceTsResponse {
+    data: PythPrice[];
+}
+
+export interface PythPriceError {
+    code: number;
+    message: string;
+    id: string;
+}
