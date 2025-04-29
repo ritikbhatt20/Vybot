@@ -9,6 +9,7 @@ import { PYTH_ACCOUNTS_SCENE_ID } from './pyth-accounts.scene';
 import { PYTH_PRICE_SCENE_ID } from './pyth-price.scene';
 import { PYTH_PRICE_TS_SCENE_ID } from './pyth-price-ts.scene';
 import { PYTH_PRICE_OHLC_SCENE_ID } from './pyth-price-olhc.scene';
+import { PYTH_PRODUCT_SCENE_ID } from './pyth-product.scene';
 import { BOT_MESSAGES } from '../../constants';
 
 @Update()
@@ -138,6 +139,34 @@ export class PricesUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling Pyth OHLC command: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action(Actions.PYTH_PRODUCT)
+    async onPythProduct(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📋 Accessing Pyth product explorer...');
+            await ctx.scene.enter(PYTH_PRODUCT_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering Pyth product scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.PythProduct)
+    async handlePythProduct(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('📋 Opening Pyth product explorer...'),
+                ctx.scene.enter(PYTH_PRODUCT_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling Pyth product command: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

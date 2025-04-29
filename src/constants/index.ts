@@ -29,6 +29,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.PythPriceTs]: '/pythpricets - 📈 View Pyth oracle price time series data',
     [Commands.PythPriceOhlc]: '/pythpriceohlc - 📊 View Pyth oracle OHLC price data',
     [Commands.TokenOhlcv]: '/tokenohlcv - 📊 View token OHLCV price data',
+    [Commands.PythProduct]: '/pythproduct - 📋 View Pyth oracle product metadata',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -65,6 +66,7 @@ Use /knownaccounts to explore labeled accounts
 /pythpricets to view Pyth oracle price time series
 /pythpriceohlc to view Pyth oracle OHLC price data
 /tokenohlcv to view token OHLCV price data
+/pythproduct to view Pyth oracle product metadata
 or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
@@ -82,7 +84,7 @@ Choose an option below or type a command:`,
         INVALID_TIMESTAMP: '❌ Invalid timestamp. Please provide a valid Unix timestamp.',
         INVALID_INTERVAL: '❌ Invalid interval. Please select Hourly, Daily, or Weekly.',
         INVALID_AMOUNT: '❌ Invalid amount. Please provide a valid number.',
-        INVALID_RESOLUTION: '❌ Invalid resolution. Please select Hourly, Daily, Weekly, Monthly, or Yearly.',
+        INVALID_RESOLUTION: '❌ Invalid resolution. Please select a valid resolution (e.g., 1s, 1m, 5m, 15m, 30m, 1h, 2h, 3h, 4h, 1d, 1w, 1mo, 1y).',
         INVALID_RANGE: '❌ Invalid range. Please select a valid time range (4h, 12h, 24h, 1d, 7d, 30d).',
         INVALID_DAYS: '❌ Invalid number of days. Please select a number between 1 and 30.',
         INVALID_LIMIT: '❌ Invalid limit. Please provide a non-negative number.',
@@ -240,6 +242,17 @@ Options: Hourly, Daily, Weekly, Monthly, Yearly`,
             SEARCHING: '🔍 <b>Fetching Pyth OHLC data...</b>',
             NO_RESULTS: '🔍 <b>No OHLC data found for this price feed ID and criteria</b>',
             RESULTS_HEADER: '📊 <b>Pyth Price OHLC Data</b>\n\n',
+        },
+        PYTH_PRODUCT: {
+            ASK_PRODUCT_ID: `📋 <b>Pyth Product</b>
+
+Enter a Pyth product ID to view its metadata:
+
+Example:
+• <code>6bQMDtuAmRgjvymdWk9w4tTc9YyuXcjMxF8MyPHXejsx</code>`,
+            SEARCHING: '🔍 <b>Fetching Pyth product metadata...</b>',
+            NO_RESULTS: '🔍 <b>No product metadata found for this product ID</b>',
+            RESULTS_HEADER: '📋 <b>Pyth Product Metadata</b>\n\n',
         },
     },
 

@@ -118,6 +118,9 @@ export class KeyboardService {
                 Markup.button.callback('📈 Pyth Price TS', Actions.PYTH_PRICE_TS),
             ],
             [
+                Markup.button.callback('📋 Pyth Product', Actions.PYTH_PRODUCT),
+            ],
+            [
                 Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
@@ -549,6 +552,17 @@ export class KeyboardService {
     getTokenOhlcvResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Try Again', SceneActions.TOKEN_OHLCV_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
+            [
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getPythProductResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Try Again', SceneActions.PYTH_PRODUCT_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://alphavybe.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),

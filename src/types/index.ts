@@ -373,6 +373,17 @@ export interface TokenOhlcvResponse {
     data: TokenOhlcv[];
 }
 
+export interface PythProduct {
+    productId: string;
+    description: string;
+    symbol: string;
+    assetType: string;
+    quote: string;
+    base: string;
+    schedule: string;
+    genericSymbol: string;
+}
+
 export interface PythPriceError {
     code: number;
     message: string;
