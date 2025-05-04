@@ -1,8 +1,9 @@
-import { Action, Command, Ctx, Help, Start, Update } from 'nestjs-telegraf';
+import { Action, Command, Ctx, Help, On, Start, Update } from 'nestjs-telegraf';
 import { Context } from 'telegraf';
 import { SceneContext } from 'telegraf/typings/scenes';
 import { Logger } from '@nestjs/common';
 import { KeyboardService } from './modules/shared/keyboard.service';
+import { NlpService } from './modules/shared/nlp.service';
 import { Actions } from './enums/actions.enum';
 import { Commands } from './enums/commands.enum';
 import { BOT_MESSAGES, commandDescriptions } from './constants';
@@ -31,7 +32,10 @@ import { PYTH_ACCOUNTS_SCENE_ID } from './modules/prices/pyth-accounts.scene';
 export class AppUpdate {
     private readonly logger = new Logger(AppUpdate.name);
 
-    constructor(private readonly keyboard: KeyboardService) { }
+    constructor(
+        private readonly keyboard: KeyboardService,
+        private readonly nlpService: NlpService,
+    ) { }
 
     @Start()
     async start(@Ctx() ctx: Context) {
@@ -97,6 +101,61 @@ export class AppUpdate {
             });
         } catch (error) {
             this.logger.error(`Error in prices action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @On('text')
+    async handleText(@Ctx() ctx: Context & SceneContext) {
+        const messageText = (ctx.message as { text: string })?.text;
+        if (!messageText || messageText.startsWith('/')) {
+            return; // Ignore commands or empty messages
+        }
+
+        try {
+            const intent = this.nlpService.detectIntent(messageText);
+            if (!intent) {
+                await ctx.replyWithHTML(
+                    `🤔 I didn't understand "${messageText}". Try phrases like "show top token holders", "get wallet pnl", or "program ranking". Use /help to see all commands.`,
+                    { reply_markup: this.keyboard.getMainKeyboard().reply_markup },
+                );
+                this.logger.warn(`No intent matched for input: ${messageText}`);
+                return;
+            }
+
+            this.logger.log(`Detected intent: ${intent.command} for message: ${messageText}`);
+
+            // Handle special cases that don't require scenes
+            if (intent.command === Commands.HELP) {
+                await this.help(ctx);
+                return;
+            }
+            if (intent.command === Commands.MAIN_MENU) {
+                await this.handleMainMenu(ctx);
+                return;
+            }
+            if (intent.command === Commands.Cancel) {
+                if (ctx.scene && ctx.scene.current) {
+                    await ctx.scene.leave();
+                }
+                await ctx.replyWithHTML(BOT_MESSAGES.CANCEL, {
+                    reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+                });
+                return;
+            }
+
+            // Enter the appropriate scene
+            if (intent.sceneId) {
+                await ctx.reply(`🔍 Processing your request for ${intent.command.replace(/([A-Z])/g, ' $1').toLowerCase()}...`);
+                await ctx.scene.enter(intent.sceneId);
+            } else {
+                await ctx.replyWithHTML(
+                    `❌ Unable to process request for ${intent.command}. Try /help for more options.`,
+                    { reply_markup: this.keyboard.getMainKeyboard().reply_markup },
+                );
+            }
+        } catch (error) {
+            this.logger.error(`Error handling text input: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }
