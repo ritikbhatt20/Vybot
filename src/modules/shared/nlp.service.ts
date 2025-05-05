@@ -8,7 +8,6 @@ export class NlpService {
     private readonly tokenizer = new WordTokenizer();
     private readonly stemmer = PorterStemmer;
 
-    // Static token map for common tokens
     private readonly tokenMap: { [key: string]: string } = {
         sol: 'So11111111111111111111111111111111111111112',
         usdt: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
@@ -26,7 +25,6 @@ export class NlpService {
         wif: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm',
     };
 
-    // Mapping of commands to keywords/phrases for intent recognition
     private readonly intentMap: { command: Commands; keywords: string[]; exactPhrases?: string[] }[] = [
         {
             command: Commands.KnownAccounts,
@@ -180,7 +178,6 @@ export class NlpService {
         },
     ];
 
-    // Map scene IDs to commands for scene entry
     private readonly sceneMap: { [key in Commands]: string } = {
         [Commands.KnownAccounts]: 'KNOWN_ACCOUNTS_SCENE',
         [Commands.TokenBalances]: 'TOKEN_BALANCES_SCENE',
@@ -214,11 +211,6 @@ export class NlpService {
         [Commands.Cancel]: '',
     };
 
-    /**
-     * Detects the intended command and extracts token parameters from a user message
-     * @param message The user's input message
-     * @returns The detected command, scene ID, and optional mint address
-     */
     detectIntent(message: string): { command: Commands; sceneId?: string; mintAddress?: string } | null {
         if (!message || typeof message !== 'string') {
             return null;
@@ -237,8 +229,8 @@ export class NlpService {
                         const score = phraseLower.length / lowerMessage.length;
                         if (!bestMatch || score > bestMatch.score) {
                             bestMatch = { command: intent.command, score };
-                            // Extract token name/symbol if relevant command
-                            if ([Commands.TokenHolders, Commands.TokenDetails].includes(intent.command)) {
+                            // Extract token name/symbol for relevant commands
+                            if ([Commands.TokenHolders, Commands.TokenDetails, Commands.TokenTrades].includes(intent.command)) {
                                 const tokens = this.tokenizer.tokenize(lowerMessage);
                                 const tokenIndex = tokens.findIndex(t => t === 'of') + 1;
                                 if (tokenIndex > 0 && tokenIndex < tokens.length) {
@@ -267,7 +259,7 @@ export class NlpService {
 
                     if (score > 0.7 && (!bestMatch || score > bestMatch.score)) {
                         bestMatch = { command: intent.command, score };
-                        if ([Commands.TokenHolders, Commands.TokenDetails].includes(intent.command)) {
+                        if ([Commands.TokenHolders, Commands.TokenDetails, Commands.TokenTrades].includes(intent.command)) {
                             const tokenIndex = tokens.findIndex(t => t === 'of') + 1;
                             if (tokenIndex > 0 && tokenIndex < tokens.length) {
                                 extractedToken = tokens.slice(tokenIndex).join(' ');
@@ -285,7 +277,7 @@ export class NlpService {
 
         // Step 3: Resolve token to mint address if extracted
         let mintAddress: string | undefined;
-        if (extractedToken && [Commands.TokenHolders, Commands.TokenDetails].includes(bestMatch.command)) {
+        if (extractedToken && [Commands.TokenHolders, Commands.TokenDetails, Commands.TokenTrades].includes(bestMatch.command)) {
             const normalizedToken = extractedToken.toLowerCase().trim();
             if (this.tokenMap[normalizedToken]) {
                 mintAddress = this.tokenMap[normalizedToken];
@@ -296,7 +288,7 @@ export class NlpService {
 
         this.logger.debug(
             `Detected intent: ${bestMatch.command} with score ${bestMatch.score} for message: ${message}` +
-            (mintAddress ? `, mintAddress: ${mintAddress}` : ''),
+            (mintAddress ? `, mintAddress: ${mintAddress}` : '')
         );
 
         return {

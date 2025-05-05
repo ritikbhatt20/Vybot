@@ -94,6 +94,7 @@ Choose an option below or type a command:`,
         INVALID_LIMIT: '❌ Invalid limit. Please provide a non-negative number.',
         INVALID_PAGE: '❌ Invalid page. Please provide a non-negative number.',
         INVALID_MINT_ADDRESS: '❌ Invalid mint address. Please provide a valid Solana mint address.',
+        TIME_RANGE_TOO_LARGE: '⚠️ Time range too large. Please select a shorter time range and try again.',
     },
 
     KNOWN_ACCOUNTS: {

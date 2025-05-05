@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress } from '../../utils';
+import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
 import { TokenTransfersWizardState } from '../../types';
 
 export const TOKEN_TRANSFERS_SCENE_ID = 'TOKEN_TRANSFERS_SCENE';
@@ -24,11 +24,20 @@ export class TokenTransfersScene {
     @WizardStep(1)
     async askMintAddress(@Ctx() ctx: WizardContext & { wizard: { state: TokenTransfersWizardState } }) {
         try {
-            await ctx.replyWithHTML(
-                BOT_MESSAGES.TOKEN_TRANSFERS.ASK_MINT_ADDRESS,
-                { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup }
-            );
-            ctx.wizard.next();
+            const { mintAddress } = ctx.scene.state as { mintAddress?: string };
+            this.logger.debug(`Scene state mintAddress: ${mintAddress}`);
+
+            if (mintAddress && isValidSolanaAddress(mintAddress)) {
+                ctx.wizard.state.mintAddress = mintAddress;
+                await this.askStartTime(ctx);
+            } else {
+                this.logger.debug('No valid mintAddress provided, prompting user');
+                await ctx.replyWithHTML(
+                    BOT_MESSAGES.TOKEN_TRANSFERS.ASK_MINT_ADDRESS,
+                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup },
+                );
+                ctx.wizard.next();
+            }
         } catch (error) {
             this.logger.error(`Error in ask mint address step: ${error.message}`);
             await ctx.scene.leave();
@@ -38,19 +47,22 @@ export class TokenTransfersScene {
     @WizardStep(2)
     async askStartTime(@Ctx() ctx: WizardContext & { wizard: { state: TokenTransfersWizardState } }) {
         try {
-            const messageText = (ctx.message as { text: string })?.text;
-            if (!messageText) {
-                await ctx.replyWithHTML(
-                    BOT_MESSAGES.ERROR.INVALID_FORMAT,
-                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup }
-                );
-                return;
+            if (!ctx.wizard.state.mintAddress) {
+                const messageText = (ctx.message as { text: string })?.text;
+                if (!messageText || !isValidSolanaAddress(messageText)) {
+                    this.logger.warn(`Invalid user-provided mint address: ${messageText}`);
+                    await ctx.replyWithHTML(
+                        BOT_MESSAGES.ERROR.INVALID_FORMAT,
+                        { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup },
+                    );
+                    return;
+                }
+                ctx.wizard.state.mintAddress = messageText;
             }
 
-            ctx.wizard.state.mintAddress = messageText;
             await ctx.replyWithHTML(
                 BOT_MESSAGES.TOKEN_TRANSFERS.ASK_START_TIME,
-                { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup }
+                { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup },
             );
             ctx.wizard.next();
         } catch (error) {
@@ -66,7 +78,7 @@ export class TokenTransfersScene {
             if (!messageText || isNaN(parseInt(messageText))) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.ERROR.INVALID_TIMESTAMP,
-                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup },
                 );
                 return;
             }
@@ -74,7 +86,7 @@ export class TokenTransfersScene {
             ctx.wizard.state.timeStart = parseInt(messageText);
             await ctx.replyWithHTML(
                 BOT_MESSAGES.TOKEN_TRANSFERS.ASK_END_TIME,
-                { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup }
+                { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup },
             );
             ctx.wizard.next();
         } catch (error) {
@@ -90,7 +102,7 @@ export class TokenTransfersScene {
             if (!messageText || isNaN(parseInt(messageText))) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.ERROR.INVALID_TIMESTAMP,
-                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup },
                 );
                 return;
             }
@@ -106,7 +118,7 @@ export class TokenTransfersScene {
                             Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                         ],
                     ]).reply_markup,
-                }
+                },
             );
             ctx.wizard.next();
         } catch (error) {
@@ -126,7 +138,7 @@ export class TokenTransfersScene {
                 if (!messageText || isNaN(parseInt(messageText))) {
                     await ctx.replyWithHTML(
                         BOT_MESSAGES.ERROR.INVALID_AMOUNT,
-                        { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup }
+                        { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup },
                     );
                     return;
                 }
@@ -144,7 +156,7 @@ export class TokenTransfersScene {
                             Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                         ],
                     ]).reply_markup,
-                }
+                },
             );
             ctx.wizard.next();
         } catch (error) {
@@ -177,7 +189,7 @@ export class TokenTransfersScene {
             if (!mintAddress || !timeStart || !timeEnd) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.ERROR.INVALID_FORMAT,
-                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup },
                 );
                 return;
             }
@@ -185,9 +197,9 @@ export class TokenTransfersScene {
             if (minAmount && maxAmount && minAmount > maxAmount) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.TOKEN_TRANSFERS.INVALID_AMOUNT_RANGE,
-                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup },
                 );
-                ctx.wizard.selectStep(4); // Go back to min amount
+                ctx.wizard.selectStep(4);
                 await this.askMinAmount(ctx);
                 return;
             }
@@ -200,14 +212,14 @@ export class TokenTransfersScene {
                 timeEnd,
                 minAmount,
                 maxAmount,
-                limit: 10, // Limit to 10 for Telegram message size
-                sortByDesc: 'blockTime', // Sort by most recent
+                limit: 10,
+                sortByDesc: 'blockTime',
             });
 
             if (!transfers || transfers.length === 0) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.TOKEN_TRANSFERS.NO_RESULTS,
-                    { reply_markup: this.keyboard.getTokenTransfersResultsKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenTransfersResultsKeyboard().reply_markup },
                 );
                 await ctx.scene.leave();
                 return;
@@ -235,19 +247,28 @@ export class TokenTransfersScene {
 
             await ctx.replyWithHTML(
                 `${BOT_MESSAGES.TOKEN_TRANSFERS.RESULTS_HEADER}${message}`,
-                { reply_markup: this.keyboard.getTokenTransfersResultsKeyboard().reply_markup }
+                { reply_markup: this.keyboard.getTokenTransfersResultsKeyboard().reply_markup },
             );
 
             await ctx.scene.leave();
         } catch (error) {
             this.logger.error(`Error in handle transfers query step: ${error.message}`);
-            await handleErrorResponse({
-                ctx,
-                error,
-                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
-                buttons: [{ text: '🔄 Try Again', action: SceneActions.TOKEN_TRANSFERS_AGAIN }],
-            });
-            await ctx.scene.leave();
+            if (error.message.includes('Request time range is too large')) {
+                await ctx.replyWithHTML(
+                    BOT_MESSAGES.ERROR.TIME_RANGE_TOO_LARGE,
+                    { reply_markup: this.keyboard.getTokenTransfersKeyboard().reply_markup },
+                );
+                ctx.wizard.selectStep(2);
+                await this.askStartTime(ctx);
+            } else {
+                await handleErrorResponse({
+                    ctx,
+                    error,
+                    defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                    buttons: [{ text: '🔄 Try Again', action: SceneActions.TOKEN_TRANSFERS_AGAIN }],
+                });
+                await ctx.scene.leave();
+            }
         }
     }
 

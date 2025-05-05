@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress } from '../../utils';
+import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
 import { TokenVolumeWizardState } from '../../types';
 
 export const TOKEN_VOLUME_SCENE_ID = 'TOKEN_VOLUME_SCENE';
@@ -30,11 +30,20 @@ export class TokenVolumeScene {
     @WizardStep(1)
     async askMintAddress(@Ctx() ctx: WizardContext & { wizard: { state: TokenVolumeWizardState } }) {
         try {
-            await ctx.replyWithHTML(
-                BOT_MESSAGES.TOKEN_VOLUME.ASK_MINT_ADDRESS,
-                { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup }
-            );
-            ctx.wizard.next();
+            const { mintAddress } = ctx.scene.state as { mintAddress?: string };
+            this.logger.debug(`Scene state mintAddress: ${mintAddress}`);
+
+            if (mintAddress && isValidSolanaAddress(mintAddress)) {
+                ctx.wizard.state.mintAddress = mintAddress;
+                await this.askStartTime(ctx);
+            } else {
+                this.logger.debug('No valid mintAddress provided, prompting user');
+                await ctx.replyWithHTML(
+                    BOT_MESSAGES.TOKEN_VOLUME.ASK_MINT_ADDRESS,
+                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup },
+                );
+                ctx.wizard.next();
+            }
         } catch (error) {
             this.logger.error(`Error in ask mint address step: ${error.message}`);
             await ctx.scene.leave();
@@ -44,19 +53,22 @@ export class TokenVolumeScene {
     @WizardStep(2)
     async askStartTime(@Ctx() ctx: WizardContext & { wizard: { state: TokenVolumeWizardState } }) {
         try {
-            const messageText = (ctx.message as { text: string })?.text;
-            if (!messageText) {
-                await ctx.replyWithHTML(
-                    BOT_MESSAGES.ERROR.INVALID_FORMAT,
-                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup }
-                );
-                return;
+            if (!ctx.wizard.state.mintAddress) {
+                const messageText = (ctx.message as { text: string })?.text;
+                if (!messageText || !isValidSolanaAddress(messageText)) {
+                    this.logger.warn(`Invalid user-provided mint address: ${messageText}`);
+                    await ctx.replyWithHTML(
+                        BOT_MESSAGES.ERROR.INVALID_FORMAT,
+                        { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup },
+                    );
+                    return;
+                }
+                ctx.wizard.state.mintAddress = messageText;
             }
 
-            ctx.wizard.state.mintAddress = messageText;
             await ctx.replyWithHTML(
                 BOT_MESSAGES.TOKEN_VOLUME.ASK_START_TIME,
-                { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup }
+                { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup },
             );
             ctx.wizard.next();
         } catch (error) {
@@ -72,7 +84,7 @@ export class TokenVolumeScene {
             if (!messageText || isNaN(parseInt(messageText))) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.ERROR.INVALID_TIMESTAMP,
-                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup },
                 );
                 return;
             }
@@ -80,7 +92,7 @@ export class TokenVolumeScene {
             ctx.wizard.state.startTime = parseInt(messageText);
             await ctx.replyWithHTML(
                 BOT_MESSAGES.TOKEN_VOLUME.ASK_END_TIME,
-                { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup }
+                { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup },
             );
             ctx.wizard.next();
         } catch (error) {
@@ -96,7 +108,7 @@ export class TokenVolumeScene {
             if (!messageText || isNaN(parseInt(messageText))) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.ERROR.INVALID_TIMESTAMP,
-                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup },
                 );
                 return;
             }
@@ -116,7 +128,7 @@ export class TokenVolumeScene {
                             Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                         ],
                     ]).reply_markup,
-                }
+                },
             );
             ctx.wizard.next();
         } catch (error) {
@@ -137,7 +149,7 @@ export class TokenVolumeScene {
             if (!interval || !['1h', '1d', '1w'].includes(interval)) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.ERROR.INVALID_INTERVAL,
-                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup },
                 );
                 return;
             }
@@ -149,7 +161,7 @@ export class TokenVolumeScene {
             if (!mintAddress || !startTime || !endTime) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.ERROR.INVALID_FORMAT,
-                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup },
                 );
                 return;
             }
@@ -167,7 +179,7 @@ export class TokenVolumeScene {
             if (!volumes || volumes.length === 0) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.TOKEN_VOLUME.NO_RESULTS,
-                    { reply_markup: this.keyboard.getTokenVolumeResultsKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenVolumeResultsKeyboard().reply_markup },
                 );
                 await ctx.scene.leave();
                 return;
@@ -190,7 +202,7 @@ export class TokenVolumeScene {
 
             await ctx.replyWithHTML(
                 `${BOT_MESSAGES.TOKEN_VOLUME.RESULTS_HEADER}${message}`,
-                { reply_markup: this.keyboard.getTokenVolumeResultsKeyboard().reply_markup }
+                { reply_markup: this.keyboard.getTokenVolumeResultsKeyboard().reply_markup },
             );
 
             await ctx.scene.leave();
@@ -199,16 +211,16 @@ export class TokenVolumeScene {
             if (error.message.includes('Request time range is too large')) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.TOKEN_VOLUME.TIME_RANGE_TOO_LARGE,
-                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup },
                 );
-                ctx.wizard.selectStep(2); // Go back to start time
+                ctx.wizard.selectStep(2);
                 await this.askStartTime(ctx);
             } else if (error.message.includes('unknown variant')) {
                 await ctx.replyWithHTML(
                     '❌ Invalid interval selected. Please choose Hourly, Daily, or Weekly.',
-                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenVolumeKeyboard().reply_markup },
                 );
-                ctx.wizard.selectStep(4); // Go back to interval selection
+                ctx.wizard.selectStep(4);
                 await this.askInterval(ctx);
             } else {
                 await handleErrorResponse({
