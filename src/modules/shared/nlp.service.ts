@@ -8,6 +8,24 @@ export class NlpService {
     private readonly tokenizer = new WordTokenizer();
     private readonly stemmer = PorterStemmer;
 
+    // Static token map for common tokens
+    private readonly tokenMap: { [key: string]: string } = {
+        sol: 'So11111111111111111111111111111111111111112',
+        usdt: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+        usdc: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        bonk: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+        link: 'CWE8jPTUYhdCTZYWPTe1o5DFq8a4sCKSKi17dMZrCNd9',
+        ray: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
+        jup: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
+        pyth: 'HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3',
+        grt: '7z4WPA4tV5QhQNq2ZJ2bA3HuW51tN7d2bAcuZPx2NDuC',
+        atlas: 'ATLASXmbPQxBUYbxPsV97usA3fPQYEqzQBUHyiRzV',
+        inj: '5BzvWG6RPR9N83z3DXD7EDd5DvaW4zCYanCmB7oYd1fP',
+        fart: '9vTapS6W2uz3o2qQ3wSLCxT14vYV8tVXb7k4FMsqSL5',
+        orca: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE',
+        wif: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm',
+    };
+
     // Mapping of commands to keywords/phrases for intent recognition
     private readonly intentMap: { command: Commands; keywords: string[]; exactPhrases?: string[] }[] = [
         {
@@ -197,17 +215,18 @@ export class NlpService {
     };
 
     /**
-     * Detects the intended command from a user message
+     * Detects the intended command and extracts token parameters from a user message
      * @param message The user's input message
-     * @returns The detected command and scene ID or null if no match
+     * @returns The detected command, scene ID, and optional mint address
      */
-    detectIntent(message: string): { command: Commands; sceneId?: string } | null {
+    detectIntent(message: string): { command: Commands; sceneId?: string; mintAddress?: string } | null {
         if (!message || typeof message !== 'string') {
             return null;
         }
 
         const lowerMessage = message.toLowerCase().trim();
         let bestMatch: { command: Commands; score: number } | null = null;
+        let extractedToken: string | null = null;
 
         // Step 1: Check for exact or near-exact phrase matches
         for (const intent of this.intentMap) {
@@ -215,10 +234,17 @@ export class NlpService {
                 for (const phrase of intent.exactPhrases) {
                     const phraseLower = phrase.toLowerCase();
                     if (lowerMessage.includes(phraseLower)) {
-                        // Exact match gets a high score
                         const score = phraseLower.length / lowerMessage.length;
                         if (!bestMatch || score > bestMatch.score) {
                             bestMatch = { command: intent.command, score };
+                            // Extract token name/symbol if relevant command
+                            if ([Commands.TokenHolders, Commands.TokenDetails].includes(intent.command)) {
+                                const tokens = this.tokenizer.tokenize(lowerMessage);
+                                const tokenIndex = tokens.findIndex(t => t === 'of') + 1;
+                                if (tokenIndex > 0 && tokenIndex < tokens.length) {
+                                    extractedToken = tokens.slice(tokenIndex).join(' ');
+                                }
+                            }
                         }
                     }
                 }
@@ -235,31 +261,48 @@ export class NlpService {
                     const keywordTokens = this.tokenizer.tokenize(keyword.toLowerCase());
                     const stemmedKeywordTokens = keywordTokens.map(token => this.stemmer.stem(token));
 
-                    // Calculate match score based on overlapping stemmed tokens
                     const commonTokens = stemmedTokens.filter(token => stemmedKeywordTokens.includes(token));
                     let score = commonTokens.length / Math.max(stemmedKeywordTokens.length, 1);
-
-                    // Boost score for longer keywords to prioritize specificity
                     score *= Math.min(keywordTokens.length / 5, 1.5);
 
                     if (score > 0.7 && (!bestMatch || score > bestMatch.score)) {
                         bestMatch = { command: intent.command, score };
+                        if ([Commands.TokenHolders, Commands.TokenDetails].includes(intent.command)) {
+                            const tokenIndex = tokens.findIndex(t => t === 'of') + 1;
+                            if (tokenIndex > 0 && tokenIndex < tokens.length) {
+                                extractedToken = tokens.slice(tokenIndex).join(' ');
+                            }
+                        }
                     }
                 }
             }
         }
 
-        if (bestMatch) {
-            this.logger.debug(
-                `Detected intent: ${bestMatch.command} with score ${bestMatch.score} for message: ${message}`,
-            );
-            return {
-                command: bestMatch.command,
-                sceneId: this.sceneMap[bestMatch.command] || undefined,
-            };
+        if (!bestMatch) {
+            this.logger.debug(`No intent detected for message: ${message}`);
+            return null;
         }
 
-        this.logger.debug(`No intent detected for message: ${message}`);
-        return null;
+        // Step 3: Resolve token to mint address if extracted
+        let mintAddress: string | undefined;
+        if (extractedToken && [Commands.TokenHolders, Commands.TokenDetails].includes(bestMatch.command)) {
+            const normalizedToken = extractedToken.toLowerCase().trim();
+            if (this.tokenMap[normalizedToken]) {
+                mintAddress = this.tokenMap[normalizedToken];
+            } else {
+                this.logger.warn(`No token found in tokenMap for: ${normalizedToken}`);
+            }
+        }
+
+        this.logger.debug(
+            `Detected intent: ${bestMatch.command} with score ${bestMatch.score} for message: ${message}` +
+            (mintAddress ? `, mintAddress: ${mintAddress}` : ''),
+        );
+
+        return {
+            command: bestMatch.command,
+            sceneId: this.sceneMap[bestMatch.command] || undefined,
+            mintAddress,
+        };
     }
 }

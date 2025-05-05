@@ -23,11 +23,27 @@ export class TokenDetailsScene {
     @WizardStep(1)
     async askMintAddress(@Ctx() ctx: WizardContext) {
         try {
-            await ctx.replyWithHTML(
-                BOT_MESSAGES.TOKEN_DETAILS.ASK_MINT_ADDRESS,
-                { reply_markup: this.keyboard.getTokenDetailsKeyboard().reply_markup }
-            );
-            ctx.wizard.next();
+            // Check if mintAddress is provided in scene state
+            const { mintAddress } = ctx.scene.state as { mintAddress?: string };
+            if (mintAddress) {
+                // Validate mint address length
+                if (mintAddress.length < 32 || mintAddress.length > 44) {
+                    await ctx.replyWithHTML(
+                        BOT_MESSAGES.ERROR.INVALID_MINT_ADDRESS,
+                        { reply_markup: this.keyboard.getTokenDetailsKeyboard().reply_markup },
+                    );
+                    ctx.wizard.next();
+                    return;
+                }
+                // Proceed to handleMintAddress logic
+                await this.handleMintAddressWithMint(ctx, mintAddress);
+            } else {
+                await ctx.replyWithHTML(
+                    BOT_MESSAGES.TOKEN_DETAILS.ASK_MINT_ADDRESS,
+                    { reply_markup: this.keyboard.getTokenDetailsKeyboard().reply_markup },
+                );
+                ctx.wizard.next();
+            }
         } catch (error) {
             this.logger.error(`Error in ask mint address step: ${error.message}`);
             await ctx.scene.leave();
@@ -41,19 +57,34 @@ export class TokenDetailsScene {
             if (!messageText) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.ERROR.INVALID_FORMAT,
-                    { reply_markup: this.keyboard.getTokenDetailsKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenDetailsKeyboard().reply_markup },
                 );
                 return;
             }
 
+            await this.handleMintAddressWithMint(ctx, messageText);
+        } catch (error) {
+            this.logger.error(`Error in handle mint address step: ${error.message}`);
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.TOKEN_DETAILS_AGAIN }],
+            });
+            await ctx.scene.leave();
+        }
+    }
+
+    async handleMintAddressWithMint(@Ctx() ctx: WizardContext, mintAddress: string) {
+        try {
             await ctx.replyWithHTML(BOT_MESSAGES.TOKEN_DETAILS.SEARCHING);
 
-            const token = await this.tokensService.getTokenDetails(messageText);
+            const token = await this.tokensService.getTokenDetails(mintAddress);
 
             if (!token) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.TOKEN_DETAILS.NO_RESULTS,
-                    { reply_markup: this.keyboard.getTokenDetailsResultsKeyboard().reply_markup }
+                    { reply_markup: this.keyboard.getTokenDetailsResultsKeyboard().reply_markup },
                 );
                 await ctx.scene.leave();
                 return;
@@ -80,12 +111,12 @@ export class TokenDetailsScene {
 
             await ctx.replyWithHTML(
                 `${BOT_MESSAGES.TOKEN_DETAILS.RESULTS_HEADER}${message}`,
-                { reply_markup: this.keyboard.getTokenDetailsResultsKeyboard().reply_markup }
+                { reply_markup: this.keyboard.getTokenDetailsResultsKeyboard().reply_markup },
             );
 
             await ctx.scene.leave();
         } catch (error) {
-            this.logger.error(`Error in handle mint address step: ${error.message}`);
+            this.logger.error(`Error processing mint address ${mintAddress}: ${error.message}`);
             await handleErrorResponse({
                 ctx,
                 error,

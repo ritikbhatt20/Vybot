@@ -93,6 +93,7 @@ Choose an option below or type a command:`,
         INVALID_DAYS: '❌ Invalid number of days. Please select a number between 1 and 30.',
         INVALID_LIMIT: '❌ Invalid limit. Please provide a non-negative number.',
         INVALID_PAGE: '❌ Invalid page. Please provide a non-negative number.',
+        INVALID_MINT_ADDRESS: '❌ Invalid mint address. Please provide a valid Solana mint address.',
     },
 
     KNOWN_ACCOUNTS: {

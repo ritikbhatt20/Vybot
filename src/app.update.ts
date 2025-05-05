@@ -116,14 +116,18 @@ export class AppUpdate {
             const intent = this.nlpService.detectIntent(messageText);
             if (!intent) {
                 await ctx.replyWithHTML(
-                    `🤔 I didn't understand "${messageText}". Try phrases like "show top token holders", "get wallet pnl", or "program ranking". Use /help to see all commands.`,
+                    `🤔 I didn't understand "${messageText}". Try phrases like "show top token holders of bonk", "get wallet pnl", or "program ranking". Use /help to see all commands.`,
                     { reply_markup: this.keyboard.getMainKeyboard().reply_markup },
                 );
                 this.logger.warn(`No intent matched for input: ${messageText}`);
                 return;
             }
 
-            this.logger.log(`Detected intent: ${intent.command} for message: ${messageText}`);
+            this.logger.log(
+                `Detected intent: ${intent.command}` +
+                (intent.mintAddress ? ` with mintAddress: ${intent.mintAddress}` : '') +
+                ` for message: ${messageText}`,
+            );
 
             // Handle special cases that don't require scenes
             if (intent.command === Commands.HELP) {
@@ -139,15 +143,21 @@ export class AppUpdate {
                     await ctx.scene.leave();
                 }
                 await ctx.replyWithHTML(BOT_MESSAGES.CANCEL, {
-                    reply_markup: this.keyboard.getMainKeyboard().reply_markup,
-                });
+                    reply_markup: this.keyboard.getMainKeyboard().reply_markup
+                },
+                );
                 return;
             }
 
             // Enter the appropriate scene
             if (intent.sceneId) {
-                await ctx.reply(`🔍 Processing your request for ${intent.command.replace(/([A-Z])/g, ' $1').toLowerCase()}...`);
-                await ctx.scene.enter(intent.sceneId);
+                await ctx.reply(
+                    `🔍 Processing your request for ${intent.command
+                        .replace(/([A-Z])/g, ' $1')
+                        .toLowerCase()}${intent.mintAddress ? ' (token identified)' : ''}...`,
+                );
+                // Pass mintAddress as an argument to the scene
+                await ctx.scene.enter(intent.sceneId, { mintAddress: intent.mintAddress });
             } else {
                 await ctx.replyWithHTML(
                     `❌ Unable to process request for ${intent.command}. Try /help for more options.`,
