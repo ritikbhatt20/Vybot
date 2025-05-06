@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
+import { handleErrorResponse, isValidSolanaAddress } from '../../utils';
 import { TokenTransfersWizardState } from '../../types';
 
 export const TOKEN_TRANSFERS_SCENE_ID = 'TOKEN_TRANSFERS_SCENE';

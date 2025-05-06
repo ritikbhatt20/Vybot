@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
+import { handleErrorResponse, isValidSolanaAddress } from '../../utils';
 import { ProgramActiveUsersWizardState } from '../../types';
 
 export const PROGRAM_ACTIVE_USERS_SCENE_ID = 'PROGRAM_ACTIVE_USERS_SCENE';
@@ -175,8 +175,8 @@ export class ProgramActiveUsersScene {
 
             const message = activeUsers
                 .map((userData, i) => {
-                    const wallet = formatAddress(userData.wallet);
-                    const programId = formatAddress(userData.programId);
+                    const wallet = userData.wallet;
+                    const programId = userData.programId;
                     const transactions = userData.transactions.toLocaleString();
                     const instructions = userData.instructions.toLocaleString();
 

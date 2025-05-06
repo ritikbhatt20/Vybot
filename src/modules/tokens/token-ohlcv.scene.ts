@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, isValidSolanaAddress, escapeMarkdownV2 } from '../../utils';
+import { handleErrorResponse, isValidSolanaAddress, escapeMarkdownV2 } from '../../utils';
 import { TokenOhlcv } from '../../types';
 
 export const TOKEN_OHLCV_SCENE_ID = 'TOKEN_OHLCV_SCENE';

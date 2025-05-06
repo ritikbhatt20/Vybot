@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
+import { handleErrorResponse, isValidSolanaAddress } from '../../utils';
 import { TokenTradesWizardState } from '../../types';
 
 export const TOKEN_TRADES_SCENE_ID = 'TOKEN_TRADES_SCENE';
@@ -198,8 +198,8 @@ export class TokenTradesScene {
                     const price = parseFloat(trade.price).toLocaleString();
                     const baseSize = parseFloat(trade.baseSize).toLocaleString();
                     const quoteSize = parseFloat(trade.quoteSize).toLocaleString();
-                    const marketId = formatAddress(trade.marketId);
-                    const signature = formatAddress(trade.signature);
+                    const marketId = trade.marketId;
+                    const signature = trade.signature;
 
                     return (
                         `<b>${i + 1}. ${date}</b>\n` +

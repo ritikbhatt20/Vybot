@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
+import { handleErrorResponse, isValidSolanaAddress } from '../../utils';
 import { ProgramDetailsWizardState } from '../../types';
 
 export const PROGRAM_DETAILS_SCENE_ID = 'PROGRAM_DETAILS_SCENE';
@@ -73,7 +73,7 @@ export class ProgramDetailsScene {
                 return;
             }
 
-            const programId = formatAddress(program.programId);
+            const programId = program.programId;
             const name = program.name || 'N/A';
             const friendlyName = program.friendlyName || 'N/A';
             const entityName = program.entityName || 'N/A';

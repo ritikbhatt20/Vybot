@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
+import { handleErrorResponse, isValidSolanaAddress } from '../../utils';
 import { ProgramActiveUsersTsWizardState } from '../../types';
 
 export const PROGRAM_ACTIVE_USERS_TS_SCENE_ID = 'PROGRAM_ACTIVE_USERS_TS_SCENE';
@@ -143,7 +143,7 @@ export class ProgramActiveUsersTsScene {
                 .map((userData, i) => {
                     const date = new Date(userData.blockTime * 1000).toISOString().split('T')[0];
                     const dau = userData.dau.toLocaleString();
-                    const programId = formatAddress(userData.programId);
+                    const programId = userData.programId;
 
                     return (
                         `<b>${i + 1}. ${date}</b>\n` +

@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
+import { handleErrorResponse, isValidSolanaAddress } from '../../utils';
 import { ProgramTxCountWizardState } from '../../types';
 
 export const PROGRAM_TX_COUNT_SCENE_ID = 'PROGRAM_TX_COUNT_SCENE';
@@ -143,7 +143,7 @@ export class ProgramTxCountScene {
                 .map((txCount, i) => {
                     const date = new Date(txCount.blockTime * 1000).toISOString().split('T')[0];
                     const count = txCount.transactionsCount.toLocaleString();
-                    const programId = formatAddress(txCount.programId);
+                    const programId = txCount.programId;
 
                     return (
                         `<b>${i + 1}. ${date}</b>\n` +

@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
+import { handleErrorResponse, isValidSolanaAddress } from '../../utils';
 import { ProgramsWizardState } from '../../types';
 
 export const PROGRAMS_SCENE_ID = 'PROGRAMS_SCENE';
@@ -86,7 +86,7 @@ export class ProgramsScene {
 
             const message = programs
                 .map((program, i) => {
-                    const programId = formatAddress(program.programId);
+                    const programId = program.programId;
                     const labels = program.labels.filter((label) => label).join(', ') || 'None';
                     const dau = program.dau.toLocaleString();
                     const transactions = program.transactions1d.toLocaleString();

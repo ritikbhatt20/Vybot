@@ -8,7 +8,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress, escapeMarkdownV2 } from '../../utils';
+import { handleErrorResponse, escapeMarkdownV2 } from '../../utils';
 import { ProgramRankingWizardState } from '../../types';
 
 export const PROGRAM_RANKING_SCENE_ID = 'PROGRAM_RANKING_SCENE';
