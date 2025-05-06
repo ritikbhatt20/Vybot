@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress } from '../../utils';
+import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
 import { ProgramsWizardState } from '../../types';
 
 export const PROGRAMS_SCENE_ID = 'PROGRAMS_SCENE';
@@ -24,11 +24,20 @@ export class ProgramsScene {
     @WizardStep(1)
     async askFilter(@Ctx() ctx: WizardContext & { wizard: { state: ProgramsWizardState } }) {
         try {
-            await ctx.replyWithHTML(
-                BOT_MESSAGES.PROGRAMS.ASK_FILTER,
-                { reply_markup: this.keyboard.getProgramsKeyboard().reply_markup }
-            );
-            ctx.wizard.next();
+            const { programAddress } = ctx.wizard.state;
+            this.logger.debug(`Scene state: ${JSON.stringify(ctx.wizard.state)}`);
+
+            if (programAddress && isValidSolanaAddress(programAddress)) {
+                ctx.wizard.state.programAddress = programAddress;
+                await this.handleProgramsQuery(ctx);
+            } else {
+                this.logger.debug('No valid programAddress provided, prompting user');
+                await ctx.replyWithHTML(
+                    BOT_MESSAGES.PROGRAMS.ASK_FILTER,
+                    { reply_markup: this.keyboard.getProgramsKeyboard().reply_markup }
+                );
+                ctx.wizard.next();
+            }
         } catch (error) {
             this.logger.error(`Error in ask filter step: ${error.message}`);
             await ctx.scene.leave();
@@ -42,9 +51,11 @@ export class ProgramsScene {
 
             if (ctx.updateType === 'callback_query' && (ctx.callbackQuery as any).data === SceneActions.FETCH_ALL) {
                 await ctx.answerCbQuery();
-            } else {
+            } else if (!ctx.wizard.state.programAddress) {
                 const messageText = (ctx.message as { text: string })?.text;
-                if (messageText) {
+                if (messageText && isValidSolanaAddress(messageText)) {
+                    ctx.wizard.state.programAddress = messageText;
+                } else if (messageText) {
                     labels = messageText.split(',').map((label) => label.trim().toUpperCase());
                     ctx.wizard.state.labels = labels;
                 }
@@ -52,11 +63,17 @@ export class ProgramsScene {
 
             await ctx.replyWithHTML(BOT_MESSAGES.PROGRAMS.SEARCHING);
 
-            const programs = await this.programsService.getPrograms({
+            const params: { labels?: string[]; limit?: number; sortByDesc?: string; programAddress?: string } = {
                 labels: ctx.wizard.state.labels,
-                limit: 10, // Limit to 10 for Telegram message size
-                sortByDesc: 'dau', // Sort by daily active users descending
-            });
+                limit: 10,
+                sortByDesc: 'dau',
+            };
+
+            if (ctx.wizard.state.programAddress) {
+                params.programAddress = ctx.wizard.state.programAddress;
+            }
+
+            const programs = await this.programsService.getPrograms(params);
 
             if (!programs || programs.length === 0) {
                 await ctx.replyWithHTML(
@@ -69,7 +86,7 @@ export class ProgramsScene {
 
             const message = programs
                 .map((program, i) => {
-                    const programId = program.programId;
+                    const programId = formatAddress(program.programId);
                     const labels = program.labels.filter((label) => label).join(', ') || 'None';
                     const dau = program.dau.toLocaleString();
                     const transactions = program.transactions1d.toLocaleString();

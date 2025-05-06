@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress } from '../../utils';
+import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
 import { ProgramIxCountWizardState } from '../../types';
 
 export const PROGRAM_IX_COUNT_SCENE_ID = 'PROGRAM_IX_COUNT_SCENE';
@@ -15,15 +15,6 @@ export const PROGRAM_IX_COUNT_SCENE_ID = 'PROGRAM_IX_COUNT_SCENE';
 @Wizard(PROGRAM_IX_COUNT_SCENE_ID)
 export class ProgramIxCountScene {
     private readonly logger = new Logger(ProgramIxCountScene.name);
-
-    private readonly rangeMap: { [key: string]: string } = {
-        '4h': '4h',
-        '12h': '12h',
-        '24h': '24h',
-        '1d': '1d',
-        '7d': '7d',
-        '30d': '30d',
-    };
 
     constructor(
         private readonly programsService: ProgramsService,
@@ -33,11 +24,20 @@ export class ProgramIxCountScene {
     @WizardStep(1)
     async askProgramAddress(@Ctx() ctx: WizardContext & { wizard: { state: ProgramIxCountWizardState } }) {
         try {
-            await ctx.replyWithHTML(
-                BOT_MESSAGES.PROGRAM_IX_COUNT.ASK_PROGRAM_ADDRESS,
-                { reply_markup: this.keyboard.getProgramIxCountKeyboard().reply_markup }
-            );
-            ctx.wizard.next();
+            const { programAddress } = ctx.wizard.state;
+            this.logger.debug(`Scene state: ${JSON.stringify(ctx.wizard.state)}`);
+
+            if (programAddress && isValidSolanaAddress(programAddress)) {
+                ctx.wizard.state.programAddress = programAddress;
+                await this.askRange(ctx);
+            } else {
+                this.logger.debug('No valid programAddress provided, prompting user');
+                await ctx.replyWithHTML(
+                    BOT_MESSAGES.PROGRAM_IX_COUNT.ASK_PROGRAM_ADDRESS,
+                    { reply_markup: this.keyboard.getProgramIxCountKeyboard().reply_markup }
+                );
+                ctx.wizard.next();
+            }
         } catch (error) {
             this.logger.error(`Error in ask program address step: ${error.message}`);
             await ctx.scene.leave();
@@ -47,16 +47,19 @@ export class ProgramIxCountScene {
     @WizardStep(2)
     async askRange(@Ctx() ctx: WizardContext & { wizard: { state: ProgramIxCountWizardState } }) {
         try {
-            const messageText = (ctx.message as { text: string })?.text;
-            if (!messageText) {
-                await ctx.replyWithHTML(
-                    BOT_MESSAGES.ERROR.INVALID_FORMAT,
-                    { reply_markup: this.keyboard.getProgramIxCountKeyboard().reply_markup }
-                );
-                return;
+            if (!ctx.wizard.state.programAddress) {
+                const messageText = (ctx.message as { text: string })?.text;
+                if (!messageText || !isValidSolanaAddress(messageText)) {
+                    this.logger.warn(`Invalid user-provided program address: ${messageText}`);
+                    await ctx.replyWithHTML(
+                        BOT_MESSAGES.ERROR.INVALID_FORMAT,
+                        { reply_markup: this.keyboard.getProgramIxCountKeyboard().reply_markup }
+                    );
+                    return;
+                }
+                ctx.wizard.state.programAddress = messageText;
             }
 
-            ctx.wizard.state.programAddress = messageText;
             await ctx.replyWithHTML(
                 BOT_MESSAGES.PROGRAM_IX_COUNT.ASK_RANGE,
                 {
@@ -88,13 +91,15 @@ export class ProgramIxCountScene {
     @WizardStep(3)
     async handleIxCountQuery(@Ctx() ctx: WizardContext & { wizard: { state: ProgramIxCountWizardState } }) {
         try {
-            let range = (ctx.message as { text: string })?.text;
+            let range: string | undefined;
             if (ctx.updateType === 'callback_query') {
                 range = (ctx.callbackQuery as any).data.split(':')[1];
                 await ctx.answerCbQuery();
+            } else {
+                range = (ctx.message as { text: string })?.text;
             }
 
-            if (!range || !Object.values(this.rangeMap).includes(range)) {
+            if (!range || !['4h', '12h', '24h', '1d', '7d', '30d'].includes(range)) {
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.ERROR.INVALID_RANGE,
                     { reply_markup: this.keyboard.getProgramIxCountKeyboard().reply_markup }
@@ -159,12 +164,7 @@ export class ProgramIxCountScene {
         }
     }
 
-    @Action('range:4h')
-    @Action('range:12h')
-    @Action('range:24h')
-    @Action('range:1d')
-    @Action('range:7d')
-    @Action('range:30d')
+    @Action(/range:(4h|12h|24h|1d|7d|30d)/)
     async handleRangeSelection(@Ctx() ctx: WizardContext & { wizard: { state: ProgramIxCountWizardState } }) {
         await this.handleIxCountQuery(ctx);
     }

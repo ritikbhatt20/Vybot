@@ -84,7 +84,7 @@ Choose an option below or type a command:`,
     ERROR: {
         GENERIC: '❌ Something went wrong. Please try again later.',
         API_ERROR: '❌ Failed to fetch data from the API. Please try again later.',
-        INVALID_FORMAT: '❌ Invalid format. Please provide a valid Solana address or filter.',
+        INVALID_FORMAT: '❌ Invalid format. Please provide a valid Solana address or program name.',
         INVALID_TIMESTAMP: '❌ Invalid timestamp. Please provide a valid Unix timestamp.',
         INVALID_INTERVAL: '❌ Invalid interval. Please select Hourly, Daily, or Weekly.',
         INVALID_AMOUNT: '❌ Invalid amount. Please provide a valid number.',
@@ -311,10 +311,10 @@ Examples:
     TOKEN_HOLDERS: {
         ASK_MINT_ADDRESS: `👥 <b>Top Token Holders</b>
 
-Enter a token mint address to view its top holders:
+Enter a token mint address or name (e.g., SOL, USDC) to view its top holders:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
         SEARCHING: '🔍 <b>Fetching top token holders...</b>',
         NO_RESULTS: '🔍 <b>No top token holders found for this mint address</b>',
         RESULTS_HEADER: '👥 <b>Top Token Holders</b>\n\n',
@@ -323,10 +323,10 @@ Example:
     TOKEN_DETAILS: {
         ASK_MINT_ADDRESS: `📋 <b>Token Details</b>
 
-Enter a token mint address to view its details:
+Enter a token mint address or name (e.g., SOL, USDC) to view its details:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
         SEARCHING: '🔍 <b>Fetching token details...</b>',
         NO_RESULTS: '🔍 <b>No details found for this token</b>',
         RESULTS_HEADER: '📋 <b>Token Details</b>\n\n',
@@ -335,10 +335,10 @@ Example:
     TOKEN_VOLUME: {
         ASK_MINT_ADDRESS: `📈 <b>Token Volume Time Series</b>
 
-Enter a token mint address to view its volume trends:
+Enter a token mint address or name (e.g., SOL, USDC) to view its volume trends:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
@@ -365,10 +365,10 @@ Options: Hourly, Daily, Weekly`,
     TOKEN_HOLDERS_TS: {
         ASK_MINT_ADDRESS: `📊 <b>Token Holders Time Series</b>
 
-Enter a token mint address to view its holders trends:
+Enter a token mint address or name (e.g., SOL, USDC) to view its holders trends:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
@@ -390,10 +390,10 @@ Example:
     TOKEN_TRANSFERS: {
         ASK_MINT_ADDRESS: `💸 <b>Token Transfers</b>
 
-Enter a token mint address to view its transfer transactions:
+Enter a token mint address or name (e.g., SOL, USDC) to view its transfer transactions:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
@@ -427,10 +427,10 @@ Example:
     TOKEN_TRADES: {
         ASK_MINT_ADDRESS: `📊 <b>Token Trades</b>
 
-Enter a token mint address to view its trade transactions:
+Enter a token mint address or name (e.g., SOL, USDC) to view its trade transactions:
 
 Example:
-• <code>4vPTz6bXmxsgJRUoetsdBaHTkU14khdKsmjs6rJRbLxj</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
@@ -457,10 +457,10 @@ Options: Hourly, Daily, Weekly, Monthly, Yearly`,
     TOKEN_OHLCV: {
         ASK_MINT_ADDRESS: `📊 <b>Token OHLCV</b>
 
-Enter a token mint address to view its OHLCV data:
+Enter a token mint address or name (e.g., SOL, USDC) to view its OHLCV data:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
@@ -486,11 +486,12 @@ Options: 1m, 5m, 15m, 30m, 1h, 4h, 1d, 1w, 1mo`,
     PROGRAMS: {
         ASK_FILTER: `🛠️ <b>Programs Filter</b>
 
-Enter label filters or press Fetch All to see all Solana programs with on-chain IDLs:
+Enter a Solana program name (e.g., Serum, Raydium) or address to filter programs, or press Fetch All to see all programs:
 
 Examples:
-• <code>DEFI,NFT</code> - Find programs with these labels
-• <code>WALLET</code> - Filter by a single label`,
+• <code>Serum</code> - Search by program name
+• <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code> - Search by program address
+• <code>DEFI,NFT</code> - Filter by labels`,
         SEARCHING: '🔍 <b>Fetching programs...</b>',
         NO_RESULTS: '🔍 <b>No programs found matching your criteria</b>',
         RESULTS_HEADER: '🛠️ <b>Solana Programs</b>\n\n',
@@ -499,10 +500,10 @@ Examples:
     PROGRAM_TX_COUNT: {
         ASK_PROGRAM_ADDRESS: `📈 <b>Program Transaction Count Time Series</b>
 
-Enter a program address to view its transaction count trends:
+Enter a Solana program name (e.g., Serum, Raydium) or address to view its transaction count trends:
 
 Example:
-• <code>SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf</code>`,
+• <code>Serum</code> or <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
         ASK_RANGE: `⏰ <b>Time Range</b>
 
 Select the time range for transaction count data:
@@ -516,10 +517,10 @@ Options: 4 Hours, 12 Hours, 24 Hours, 1 Day, 7 Days, 30 Days`,
     PROGRAM_IX_COUNT: {
         ASK_PROGRAM_ADDRESS: `📈 <b>Program Instruction Count Time Series</b>
 
-Enter a program address to view its instruction count trends:
+Enter a Solana program name (e.g., Serum, Raydium) or address to view its instruction count trends:
 
 Example:
-• <code>SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf</code>`,
+• <code>Serum</code> or <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
         ASK_RANGE: `⏰ <b>Time Range</b>
 
 Select the time range for instruction count data:
@@ -533,10 +534,10 @@ Options: 4 Hours, 12 Hours, 24 Hours, 1 Day, 7 Days, 30 Days`,
     PROGRAM_ACTIVE_USERS_TS: {
         ASK_PROGRAM_ADDRESS: `📈 <b>Program Active Users Time Series</b>
 
-Enter a program address to view its active users time series trends:
+Enter a Solana program name (e.g., Serum, Raydium) or address to view its active users time series trends:
 
 Example:
-• <code>SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf</code>`,
+• <code>Serum</code> or <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
         ASK_RANGE: `⏰ <b>Time Range</b>
 
 Select the time range for active users time series data:
@@ -550,10 +551,10 @@ Options: 4 Hours, 12 Hours, 24 Hours, 1 Day, 7 Days, 30 Days`,
     PROGRAM_ACTIVE_USERS: {
         ASK_PROGRAM_ADDRESS: `📈 <b>Program Active Users</b>
 
-Enter a program address to view its active users:
+Enter a Solana program name (e.g., Serum, Raydium) or address to view its active users:
 
 Example:
-• <code>SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf</code>`,
+• <code>Serum</code> or <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
         ASK_DAYS: `⏰ <b>Time Period</b>
 
 Select the number of previous days to include (1 to 30, default is 14):
@@ -572,10 +573,10 @@ Options: By Transaction Count or Instruction Count, High to Low or Low to High`,
     PROGRAM_DETAILS: {
         ASK_PROGRAM_ADDRESS: `📋 <b>Program Details</b>
 
-Enter a program address to view its details:
+Enter a Solana program name (e.g., Serum, Raydium) or address to view its details:
 
 Example:
-• <code>SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf</code>`,
+• <code>Serum</code> or <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
         SEARCHING: '🔍 <b>Fetching program details...</b>',
         NO_RESULTS: '🔍 <b>No details found for this program</b>',
         RESULTS_HEADER: '📋 <b>Program Details</b>\n\n',

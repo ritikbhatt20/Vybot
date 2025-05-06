@@ -416,3 +416,8 @@ export interface PythPriceError {
     message: string;
     id: string;
 }
+
+export interface ProgramsWizardState {
+    labels?: string[];
+    programAddress?: string;
+}

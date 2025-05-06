@@ -126,6 +126,7 @@ export class AppUpdate {
             this.logger.log(
                 `Detected intent: ${intent.command}` +
                 (intent.mintAddress ? ` with mintAddress: ${intent.mintAddress}` : '') +
+                (intent.programAddress ? ` with programAddress: ${intent.programAddress}` : '') +
                 ` for message: ${messageText}`,
             );
 
@@ -143,9 +144,8 @@ export class AppUpdate {
                     await ctx.scene.leave();
                 }
                 await ctx.replyWithHTML(BOT_MESSAGES.CANCEL, {
-                    reply_markup: this.keyboard.getMainKeyboard().reply_markup
-                },
-                );
+                    reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+                });
                 return;
             }
 
@@ -154,10 +154,23 @@ export class AppUpdate {
                 await ctx.reply(
                     `🔍 Processing your request for ${intent.command
                         .replace(/([A-Z])/g, ' $1')
-                        .toLowerCase()}${intent.mintAddress ? ' (token identified)' : ''}...`,
+                        .toLowerCase()}${intent.mintAddress
+                        ? ' (token identified)'
+                        : intent.programAddress
+                            ? ' (program identified)'
+                            : ''
+                    }...`,
                 );
-                // Pass mintAddress as an argument to the scene
-                await ctx.scene.enter(intent.sceneId, { mintAddress: intent.mintAddress });
+                // Pass mintAddress and programAddress to the scene state
+                const sceneState: { mintAddress?: string; programAddress?: string } = {};
+                if (intent.mintAddress) {
+                    sceneState.mintAddress = intent.mintAddress;
+                }
+                if (intent.programAddress) {
+                    sceneState.programAddress = intent.programAddress;
+                }
+                this.logger.debug(`Entering scene ${intent.sceneId} with state: ${JSON.stringify(sceneState)}`);
+                await ctx.scene.enter(intent.sceneId, sceneState);
             } else {
                 await ctx.replyWithHTML(
                     `❌ Unable to process request for ${intent.command}. Try /help for more options.`,

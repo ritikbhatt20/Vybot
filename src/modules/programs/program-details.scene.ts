@@ -7,7 +7,7 @@ import { KeyboardService } from '../shared/keyboard.service';
 import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
-import { handleErrorResponse, formatAddress } from '../../utils';
+import { handleErrorResponse, formatAddress, isValidSolanaAddress } from '../../utils';
 import { ProgramDetailsWizardState } from '../../types';
 
 export const PROGRAM_DETAILS_SCENE_ID = 'PROGRAM_DETAILS_SCENE';
@@ -24,11 +24,20 @@ export class ProgramDetailsScene {
     @WizardStep(1)
     async askProgramAddress(@Ctx() ctx: WizardContext & { wizard: { state: ProgramDetailsWizardState } }) {
         try {
-            await ctx.replyWithHTML(
-                BOT_MESSAGES.PROGRAM_DETAILS.ASK_PROGRAM_ADDRESS,
-                { reply_markup: this.keyboard.getProgramDetailsKeyboard().reply_markup }
-            );
-            ctx.wizard.next();
+            const { programAddress } = ctx.scene.state as { programAddress?: string };
+            this.logger.debug(`Scene state programAddress: ${programAddress}`);
+
+            if (programAddress && isValidSolanaAddress(programAddress)) {
+                ctx.wizard.state.programAddress = programAddress;
+                await this.handleProgramDetailsQuery(ctx);
+            } else {
+                this.logger.debug('No valid programAddress provided, prompting user');
+                await ctx.replyWithHTML(
+                    BOT_MESSAGES.PROGRAM_DETAILS.ASK_PROGRAM_ADDRESS,
+                    { reply_markup: this.keyboard.getProgramDetailsKeyboard().reply_markup }
+                );
+                ctx.wizard.next();
+            }
         } catch (error) {
             this.logger.error(`Error in ask program address step: ${error.message}`);
             await ctx.scene.leave();
@@ -38,20 +47,22 @@ export class ProgramDetailsScene {
     @WizardStep(2)
     async handleProgramDetailsQuery(@Ctx() ctx: WizardContext & { wizard: { state: ProgramDetailsWizardState } }) {
         try {
-            const messageText = (ctx.message as { text: string })?.text;
-            if (!messageText) {
-                await ctx.replyWithHTML(
-                    BOT_MESSAGES.ERROR.INVALID_FORMAT,
-                    { reply_markup: this.keyboard.getProgramDetailsKeyboard().reply_markup }
-                );
-                return;
+            if (!ctx.wizard.state.programAddress) {
+                const messageText = (ctx.message as { text: string })?.text;
+                if (!messageText || !isValidSolanaAddress(messageText)) {
+                    this.logger.warn(`Invalid user-provided program address: ${messageText}`);
+                    await ctx.replyWithHTML(
+                        BOT_MESSAGES.ERROR.INVALID_FORMAT,
+                        { reply_markup: this.keyboard.getProgramDetailsKeyboard().reply_markup }
+                    );
+                    return;
+                }
+                ctx.wizard.state.programAddress = messageText;
             }
-
-            ctx.wizard.state.programAddress = messageText;
 
             await ctx.replyWithHTML(BOT_MESSAGES.PROGRAM_DETAILS.SEARCHING);
 
-            const program = await this.programsService.getProgramDetails(messageText);
+            const program = await this.programsService.getProgramDetails(ctx.wizard.state.programAddress);
 
             if (!program) {
                 await ctx.replyWithHTML(
@@ -62,7 +73,7 @@ export class ProgramDetailsScene {
                 return;
             }
 
-            const programId = program.programId;
+            const programId = formatAddress(program.programId);
             const name = program.name || 'N/A';
             const friendlyName = program.friendlyName || 'N/A';
             const entityName = program.entityName || 'N/A';
