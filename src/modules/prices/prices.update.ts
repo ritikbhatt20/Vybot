@@ -11,6 +11,7 @@ import { PYTH_PRICE_TS_SCENE_ID } from './pyth-price-ts.scene';
 import { PYTH_PRICE_OHLC_SCENE_ID } from './pyth-price-olhc.scene';
 import { PYTH_PRODUCT_SCENE_ID } from './pyth-product.scene';
 import { DEX_AMM_SCENE_ID } from './dex-amm.scene';
+import { TOKEN_PRICE_SCENE_ID } from './token-price.scene';
 import { BOT_MESSAGES } from '../../constants';
 
 @Update()
@@ -28,6 +29,34 @@ export class PricesUpdate {
             });
         } catch (error) {
             this.logger.error(`Error accessing prices menu: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action(Actions.TOKEN_PRICE)
+    async onTokenPrice(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('💸 Accessing token price explorer...');
+            await ctx.scene.enter(TOKEN_PRICE_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering token price scene: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.TokenPrice)
+    async handleTokenPrice(@Ctx() ctx: Context & SceneContext) {
+        try {
+            const [message] = await Promise.allSettled([
+                ctx.reply('💸 Opening token price explorer...'),
+                ctx.scene.enter(TOKEN_PRICE_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling token price command: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

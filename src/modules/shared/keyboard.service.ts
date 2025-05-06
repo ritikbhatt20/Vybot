@@ -111,6 +111,9 @@ export class KeyboardService {
     getPricesKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [
+                Markup.button.callback('💰 Token Prices', Actions.TOKEN_PRICE),
+            ],
+            [
                 Markup.button.callback('📈 Pyth Accounts', Actions.PYTH_ACCOUNTS),
                 Markup.button.callback('📊 Pyth Price OHLC', Actions.PYTH_PRICE_OHLC),
             ],
@@ -597,6 +600,26 @@ export class KeyboardService {
     getMarketsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Try Again', SceneActions.MARKETS_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
+            [
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getTokenPriceKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [
+                Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+            ],
+        ]);
+    }
+
+    getTokenPriceResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Try Again', SceneActions.TOKEN_PRICE_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),

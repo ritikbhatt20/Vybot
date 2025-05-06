@@ -26,6 +26,7 @@ export enum Commands {
     PythProduct = 'pythproduct',
     DexAmm = 'dexamm',
     Markets = 'markets',
+    TokenPrice = 'tokenprice',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',

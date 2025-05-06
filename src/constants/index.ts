@@ -17,6 +17,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.TokenHoldersTs]: '/tokenholdersts - 📊 View token holders time series for a Solana token',
     [Commands.TokenTransfers]: '/tokentransfers - 💸 View token transfer transactions for a Solana token',
     [Commands.TokenTrades]: '/tokentrades - 📊 View token trade transactions for a Solana token',
+    [Commands.TokenOhlcv]: '/tokenohlcv - 📊 View token OHLCV price data',
     [Commands.Programs]: '/programs - 🛠️ View Solana programs with on-chain IDLs',
     [Commands.ProgramTxCount]: '/programtxcount - 📈 View transaction count time series for a Solana program',
     [Commands.ProgramIxCount]: '/programixcount - 📈 View instruction count time series for a Solana program',
@@ -28,10 +29,10 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.PythPrice]: '/pythprice - 💸 View Pyth oracle price data for a price feed',
     [Commands.PythPriceTs]: '/pythpricets - 📈 View Pyth oracle price time series data',
     [Commands.PythPriceOhlc]: '/pythpriceohlc - 📊 View Pyth oracle OHLC price data',
-    [Commands.TokenOhlcv]: '/tokenohlcv - 📊 View token OHLCV price data',
     [Commands.PythProduct]: '/pythproduct - 📋 View Pyth oracle product metadata',
     [Commands.DexAmm]: '/dexamm - 🛠️ View DEX and AMM programs for trades and prices',
     [Commands.Markets]: '/markets - 📊 View available markets for a Solana program',
+    [Commands.TokenPrice]: '/tokenprice - 💰 View token price and 24h price change for a Solana token',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
@@ -56,6 +57,7 @@ Use /knownaccounts to explore labeled accounts
 /tokenholdersts to view token holders trends
 /tokentransfers to view token transfers
 /tokentrades to view token trades
+/tokenohlcv to view token OHLCV price data
 /programs to view Solana programs
 /programtxcount to view program transaction counts
 /programixcount to view program instruction counts
@@ -67,10 +69,10 @@ Use /knownaccounts to explore labeled accounts
 /pythprice to view Pyth oracle price data
 /pythpricets to view Pyth oracle price time series
 /pythpriceohlc to view Pyth oracle OHLC price data
-/tokenohlcv to view token OHLCV price data
 /pythproduct to view Pyth oracle product metadata
 /dexamm to view DEX and AMM programs
 /markets to view available markets
+/tokenprice to view token price and 24h price change
 or type /help to see all available commands.`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
@@ -265,6 +267,17 @@ Example:
             SEARCHING: '🔍 <b>Fetching DEX and AMM programs...</b>',
             NO_RESULTS: '🔍 <b>No DEX or AMM programs found</b>',
             RESULTS_HEADER: '🛠️ <b>DEX and AMM Programs</b>\n\n',
+        },
+        TOKEN_PRICE: {
+            ASK_MINT_ADDRESS: `💰 <b>Token Price Explorer</b>
+
+Enter a Solana mint address to view the token price and 24h change:
+
+Example:
+• <code>So11111111111111111111111111111111111111112</code>`,
+            SEARCHING: '🔍 <b>Fetching token price...</b>',
+            NO_RESULTS: '❌ <b>No price data found for the given mint address</b>',
+            RESULTS_HEADER: '<b>Token Price Data</b>\n\n',
         },
     },
 

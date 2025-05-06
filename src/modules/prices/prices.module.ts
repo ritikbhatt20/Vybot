@@ -7,10 +7,12 @@ import { PythPriceTsScene } from './pyth-price-ts.scene';
 import { PythPriceOhlcScene } from './pyth-price-olhc.scene';
 import { PythProductScene } from './pyth-product.scene';
 import { DexAmmScene } from './dex-amm.scene';
+import { TokenPriceScene } from './token-price.scene';
 import { SharedModule } from '../shared/shared.module';
+import { TokensModule } from '../tokens/tokens.module';
 
 @Module({
-    imports: [SharedModule],
+    imports: [SharedModule, TokensModule],
     providers: [
         PricesService,
         PricesUpdate,
@@ -20,6 +22,7 @@ import { SharedModule } from '../shared/shared.module';
         PythPriceOhlcScene,
         PythProductScene,
         DexAmmScene,
+        TokenPriceScene,
     ],
     exports: [PricesService],
 })

@@ -1,12 +1,43 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { VybeApiService } from '../shared/vybe-api.service';
+import { TokensService } from '../tokens/tokens.service';
 import { PythAccount, PythAccountsResponse, PythPrice, PythPriceTsResponse, PythPriceOhlcResponse, PythProduct, DexAmmResponse, PythPriceError, DexAmmProgram, PythPriceOhlc } from '../../types';
 
 @Injectable()
 export class PricesService {
     private readonly logger = new Logger(PricesService.name);
 
-    constructor(private readonly vybeApi: VybeApiService) { }
+    constructor(
+        private readonly vybeApi: VybeApiService,
+        private readonly tokensService: TokensService
+    ) { }
+
+    async getTokenPrice(mintAddress: string): Promise<{
+        name: string;
+        symbol: string;
+        currentPrice: number;
+    } | null> {
+        this.logger.debug(`Fetching token price for mintAddress: ${mintAddress}`);
+
+        try {
+            const token = await this.tokensService.getTokenDetails(mintAddress);
+            if (!token) {
+                this.logger.warn(`No token details found for mintAddress: ${mintAddress}`);
+                return null;
+            }
+
+            this.logger.debug(`Fetched token price for ${mintAddress}: current=${token.price}`);
+
+            return {
+                name: token.name || 'Unknown',
+                symbol: token.symbol || 'N/A',
+                currentPrice: token.price,
+            };
+        } catch (error) {
+            this.logger.error(`Failed to fetch token price for ${mintAddress}: ${error.message}`, error.stack);
+            throw error;
+        }
+    }
 
     async getPythAccounts(params: {
         productId?: string;

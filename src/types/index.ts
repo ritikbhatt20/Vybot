@@ -421,3 +421,7 @@ export interface ProgramsWizardState {
     labels?: string[];
     programAddress?: string;
 }
+
+export interface TokenPriceWizardState {
+    mintAddress?: string;
+}

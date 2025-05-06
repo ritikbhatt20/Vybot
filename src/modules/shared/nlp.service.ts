@@ -181,6 +181,11 @@ export class NlpService {
             exactPhrases: ['markets', 'trading markets'],
         },
         {
+            command: Commands.TokenPrice,
+            keywords: ['token price', 'token price change', 'price of token'],
+            exactPhrases: ['token price'],
+        },
+        {
             command: Commands.HELP,
             keywords: ['help', 'commands', 'how to use'],
             exactPhrases: ['help', 'commands'],
@@ -225,6 +230,7 @@ export class NlpService {
         [Commands.PythProduct]: 'PYTH_PRODUCT_SCENE',
         [Commands.DexAmm]: 'DEX_AMM_SCENE',
         [Commands.Markets]: 'MARKETS_SCENE',
+        [Commands.TokenPrice]: 'TOKEN_PRICE_SCENE',
         [Commands.HELP]: '',
         [Commands.MAIN_MENU]: '',
         [Commands.Cancel]: '',
@@ -256,7 +262,7 @@ export class NlpService {
                             const ofMatch = lowerMessage.match(/of\s+(.+)/);
                             if (ofMatch) {
                                 const entity = ofMatch[1].trim();
-                                if ([Commands.TokenHolders, Commands.TokenDetails, Commands.TokenTrades, Commands.TokenHoldersTs, Commands.TokenOhlcv, Commands.TokenTransfers, Commands.TokenVolume].includes(intent.command)) {
+                                if ([Commands.TokenHolders, Commands.TokenDetails, Commands.TokenTrades, Commands.TokenHoldersTs, Commands.TokenOhlcv, Commands.TokenTransfers, Commands.TokenVolume, Commands.TokenPrice].includes(intent.command)) {
                                     extractedToken = entity;
                                 } else if ([Commands.ProgramTxCount, Commands.ProgramIxCount, Commands.ProgramActiveUsersTs, Commands.ProgramActiveUsers, Commands.ProgramDetails].includes(intent.command)) {
                                     extractedProgram = entity;
@@ -287,7 +293,7 @@ export class NlpService {
                         const ofMatch = lowerMessage.match(/of\s+(.+)/);
                         if (ofMatch) {
                             const entity = ofMatch[1].trim();
-                            if ([Commands.TokenHolders, Commands.TokenDetails, Commands.TokenTrades, Commands.TokenHoldersTs, Commands.TokenOhlcv, Commands.TokenTransfers, Commands.TokenVolume].includes(intent.command)) {
+                            if ([Commands.TokenHolders, Commands.TokenDetails, Commands.TokenTrades, Commands.TokenHoldersTs, Commands.TokenOhlcv, Commands.TokenTransfers, Commands.TokenVolume, Commands.TokenPrice].includes(intent.command)) {
                                 extractedToken = entity;
                             } else if ([Commands.ProgramTxCount, Commands.ProgramIxCount, Commands.ProgramActiveUsersTs, Commands.ProgramActiveUsers, Commands.ProgramDetails].includes(intent.command)) {
                                 extractedProgram = entity;
@@ -305,7 +311,7 @@ export class NlpService {
 
         // Step 3: Resolve token to mint address if extracted
         let mintAddress: string | undefined;
-        if (extractedToken && [Commands.TokenHolders, Commands.TokenDetails, Commands.TokenTrades, Commands.TokenHoldersTs, Commands.TokenOhlcv, Commands.TokenTransfers, Commands.TokenVolume].includes(bestMatch.command)) {
+        if (extractedToken && [Commands.TokenHolders, Commands.TokenDetails, Commands.TokenTrades, Commands.TokenHoldersTs, Commands.TokenOhlcv, Commands.TokenTransfers, Commands.TokenVolume, Commands.TokenPrice].includes(bestMatch.command)) {
             const normalizedToken = extractedToken.toLowerCase().trim();
             if (isValidSolanaAddress(normalizedToken)) {
                 mintAddress = normalizedToken;
