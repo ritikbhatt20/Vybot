@@ -57,7 +57,12 @@ export async function handleErrorResponse({
     try {
         logger.error(`API Error: ${error?.message}`, error?.stack);
 
-        const errorMessage = error?.response?.data?.message || defaultMessage;
+        let errorMessage = error?.response?.data?.message || defaultMessage;
+        // Customize message for timeout errors
+        if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+            errorMessage = '❌ API request timed out. The server is taking too long to respond. Please try again later.';
+        }
+
         let finalButtons = [...buttons];
 
         if (!ctx.scene?.current) {

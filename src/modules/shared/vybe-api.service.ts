@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axiosRetry from 'axios-retry';
 
 @Injectable()
 export class VybeApiService {
@@ -17,7 +18,20 @@ export class VybeApiService {
                 'X-API-KEY': apiKey,
                 'Accept': 'application/json',
             },
-            timeout: 10000, // 10 seconds timeout
+            timeout: 30000, // Increased to 30 seconds
+        });
+
+        // Configure retry mechanism
+        axiosRetry(this.axiosInstance, {
+            retries: 3, // Retry up to 3 times
+            retryDelay: (retryCount) => {
+                this.logger.warn(`Retry attempt #${retryCount}`);
+                return retryCount * 1000; // Exponential backoff: 1s, 2s, 3s
+            },
+            retryCondition: (error) => {
+                // Retry on timeout or network errors
+                return axiosRetry.isNetworkOrIdempotentRequestError(error) || error.code === 'ECONNABORTED';
+            },
         });
 
         // Add response interceptor for logging
