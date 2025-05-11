@@ -10,42 +10,67 @@ export class NlpService {
     private readonly stemmer = PorterStemmer;
 
     private readonly tokenMap: { [key: string]: string } = {
-        sol: 'So11111111111111111111111111111111111111112',
-        solana: 'So11111111111111111111111111111111111111112',
-        usdt: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-        usdc: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-        bonk: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
-        link: 'CWE8jPTUYhdCTZYWPTe1o5DFq8a4sCKSKi17dMZrCNd9',
-        ray: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
-        raydium: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
-        jup: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
-        jupiter: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
-        pyth: 'HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3',
-        grt: '7z4WPA4tV5QhQNq2ZJ2bA3HuW51tN7d2bAcuZPx2NDuC',
-        atlas: 'ATLASXmbPQxBUYbxPsV97usA3fPQYEqzQBUHyiRzV',
-        inj: '5BzvWG6RPR9N83z3DXD7EDd5DvaW4zCYanCmB7oYd1fP',
-        fart: '9vTapS6W2uz3o2qQ3wSLCxT14vYV8tVXb7k4FMsqSL5',
-        orca: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE',
-        wif: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm',
-        fartcoin: '9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump',
+        sol: 'So11111111111111111111111111111111111111112', // Wrapped SOL
+        solana: 'So11111111111111111111111111111111111111112', // Alias for Wrapped SOL
+        usdt: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // Tether USD
+        usdc: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', // USD Coin
+        bonk: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', // Bonk
+        link: 'CWE8jPTUYhdCTZYWPTe1o5DFq8a4sCKSKi17dMZrCNd9', // Chainlink
+        ray: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // Raydium
+        raydium: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // Alias for Raydium
+        jup: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN', // Jupiter
+        jupiter: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN', // Alias for Jupiter
+        pyth: 'HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3', // Pyth Network
+        grt: '7z4WPA4tV5QhQNq2ZJ2bA3HuW51tN7d2bAcuZPx2NDuC', // The Graph (Note: Limited presence on Solana)
+        atlas: 'ATLASXmbPQxBUYbxPsV97usA3fPQYEqzQBUHyiRzV', // Star Atlas
+        inj: '5BzvWG6RPR9N83z3DXD7EDd5DvaW4zCYanCmB7oYd1fP', // Injective (Note: Cross-chain, verify usage)
+        fart: '9vTapS6W2uz3o2qQ3wSLCxT14vYV8tVXb7k4FMsqSL5', // Fart (Less common, retained as provided)
+        orca: 'orcaEKTdK7LKz57vaAYr9QeNsVEPfiu6QeMU1kektZE', // Orca
+        wif: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', // Dogwifhat
+        fartcoin: '9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump', // Fartcoin
+        srm: 'SRMuApVNdxXekkYD7kqFN2pYcP4bG3bD7DJYMiu3V33', // Serum
+        msol: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So', // Marinade Staked SOL
+        saber: 'Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1', // Saber
+        fida: 'EchesyfXePKdLtoiZSL8pBe8Myagyy8ZRqsACNCFGnvp', // Bonfida
+        step: 'StepAscQoEioFxxWGnh2sLBDFp9d8rvKz2Yp39iDpyT', // Step Finance
+        cope: '8HGyAAB1yoM1ttS7JhaC9HswDz3JG8C9nPDyIES191ix', // COPE
+        popcat: '7GCihgDB8feCsgd7omT4LMf3VH6tNpeA4QJ6KRc4V3eN', // Popcat
+        shdw: 'SHDWyBxihqiCj6YekG2GUr7wqKLeLAMK1gHZck9pL6y', // Shadow Token
+        slnd: 'SLNDpmoWTVADgEdndyvWzroNL7zSi1dF9PC3xHGtPwp', // Solend
+        star: 'Po1mYGGYK5fW8qUKrEvD8HGjR6tW8JLT44U9z8Lzk2', // StarLaunch
+        mnde: 'MNDEFzGvMt87ueuHvVU9VcTqsAP5b3fTGPsHuuPA5ey', // Marinade
+        hnt: 'hntyVP6YFm1Hg25TN9WGLqM12b8TQmcknKrdu1oxWux', // Helium
+        audius: '9LzCMqDgTKJz9Drzqnpgee3SGa89up3a247ypqHcQkK', // Audius
+        kin: 'kinXdEcpDQeHPEuQnqmUgtYykqKGVFq6CeVX5iAHJq6', // Kin
     };
 
     private readonly programMap: { [key: string]: string } = {
-        serum: '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin',
-        raydium: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8',
-        orca: '9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP',
-        saber: 'Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1',
-        mango: 'mv3ekLzLbnVPNxjBw5r7V3NN8A5JbfmAcA6rrVMCQfs',
-        jupiter: 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4',
-        marinade: 'MarBmsSgKXdrN1egZf5sqe1TMThFZxD8Vq9Z6a17g5',
-        solend: 'So1endDq2YkqhipRh3WViPa8hdiSpxWy6z3Z6tMCpAo',
-        drift: 'dRiftyHA39Xt7KukA9PyLP4AfZciU3X2Z3bCnyFomV',
-        metaplex: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
-        squad: 'SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf',
-        openbook: 'srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX',
-        aldebaran: 'ALBRvN1uU3y8qV7jw2uUZYz9mZ3gUY4e2kA2FRoUJoVR',
-        kamino: 'KLend2g3cP87fffoy8q1mQqGKjCHnf66L4Lvpm7Su8f',
-        mercurial: 'MERLuDFBMmsHnsBPZw2sDQZHvXFMwp8EdjudcU2HKky',
+        serum: '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin', // Serum DEX
+        raydium: '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8', // Raydium AMM
+        orca: '9W959DqEETiGZocYWCQPaJ6sBmUzgfxXfqGeTEdp3aQP', // Orca DEX
+        saber: 'Saber2gLauYim4Mvftnrasomsv6NvAuncvMEZwcLpD1', // Saber Protocol
+        mango: 'mv3ekLzLbnVPNxjBw5r7V3NN8A5JbfmAcA6rrVMCQfs', // Mango Markets
+        jupiter: 'JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4', // Jupiter Aggregator
+        marinade: 'MarBmsSgKXdrN1egZf5sqe1TMThFZxD8Vq9Z6a17g5', // Marinade Finance
+        solend: 'So1endDq2YkqhipRh3WViPa8hdiSpxWy6z3Z6tMCpAo', // Solend Lending
+        drift: 'dRiftyHA39Xt7KukA9PyLP4AfZciU3X2Z3bCnyFomV', // Drift Protocol
+        metaplex: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s', // Metaplex NFT
+        squad: 'SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf', // Squads Protocol
+        openbook: 'srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX', // OpenBook DEX
+        aldebaran: 'ALBRvN1uU3y8qV7jw2uUZYz9mZ3gUY4e2kA2FRoUJoVR', // Aldebaran
+        kamino: 'KLend2g3cP87fffoy8q1mQqGKjCHnf66L4Lvpm7Su8f', // Kamino Finance
+        mercurial: 'MERLuDFBMmsHnsBPZw2sDQZHvXFMwp8EdjudcU2HKky', // Mercurial Finance
+        token: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', // SPL Token Program
+        token2022: 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb', // Token-2022 Program
+        associatedtoken: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL', // Associated Token Program
+        system: '11111111111111111111111111111111', // System Program
+        stake: 'Stake11111111111111111111111111111111111111', // Stake Program
+        pyth: 'FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH', // Pyth Oracle Program
+        wormhole: 'worm2ZoG2kUd4vFXhvjh93UX40H55xMofA6MNewszfDid', // Wormhole Bridge
+        switchboard: 'SW1TCH7qEPTdLsDHRgPuAbEkxQECbBjRZsu4ESVQRhg', // Switchboard Oracle
+        lido: 'CrX7kMhLC3cSsXJdT7JDgfyhA3Er7T4hJff8A93Zf2vw', // Lido for Solana
+        zeta: 'ZETAx4NhZ81f6P8nuoQgsyA1gqX8sG6voU8Y4R5K4s5', // Zeta Markets
+        phoenix: 'PHX4pJykNDTuH7M2hG5q4hDHozrJQMvJ7y3QWpni2F3', // Phoenix Protocol
     };
 
     private readonly intentMap: { command: Commands; keywords: string[]; exactPhrases?: string[] }[] = [
