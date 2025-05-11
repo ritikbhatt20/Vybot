@@ -9,6 +9,9 @@ import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
 import { handleErrorResponse, isValidSolanaAddress, escapeMarkdownV2 } from '../../utils';
 import { ProgramsWizardState } from '../../types';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import { InputFile } from 'telegraf/typings/core/types/typegram';
 
 export const PROGRAMS_SCENE_ID = 'PROGRAMS_SCENE';
 
@@ -199,6 +202,7 @@ export class ProgramsScene {
     }
 
     async fetchAll(@Ctx() ctx: WizardContext & { wizard: { state: ProgramsWizardState }, session: CustomSession }) {
+        let tempFilePath: string | undefined;
         try {
             this.logger.debug(`Processing fetchAll, session: ${JSON.stringify(ctx.session)}`);
 
@@ -220,14 +224,15 @@ export class ProgramsScene {
 
             await ctx.replyWithHTML(BOT_MESSAGES.PROGRAMS.SEARCHING);
 
-            const params: { limit: number; sortByDesc: string } = {
-                limit: 10,
+            // Fetch all programs (no limit or high limit)
+            const params: { sortByDesc: string } = {
                 sortByDesc: 'dau',
             };
 
-            const programs = await this.programsService.getPrograms(params);
+            const allPrograms = await this.programsService.getPrograms(params);
+            this.logger.debug(`Fetched ${allPrograms.length} programs`);
 
-            if (!programs || programs.length === 0) {
+            if (!allPrograms || allPrograms.length === 0) {
                 this.logger.debug('No programs found for fetchAll');
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.PROGRAMS.NO_RESULTS,
@@ -238,7 +243,9 @@ export class ProgramsScene {
                 return;
             }
 
-            const message = programs
+            // Display up to 10 programs in the reply
+            const displayPrograms = allPrograms.slice(0, 10);
+            const message = displayPrograms
                 .map((program, i) => {
                     const name = escapeMarkdownV2(program.name || 'Unnamed Program');
                     const programId = escapeMarkdownV2(program.programId);
@@ -263,6 +270,39 @@ export class ProgramsScene {
                 { reply_markup: this.keyboard.getProgramsResultsKeyboard().reply_markup }
             );
 
+            // Generate JSON file with all programs
+            const timestamp = new Date().toISOString().split('T')[0]; // e.g., 2025-05-11
+            const fileName = `all_programs_${timestamp}.json`;
+            tempFilePath = path.join('/tmp', fileName);
+            const fileContent = JSON.stringify(allPrograms, null, 2); // Pretty print JSON
+
+            // Check file size (Telegram limit: 50MB)
+            const fileSizeBytes = Buffer.byteLength(fileContent, 'utf8');
+            const fileSizeMB = fileSizeBytes / (1024 * 1024);
+            if (fileSizeMB > 50) {
+                this.logger.warn(`File size (${fileSizeMB.toFixed(2)} MB) exceeds Telegram limit of 50 MB`);
+                await ctx.replyWithHTML(
+                    '⚠️ The complete program list is too large to send as a file (>50 MB). Displaying top 10 programs only.',
+                    { reply_markup: this.keyboard.getProgramsResultsKeyboard().reply_markup }
+                );
+                await ctx.scene.leave();
+                ctx.session = {};
+                return;
+            }
+
+            // Write file
+            await fs.writeFile(tempFilePath, fileContent);
+            this.logger.debug(`Wrote ${allPrograms.length} programs to ${tempFilePath}`);
+
+            // Send file as document
+            await ctx.replyWithDocument(
+                { source: tempFilePath, filename: fileName },
+                {
+                    caption: `📄 Complete list of ${allPrograms.length} programs (JSON format).`,
+                    reply_markup: this.keyboard.getProgramsResultsKeyboard().reply_markup,
+                }
+            );
+
             await ctx.scene.leave();
             ctx.session = {};
         } catch (error) {
@@ -279,6 +319,16 @@ export class ProgramsScene {
             // Reset fetching flag
             if (ctx.session.__scenes) {
                 ctx.session.__scenes.isFetching = false;
+            }
+
+            // Clean up temporary file
+            if (tempFilePath) {
+                try {
+                    await fs.unlink(tempFilePath);
+                    this.logger.debug(`Deleted temporary file ${tempFilePath}`);
+                } catch (err) {
+                    this.logger.error(`Failed to delete temporary file ${tempFilePath}: ${err.message}`);
+                }
             }
         }
     }

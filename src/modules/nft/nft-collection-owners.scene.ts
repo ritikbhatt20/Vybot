@@ -8,6 +8,8 @@ import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
 import { handleErrorResponse, isValidSolanaAddress, escapeMarkdownV2 } from '../../utils';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 export const NFT_COLLECTION_OWNERS_SCENE_ID = 'NFT_COLLECTION_OWNERS_SCENE';
 
@@ -19,6 +21,7 @@ interface WizardSessionData {
     cursor: number;
     current: string;
     state: NftCollectionOwnersWizardState;
+    isFetching?: boolean; // Flag to prevent concurrent fetches
 }
 
 interface CustomSession {
@@ -44,7 +47,8 @@ export class NftCollectionOwnersScene {
             ctx.session.__scenes = ctx.session.__scenes || {
                 cursor: 0,
                 current: NFT_COLLECTION_OWNERS_SCENE_ID,
-                state: {}
+                state: {},
+                isFetching: false
             };
 
             await ctx.replyWithHTML(
@@ -56,16 +60,35 @@ export class NftCollectionOwnersScene {
             ctx.session.__scenes.cursor = 1;
             this.logger.debug(`Advanced to step 2, cursor: ${ctx.wizard.cursor}, session: ${JSON.stringify(ctx.session)}`);
         } catch (error) {
-            this.logger.error(`Error in askCollectionAddress: ${error.message}`);
+            this.logger.error(`Error in askCollectionAddress: ${error.message}, stack: ${error.stack}`);
             await ctx.scene.leave();
             ctx.session = {};
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.NFT_OWNERS_AGAIN }],
+            });
         }
     }
 
     @WizardStep(2)
     async handleOwnersQuery(@Ctx() ctx: WizardContext & { wizard: { state: NftCollectionOwnersWizardState }, session: CustomSession }) {
+        let tempFilePath: string | undefined;
         try {
             this.logger.debug(`Processing ${NFT_COLLECTION_OWNERS_SCENE_ID}, step 2: handleOwnersQuery, updateType: ${ctx.updateType}, scene: ${ctx.scene.current?.id}, cursor: ${ctx.wizard.cursor}, session: ${JSON.stringify(ctx.session)}`);
+
+            // Prevent processing if already fetching
+            if (ctx.session.__scenes?.isFetching) {
+                this.logger.warn('Fetch already in progress, ignoring request');
+                await ctx.answerCbQuery('Please wait, fetching is in progress...');
+                return;
+            }
+
+            // Set fetching flag
+            if (ctx.session.__scenes) {
+                ctx.session.__scenes.isFetching = true;
+            }
 
             // Handle callback queries
             if (ctx.updateType === 'callback_query') {
@@ -102,6 +125,7 @@ export class NftCollectionOwnersScene {
             await ctx.replyWithHTML(BOT_MESSAGES.NFT_OWNERS.SEARCHING);
 
             const owners = await this.nftService.getCollectionOwners(messageText);
+            this.logger.debug(`Fetched ${owners.length} NFT owners for collectionAddress: ${messageText}`);
 
             if (!Array.isArray(owners) || owners.length === 0) {
                 this.logger.debug(`No NFT owners found for collectionAddress: ${messageText}`);
@@ -114,8 +138,9 @@ export class NftCollectionOwnersScene {
                 return;
             }
 
-            const message = owners
-                .slice(0, 10)
+            // Display up to 10 owners in the reply
+            const displayOwners = owners.slice(0, 10);
+            const message = displayOwners
                 .map((owner: NftCollectionOwner, i: number) => {
                     return (
                         `<b>${i + 1}. Owner: <code>${owner.owner}</code></b>\n` +
@@ -127,6 +152,39 @@ export class NftCollectionOwnersScene {
             await ctx.replyWithHTML(
                 `${BOT_MESSAGES.NFT_OWNERS.RESULTS_HEADER}${message}`,
                 { reply_markup: this.keyboard.getNftCollectionOwnersResultsKeyboard().reply_markup }
+            );
+
+            // Generate and send a JSON file with all owners
+            const timestamp = new Date().toISOString().split('T')[0]; // e.g., 2025-05-11
+            const fileName = `nft_collection_owners_${timestamp}.json`;
+            tempFilePath = path.join('/tmp', fileName);
+            const fileContent = JSON.stringify(owners, null, 2); // Pretty print JSON
+
+            // Check file size (Telegram limit: 50MB)
+            const fileSizeBytes = Buffer.byteLength(fileContent, 'utf8');
+            const fileSizeMB = fileSizeBytes / (1024 * 1024);
+            if (fileSizeMB > 50) {
+                this.logger.warn(`File size (${fileSizeMB.toFixed(2)} MB) exceeds Telegram limit of 50 MB`);
+                await ctx.replyWithHTML(
+                    '⚠️ The complete NFT owners list is too large to send as a file (>50 MB). Displaying top 10 owners only.',
+                    { reply_markup: this.keyboard.getNftCollectionOwnersResultsKeyboard().reply_markup }
+                );
+                await ctx.scene.leave();
+                ctx.session = {};
+                return;
+            }
+
+            // Write file
+            await fs.writeFile(tempFilePath, fileContent);
+            this.logger.debug(`Wrote ${owners.length} owners to ${tempFilePath}`);
+
+            // Send file as document
+            await ctx.replyWithDocument(
+                { source: tempFilePath, filename: fileName },
+                {
+                    caption: `📄 Complete list of ${owners.length} NFT owners for collection ${messageText} (JSON format).`,
+                    reply_markup: this.keyboard.getNftCollectionOwnersResultsKeyboard().reply_markup,
+                }
             );
 
             await ctx.scene.leave();
@@ -141,6 +199,21 @@ export class NftCollectionOwnersScene {
             });
             await ctx.scene.leave();
             ctx.session = {};
+        } finally {
+            // Reset fetching flag
+            if (ctx.session.__scenes) {
+                ctx.session.__scenes.isFetching = false;
+            }
+
+            // Clean up temporary file
+            if (tempFilePath) {
+                try {
+                    await fs.unlink(tempFilePath);
+                    this.logger.debug(`Deleted temporary file ${tempFilePath}`);
+                } catch (err) {
+                    this.logger.error(`Failed to delete temporary file ${tempFilePath}: ${err.message}`);
+                }
+            }
         }
     }
 
@@ -185,6 +258,12 @@ export class NftCollectionOwnersScene {
                         reply_markup: this.keyboard.getNftsKeyboard().reply_markup,
                     });
                     break;
+                case SceneActions.CANCEL_BUTTON:
+                case SceneActions.CLOSE_BUTTON:
+                    await ctx.replyWithHTML(BOT_MESSAGES.CANCEL, {
+                        reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+                    });
+                    break;
                 default:
                     this.logger.debug(`Unknown callback data: ${data}`);
                     await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
@@ -192,7 +271,7 @@ export class NftCollectionOwnersScene {
                     });
             }
         } catch (error) {
-            this.logger.error(`Error handling callback after scene exit: ${error.message}`);
+            this.logger.error(`Error handling callback after scene exit: ${error.message}, stack: ${error.stack}`);
             try {
                 await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
                     reply_markup: this.keyboard.getMainKeyboard().reply_markup,
@@ -370,7 +449,7 @@ export class NftCollectionOwnersScene {
                     });
             }
         } catch (error) {
-            this.logger.error(`Error handling command after scene exit: ${error.message}`);
+            this.logger.error(`Error handling command after scene exit: ${error.message}, stack: ${error.stack}`);
             try {
                 await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
                     reply_markup: this.keyboard.getMainKeyboard().reply_markup,
@@ -388,9 +467,15 @@ export class NftCollectionOwnersScene {
             ctx.wizard.selectStep(1);
             await this.askCollectionAddress(ctx);
         } catch (error) {
-            this.logger.error(`Error in tryAgain: ${error.message}`);
+            this.logger.error(`Error in tryAgain: ${error.message}, stack: ${error.stack}`);
             await ctx.scene.leave();
             ctx.session = {};
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.NFT_OWNERS_AGAIN }],
+            });
         }
     }
 
@@ -404,9 +489,15 @@ export class NftCollectionOwnersScene {
             await ctx.scene.leave();
             ctx.session = {};
         } catch (error) {
-            this.logger.error(`Error in onCancel: ${error.message}`);
+            this.logger.error(`Error in onCancel: ${error.message}, stack: ${error.stack}`);
             await ctx.scene.leave();
             ctx.session = {};
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.NFT_OWNERS_AGAIN }],
+            });
         }
     }
 
@@ -420,9 +511,15 @@ export class NftCollectionOwnersScene {
             await ctx.scene.leave();
             ctx.session = {};
         } catch (error) {
-            this.logger.error(`Error in onMainMenu: ${error.message}`);
+            this.logger.error(`Error in onMainMenu: ${error.message}, stack: ${error.stack}`);
             await ctx.scene.leave();
             ctx.session = {};
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.NFT_OWNERS_AGAIN }],
+            });
         }
     }
 
@@ -435,9 +532,15 @@ export class NftCollectionOwnersScene {
             await ctx.scene.leave();
             ctx.session = {};
         } catch (error) {
-            this.logger.error(`Error in cancelCommand: ${error.message}`);
+            this.logger.error(`Error in cancelCommand: ${error.message}, stack: ${error.stack}`);
             await ctx.scene.leave();
             ctx.session = {};
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.NFT_OWNERS_AGAIN }],
+            });
         }
     }
 }

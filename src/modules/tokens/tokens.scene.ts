@@ -8,6 +8,8 @@ import { Commands } from '../../enums/commands.enum';
 import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
 import { handleErrorResponse, escapeMarkdownV2 } from '../../utils';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 export const TOKENS_SCENE_ID = 'TOKENS_SCENE';
 
@@ -26,6 +28,7 @@ interface WizardSessionData {
     cursor: number;
     current: string;
     state: TokensWizardState;
+    isFetching?: boolean; // Flag to prevent concurrent fetches
 }
 
 interface CustomSession {
@@ -51,7 +54,8 @@ export class TokensScene {
             ctx.session.__scenes = ctx.session.__scenes || {
                 cursor: 0,
                 current: TOKENS_SCENE_ID,
-                state: {}
+                state: {},
+                isFetching: false
             };
 
             await ctx.replyWithHTML(
@@ -78,6 +82,13 @@ export class TokensScene {
     async handleFilter(@Ctx() ctx: WizardContext & { wizard: { state: TokensWizardState }, session: CustomSession }) {
         try {
             this.logger.debug(`Processing ${TOKENS_SCENE_ID}, step 2: handleFilter, updateType: ${ctx.updateType}, scene: ${ctx.scene.current?.id}, cursor: ${ctx.wizard.cursor}, session: ${JSON.stringify(ctx.session)}`);
+
+            // Prevent processing if already fetching
+            if (ctx.session.__scenes?.isFetching) {
+                this.logger.warn('Fetch already in progress, ignoring request');
+                await ctx.answerCbQuery('Please wait, fetching is in progress...');
+                return;
+            }
 
             // Handle callback queries
             if (ctx.updateType === 'callback_query') {
@@ -143,12 +154,30 @@ export class TokensScene {
                 defaultMessage: BOT_MESSAGES.ERROR.GENERIC,
                 buttons: [{ text: '🔄 Try Again', action: SceneActions.TOKENS_AGAIN }],
             });
+        } finally {
+            // Reset fetching flag
+            if (ctx.session.__scenes) {
+                ctx.session.__scenes.isFetching = false;
+            }
         }
     }
 
     async handleFetch(@Ctx() ctx: WizardContext & { wizard: { state: TokensWizardState }, session: CustomSession }) {
+        let tempFilePath: string | undefined;
         try {
             this.logger.debug(`Processing handleFetch, params: ${JSON.stringify(ctx.wizard.state.params)}, session: ${JSON.stringify(ctx.session)}`);
+
+            // Prevent concurrent fetches
+            if (ctx.session.__scenes?.isFetching) {
+                this.logger.warn('Fetch already in progress, ignoring request');
+                await ctx.answerCbQuery('Please wait, fetching is in progress...');
+                return;
+            }
+
+            // Set fetching flag
+            if (ctx.session.__scenes) {
+                ctx.session.__scenes.isFetching = true;
+            }
 
             if (ctx.updateType === 'callback_query') {
                 await ctx.answerCbQuery('🔍 Searching...');
@@ -157,10 +186,15 @@ export class TokensScene {
             await ctx.replyWithHTML(BOT_MESSAGES.TOKENS.SEARCHING);
 
             const params = ctx.wizard.state.params || {};
-            const tokens = await this.tokensService.getTokens(params);
+            // For FETCH_ALL, remove limit to fetch all tokens
+            const fetchAll = !params.limit && !params.name && !params.symbol && !params.page;
+            const apiParams = fetchAll ? { sortByDesc: params.sortByDesc || 'marketCap' } : params;
+
+            const tokens = await this.tokensService.getTokens(apiParams);
+            this.logger.debug(`Fetched ${tokens.length} tokens`);
 
             if (!tokens || tokens.length === 0) {
-                this.logger.debug(`No tokens found for params: ${JSON.stringify(params)}`);
+                this.logger.debug(`No tokens found for params: ${JSON.stringify(apiParams)}`);
                 await ctx.replyWithHTML(
                     BOT_MESSAGES.TOKENS.NO_RESULTS,
                     { reply_markup: this.keyboard.getTokensResultsKeyboard().reply_markup }
@@ -170,8 +204,9 @@ export class TokensScene {
                 return;
             }
 
-            const message = tokens
-                .slice(0, 10)
+            // Display up to 10 tokens in the reply
+            const displayTokens = tokens.slice(0, 10);
+            const message = displayTokens
                 .map((token, i) => {
                     const name = escapeMarkdownV2(token.name || 'Unnamed Token');
                     const symbol = escapeMarkdownV2(token.symbol || 'N/A');
@@ -193,6 +228,41 @@ export class TokensScene {
                 { reply_markup: this.keyboard.getTokensResultsKeyboard().reply_markup }
             );
 
+            // If FETCH_ALL, generate and send a JSON file with all tokens
+            if (fetchAll) {
+                const timestamp = new Date().toISOString().split('T')[0]; // e.g., 2025-05-11
+                const fileName = `all_tokens_${timestamp}.json`;
+                tempFilePath = path.join('/tmp', fileName);
+                const fileContent = JSON.stringify(tokens, null, 2); // Pretty print JSON
+
+                // Check file size (Telegram limit: 50MB)
+                const fileSizeBytes = Buffer.byteLength(fileContent, 'utf8');
+                const fileSizeMB = fileSizeBytes / (1024 * 1024);
+                if (fileSizeMB > 50) {
+                    this.logger.warn(`File size (${fileSizeMB.toFixed(2)} MB) exceeds Telegram limit of 50 MB`);
+                    await ctx.replyWithHTML(
+                        '⚠️ The complete token list is too large to send as a file (>50 MB). Displaying top 10 tokens only.',
+                        { reply_markup: this.keyboard.getTokensResultsKeyboard().reply_markup }
+                    );
+                    await ctx.scene.leave();
+                    ctx.session = {};
+                    return;
+                }
+
+                // Write file
+                await fs.writeFile(tempFilePath, fileContent);
+                this.logger.debug(`Wrote ${tokens.length} tokens to ${tempFilePath}`);
+
+                // Send file as document
+                await ctx.replyWithDocument(
+                    { source: tempFilePath, filename: fileName },
+                    {
+                        caption: `📄 Complete list of ${tokens.length} tokens (JSON format).`,
+                        reply_markup: this.keyboard.getTokensResultsKeyboard().reply_markup,
+                    }
+                );
+            }
+
             await ctx.scene.leave();
             ctx.session = {};
         } catch (error) {
@@ -205,6 +275,21 @@ export class TokensScene {
                 defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
                 buttons: [{ text: '🔄 Try Again', action: SceneActions.TOKENS_AGAIN }],
             });
+        } finally {
+            // Reset fetching flag
+            if (ctx.session.__scenes) {
+                ctx.session.__scenes.isFetching = false;
+            }
+
+            // Clean up temporary file
+            if (tempFilePath) {
+                try {
+                    await fs.unlink(tempFilePath);
+                    this.logger.debug(`Deleted temporary file ${tempFilePath}`);
+                } catch (err) {
+                    this.logger.error(`Failed to delete temporary file ${tempFilePath}: ${err.message}`);
+                }
+            }
         }
     }
 
@@ -266,7 +351,7 @@ export class TokensScene {
                     });
             }
         } catch (error) {
-            this.logger.error(`Error handling callback after scene exit: ${error.message}`);
+            this.logger.error(`Error handling callback after scene exit: ${error.message}, stack: ${error.stack}`);
             try {
                 await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
                     reply_markup: this.keyboard.getMainKeyboard().reply_markup,
@@ -444,7 +529,7 @@ export class TokensScene {
                     });
             }
         } catch (error) {
-            this.logger.error(`Error handling command after scene exit: ${error.message}`);
+            this.logger.error(`Error handling command after scene exit: ${error.message}, stack: ${error.stack}`);
             try {
                 await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
                     reply_markup: this.keyboard.getMainKeyboard().reply_markup,

@@ -8,6 +8,8 @@ import { SceneActions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
 import { handleErrorResponse, escapeMarkdownV2 } from '../../utils';
 import { PythAccount } from '../../types';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 export const PYTH_ACCOUNTS_SCENE_ID = 'PYTH_ACCOUNTS_SCENE';
 
@@ -21,6 +23,7 @@ interface WizardSessionData {
     cursor: number;
     current: string;
     state: PythAccountsWizardState;
+    isFetching?: boolean; // Flag to prevent concurrent fetches
 }
 
 interface CustomSession {
@@ -46,7 +49,8 @@ export class PythAccountsScene {
             ctx.session.__scenes = ctx.session.__scenes || {
                 cursor: 0,
                 current: PYTH_ACCOUNTS_SCENE_ID,
-                state: {}
+                state: {},
+                isFetching: false
             };
 
             await ctx.replyWithHTML(BOT_MESSAGES.PRICES.PYTH_ACCOUNTS.ASK_FILTER, {
@@ -57,9 +61,15 @@ export class PythAccountsScene {
             ctx.session.__scenes.cursor = 1;
             this.logger.debug(`Advanced to step 2, cursor: ${ctx.wizard.cursor}, session: ${JSON.stringify(ctx.session)}`);
         } catch (error) {
-            this.logger.error(`Error in askFilter: ${error.message}`);
+            this.logger.error(`Error in askFilter: ${error.message}, stack: ${error.stack}`);
             await ctx.scene.leave();
             ctx.session = {};
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.PYTH_ACCOUNTS_AGAIN }],
+            });
         }
     }
 
@@ -67,6 +77,13 @@ export class PythAccountsScene {
     async handleFilter(@Ctx() ctx: WizardContext & { wizard: { state: PythAccountsWizardState }, session: CustomSession }) {
         try {
             this.logger.debug(`Processing ${PYTH_ACCOUNTS_SCENE_ID}, step 2: handleFilter, updateType: ${ctx.updateType}, scene: ${ctx.scene.current?.id}, cursor: ${ctx.wizard.cursor}, session: ${JSON.stringify(ctx.session)}`);
+
+            // Prevent processing if already fetching
+            if (ctx.session.__scenes?.isFetching) {
+                this.logger.warn('Fetch already in progress, ignoring request');
+                await ctx.answerCbQuery('Please wait, fetching is in progress...');
+                return;
+            }
 
             // Handle callback queries
             if (ctx.updateType === 'callback_query') {
@@ -123,21 +140,45 @@ export class PythAccountsScene {
             });
             await ctx.scene.leave();
             ctx.session = {};
+        } finally {
+            // Reset fetching flag
+            if (ctx.session.__scenes) {
+                ctx.session.__scenes.isFetching = false;
+            }
         }
     }
 
     async handleFetch(@Ctx() ctx: WizardContext & { wizard: { state: PythAccountsWizardState }, session: CustomSession }, params: any) {
+        let tempFilePath: string | undefined;
         try {
+            this.logger.debug(`Processing handleFetch, params: ${JSON.stringify(params)}, session: ${JSON.stringify(ctx.session)}`);
+
+            // Prevent concurrent fetches
+            if (ctx.session.__scenes?.isFetching) {
+                this.logger.warn('Fetch already in progress, ignoring request');
+                await ctx.answerCbQuery('Please wait, fetching is in progress...');
+                return;
+            }
+
+            // Set fetching flag
+            if (ctx.session.__scenes) {
+                ctx.session.__scenes.isFetching = true;
+            }
+
             if (ctx.updateType === 'callback_query') {
                 await ctx.answerCbQuery('🔍 Searching...');
             }
 
             await ctx.replyWithHTML(BOT_MESSAGES.PRICES.PYTH_ACCOUNTS.SEARCHING);
 
-            const accounts = await this.pricesService.getPythAccounts(params);
+            // Fetch accounts
+            const fetchAll = Object.keys(params).length === 0; // FETCH_ALL when params are empty
+            const apiParams = fetchAll ? {} : params;
+            const accounts = await this.pricesService.getPythAccounts(apiParams);
+            this.logger.debug(`Fetched ${accounts.length} Pyth accounts`);
 
             if (!accounts || accounts.length === 0) {
-                this.logger.debug(`No Pyth accounts found for params: ${JSON.stringify(params)}`);
+                this.logger.debug(`No Pyth accounts found for params: ${JSON.stringify(apiParams)}`);
                 await ctx.replyWithHTML(BOT_MESSAGES.PRICES.PYTH_ACCOUNTS.NO_RESULTS, {
                     reply_markup: this.keyboard.getPythAccountsResultsKeyboard().reply_markup,
                 });
@@ -146,8 +187,9 @@ export class PythAccountsScene {
                 return;
             }
 
-            const message = accounts
-                .slice(0, 10)
+            // Display up to 10 accounts in the reply
+            const displayAccounts = accounts.slice(0, 10);
+            const message = displayAccounts
                 .map((acc: PythAccount, i: number) => {
                     const symbol = acc.symbol ? escapeMarkdownV2(acc.symbol) : 'N/A';
                     const productId = acc.productId ? acc.productId : 'N/A';
@@ -165,6 +207,41 @@ export class PythAccountsScene {
                 reply_markup: this.keyboard.getPythAccountsResultsKeyboard().reply_markup,
             });
 
+            // If FETCH_ALL, generate and send a JSON file with all accounts
+            if (fetchAll) {
+                const timestamp = new Date().toISOString().split('T')[0]; // e.g., 2025-05-11
+                const fileName = `all_pyth_accounts_${timestamp}.json`;
+                tempFilePath = path.join('/tmp', fileName);
+                const fileContent = JSON.stringify(accounts, null, 2); // Pretty print JSON
+
+                // Check file size (Telegram limit: 50MB)
+                const fileSizeBytes = Buffer.byteLength(fileContent, 'utf8');
+                const fileSizeMB = fileSizeBytes / (1024 * 1024);
+                if (fileSizeMB > 50) {
+                    this.logger.warn(`File size (${fileSizeMB.toFixed(2)} MB) exceeds Telegram limit of 50 MB`);
+                    await ctx.replyWithHTML(
+                        '⚠️ The complete Pyth accounts list is too large to send as a file (>50 MB). Displaying top 10 accounts only.',
+                        { reply_markup: this.keyboard.getPythAccountsResultsKeyboard().reply_markup }
+                    );
+                    await ctx.scene.leave();
+                    ctx.session = {};
+                    return;
+                }
+
+                // Write file
+                await fs.writeFile(tempFilePath, fileContent);
+                this.logger.debug(`Wrote ${accounts.length} accounts to ${tempFilePath}`);
+
+                // Send file as document
+                await ctx.replyWithDocument(
+                    { source: tempFilePath, filename: fileName },
+                    {
+                        caption: `📄 Complete list of ${accounts.length} Pyth accounts (JSON format).`,
+                        reply_markup: this.keyboard.getPythAccountsResultsKeyboard().reply_markup,
+                    }
+                );
+            }
+
             await ctx.scene.leave();
             ctx.session = {};
         } catch (error) {
@@ -177,6 +254,21 @@ export class PythAccountsScene {
             });
             await ctx.scene.leave();
             ctx.session = {};
+        } finally {
+            // Reset fetching flag
+            if (ctx.session.__scenes) {
+                ctx.session.__scenes.isFetching = false;
+            }
+
+            // Clean up temporary file
+            if (tempFilePath) {
+                try {
+                    await fs.unlink(tempFilePath);
+                    this.logger.debug(`Deleted temporary file ${tempFilePath}`);
+                } catch (err) {
+                    this.logger.error(`Failed to delete temporary file ${tempFilePath}: ${err.message}`);
+                }
+            }
         }
     }
 
@@ -186,7 +278,6 @@ export class PythAccountsScene {
         try {
             switch (data) {
                 case SceneActions.FETCH_ALL:
-                    await ctx.answerCbQuery('📈 Fetching all Pyth accounts...');
                     await this.handleFetch(ctx, {});
                     break;
                 case SceneActions.PYTH_ACCOUNTS_AGAIN:
@@ -225,6 +316,12 @@ export class PythAccountsScene {
                         reply_markup: this.keyboard.getNftsKeyboard().reply_markup,
                     });
                     break;
+                case SceneActions.CANCEL_BUTTON:
+                case SceneActions.CLOSE_BUTTON:
+                    await ctx.replyWithHTML(BOT_MESSAGES.CANCEL, {
+                        reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+                    });
+                    break;
                 default:
                     this.logger.debug(`Unknown callback data: ${data}`);
                     await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
@@ -232,7 +329,7 @@ export class PythAccountsScene {
                     });
             }
         } catch (error) {
-            this.logger.error(`Error handling callback after scene exit: ${error.message}`);
+            this.logger.error(`Error handling callback after scene exit: ${error.message}, stack: ${error.stack}`);
             try {
                 await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
                     reply_markup: this.keyboard.getMainKeyboard().reply_markup,
@@ -410,7 +507,7 @@ export class PythAccountsScene {
                     });
             }
         } catch (error) {
-            this.logger.error(`Error handling command after scene exit: ${error.message}`);
+            this.logger.error(`Error handling command after scene exit: ${error.message}, stack: ${error.stack}`);
             try {
                 await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
                     reply_markup: this.keyboard.getMainKeyboard().reply_markup,
@@ -428,9 +525,15 @@ export class PythAccountsScene {
             ctx.wizard.selectStep(1);
             await this.askFilter(ctx);
         } catch (error) {
-            this.logger.error(`Error in filterAgain: ${error.message}`);
+            this.logger.error(`Error in filterAgain: ${error.message}, stack: ${error.stack}`);
             await ctx.scene.leave();
             ctx.session = {};
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.PYTH_ACCOUNTS_AGAIN }],
+            });
         }
     }
 
@@ -444,9 +547,15 @@ export class PythAccountsScene {
             await ctx.scene.leave();
             ctx.session = {};
         } catch (error) {
-            this.logger.error(`Error in onCancel: ${error.message}`);
+            this.logger.error(`Error in onCancel: ${error.message}, stack: ${error.stack}`);
             await ctx.scene.leave();
             ctx.session = {};
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.PYTH_ACCOUNTS_AGAIN }],
+            });
         }
     }
 
@@ -460,9 +569,15 @@ export class PythAccountsScene {
             await ctx.scene.leave();
             ctx.session = {};
         } catch (error) {
-            this.logger.error(`Error in onMainMenu: ${error.message}`);
+            this.logger.error(`Error in onMainMenu: ${error.message}, stack: ${error.stack}`);
             await ctx.scene.leave();
             ctx.session = {};
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.PYTH_ACCOUNTS_AGAIN }],
+            });
         }
     }
 
@@ -475,9 +590,15 @@ export class PythAccountsScene {
             await ctx.scene.leave();
             ctx.session = {};
         } catch (error) {
-            this.logger.error(`Error in cancelCommand: ${error.message}`);
+            this.logger.error(`Error in cancelCommand: ${error.message}, stack: ${error.stack}`);
             await ctx.scene.leave();
             ctx.session = {};
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: SceneActions.PYTH_ACCOUNTS_AGAIN }],
+            });
         }
     }
 }
