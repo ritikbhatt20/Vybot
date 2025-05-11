@@ -96,10 +96,12 @@ Choose an option below or type a command:`,
         INVALID_LIMIT: '❌ Invalid limit. Please provide a non-negative number.',
         INVALID_PAGE: '❌ Invalid page. Please provide a non-negative number.',
         INVALID_MINT_ADDRESS: '❌ Invalid mint address. Please provide a valid Solana mint address.',
+        INVALID_ADDRESS: '❌ Invalid address. Please provide a valid Solana address.',
         TIME_RANGE_TOO_LARGE: '⚠️ Time range too large. Please select a shorter time range and try again.',
     },
 
     KNOWN_ACCOUNTS: {
+        MENU: '👤 Discover Accounts Insights:',
         ASK_FILTER: `📊 <b>Known Accounts Filter</b>
 
 Enter a filter or press Fetch All to see all known accounts:
@@ -160,6 +162,7 @@ Options: 1 Day, 7 Days, 30 Days`,
     },
 
     NFT_OWNERS: {
+        MENU: '🎨 Dive into NFTs features:',
         ASK_ADDRESS: `🎨 <b>NFT Collection Owners</b>
 
 Enter an NFT collection address to view its owners:
@@ -172,6 +175,7 @@ Example:
     },
 
     PRICES: {
+        MENU: '📊 Discover Markets Insights:',
         PYTH_ACCOUNTS: {
             ASK_FILTER: `📈 <b>Pyth Accounts</b>
 
@@ -497,6 +501,7 @@ Options: 1m, 5m, 15m, 30m, 1h, 4h, 1d, 1w, 1mo`,
     },
 
     PROGRAMS: {
+        MENU: '🛠️ Discover Programs Insights:',
         ASK_FILTER: `🛠️ <b>Programs Filter</b>
 
 Enter a Solana program name (e.g., Serum, Raydium) or address to filter programs, or press Fetch All to see all programs:
