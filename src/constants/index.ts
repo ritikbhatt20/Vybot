@@ -175,7 +175,7 @@ Example:
     },
 
     PRICES: {
-        MENU: '📊 Discover Markets Insights:',
+        MENU: '💲 Discover Prices Insights:',
         PYTH_ACCOUNTS: {
             ASK_FILTER: `📈 <b>Pyth Accounts</b>
 
@@ -331,7 +331,7 @@ Examples:
 Enter a token mint address or name (e.g., SOL, USDC) to view its top holders:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
         SEARCHING: '🔍 <b>Fetching top token holders...</b>',
         NO_RESULTS: '🔍 <b>No top token holders found for this mint address</b>',
         RESULTS_HEADER: '👥 <b>Top Token Holders</b>\n\n',
@@ -343,7 +343,7 @@ Example:
 Enter a token mint address or name (e.g., SOL, USDC) to view its details:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
         SEARCHING: '🔍 <b>Fetching token details...</b>',
         NO_RESULTS: '🔍 <b>No details found for this token</b>',
         RESULTS_HEADER: '📋 <b>Token Details</b>\n\n',
@@ -355,7 +355,7 @@ Example:
 Enter a token mint address or name (e.g., SOL, USDC) to view its volume trends:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
@@ -385,7 +385,7 @@ Options: Hourly, Daily, Weekly`,
 Enter a token mint address or name (e.g., SOL, USDC) to view its holders trends:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
@@ -410,7 +410,7 @@ Example:
 Enter a token mint address or name (e.g., SOL, USDC) to view its transfer transactions:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
@@ -447,7 +447,7 @@ Example:
 Enter a token mint address or name (e.g., SOL, USDC) to view its trade transactions:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
@@ -477,7 +477,7 @@ Options: Hourly, Daily, Weekly, Monthly, Yearly`,
 Enter a token mint address or name (e.g., SOL, USDC) to view its OHLCV data:
 
 Example:
-• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code> or <code>BONK</code>`,
+• <code>DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263</code>`,
         ASK_START_TIME: `📅 <b>Start Time</b>
 
 Enter the start time as a Unix timestamp (seconds):
