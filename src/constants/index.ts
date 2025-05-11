@@ -39,41 +39,14 @@ export const commandDescriptions: CommandDescriptions = {
 };
 
 export const BOT_MESSAGES = {
-    WELCOME: `👋 <b>Welcome to VybeBot</b>
+    WELCOME: `👋 <b>Welcome to VybeBot: Your Ultimate Solana Analytics Wingman!</b>
 
-🚀 Your real-time Solana analytics companion!
+🌊 Dive into the Solana blockchain with <b>real-time insights</b>!
+📈 Track token balances, analyze wallet performance 
+🖼️ explore NFT owners , and tap into Pyth oracle prices 
+📊—VybeBot’s sleek commands make it all a breeze! 😎
 
-VybeBot helps you track and analyze Solana blockchain activity with powerful, user-friendly commands.
-
-Use /knownaccounts to explore labeled accounts
-/tokenbalances to check token balances
-/tokenbalancests to check token balances time series
-/walletpnl to analyze wallet trading performance
-/nftowners to view NFT collection owners
-/tokens to view tracked tokens
-/tokenholders to see top token holders
-/tokendetails to view token details
-/tokenvolume to view token volume trends
-/tokenholdersts to view token holders trends
-/tokentransfers to view token transfers
-/tokentrades to view token trades
-/tokenohlcv to view token OHLCV price data
-/programs to view Solana programs
-/programtxcount to view program transaction counts
-/programixcount to view program instruction counts
-/programactiveusersts to view program active users time series
-/programactiveusers to view program active users
-/programdetails to view program details
-/programranking to view top-ranked programs
-/pythaccounts to view Pyth oracle price accounts
-/pythprice to view Pyth oracle price data
-/pythpricets to view Pyth oracle price time series
-/pythpriceohlc to view Pyth oracle OHLC price data
-/pythproduct to view Pyth oracle product metadata
-/dexamm to view DEX and AMM programs
-/markets to view available markets
-/tokenprice to view token price and 24h price change
-or type /help to see all available commands.`,
+<b>Smash that button below</b> to unleash the full power of Solana analytics! 💥✨`,
 
     HELP_HEADER: `📚<b> VybeBot Commands</b>\n\nHere are all the commands you can use:\n\n`,
 
