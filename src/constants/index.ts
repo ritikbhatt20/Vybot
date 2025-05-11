@@ -521,7 +521,7 @@ Examples:
 Enter a Solana program name (e.g., Serum, Raydium) or address to view its transaction count trends:
 
 Example:
-• <code>Serum</code> or <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
+• <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
         ASK_RANGE: `⏰ <b>Time Range</b>
 
 Select the time range for transaction count data:
@@ -538,7 +538,7 @@ Options: 4 Hours, 12 Hours, 24 Hours, 1 Day, 7 Days, 30 Days`,
 Enter a Solana program name (e.g., Serum, Raydium) or address to view its instruction count trends:
 
 Example:
-• <code>Serum</code> or <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
+• <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
         ASK_RANGE: `⏰ <b>Time Range</b>
 
 Select the time range for instruction count data:
@@ -555,7 +555,7 @@ Options: 4 Hours, 12 Hours, 24 Hours, 1 Day, 7 Days, 30 Days`,
 Enter a Solana program name (e.g., Serum, Raydium) or address to view its active users time series trends:
 
 Example:
-• <code>Serum</code> or <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
+• <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
         ASK_RANGE: `⏰ <b>Time Range</b>
 
 Select the time range for active users time series data:
@@ -572,7 +572,7 @@ Options: 4 Hours, 12 Hours, 24 Hours, 1 Day, 7 Days, 30 Days`,
 Enter a Solana program name (e.g., Serum, Raydium) or address to view its active users:
 
 Example:
-• <code>Serum</code> or <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
+• <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
         ASK_DAYS: `⏰ <b>Time Period</b>
 
 Select the number of previous days to include (1 to 30, default is 14):
@@ -594,7 +594,7 @@ Options: By Transaction Count or Instruction Count, High to Low or Low to High`,
 Enter a Solana program name (e.g., Serum, Raydium) or address to view its details:
 
 Example:
-• <code>Serum</code> or <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
+• <code>9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin</code>`,
         SEARCHING: '🔍 <b>Fetching program details...</b>',
         NO_RESULTS: '🔍 <b>No details found for this program</b>',
         RESULTS_HEADER: '📋 <b>Program Details</b>\n\n',
