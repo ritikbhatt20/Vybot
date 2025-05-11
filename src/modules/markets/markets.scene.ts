@@ -229,8 +229,8 @@ export class MarketsScene {
                 .slice(0, 5)
                 .map((market: Market, i: number) => (
                     `<b>${i + 1}. ${escapeMarkdownV2(market.marketName)}</b>\n` +
-                    `🆔 <b>Market ID:</b> ${escapeMarkdownV2(market.marketId)}\n` +
-                    `<b>Program:</b> ${escapeMarkdownV2(market.programName)} (${escapeMarkdownV2(market.programId)})\n` +
+                    `🆔 <b>Market ID:</b> <code>${market.marketId}</code>\n` +
+                    `<b>Program:</b> ${escapeMarkdownV2(market.programName)} (<code>${market.programId}</code>)\n` +
                     `<b>Base Token:</b> ${escapeMarkdownV2(market.baseTokenName)} (${escapeMarkdownV2(market.baseTokenSymbol)})\n` +
                     `<b>Quote Token:</b> ${escapeMarkdownV2(market.quoteTokenName)} (${escapeMarkdownV2(market.quoteTokenSymbol)})\n` +
                     `<b>Updated At:</b> ${new Date(market.updatedAt * 1000).toISOString()}\n`
