@@ -49,20 +49,19 @@ export class AlertsScene {
                 action?: 'add' | 'view' | 'view_details', 
                 selectedAlertId?: number 
             };
-            // Prefer action from scene.state (passed during enter) for initial dispatch
             const sceneEntryAction = params?.action;
             
             this.logger.debug(`Entering ${ALERTS_SCENE_ID}, params: ${JSON.stringify(params)}, sceneEntryAction: ${sceneEntryAction}`);
             
             if (sceneEntryAction) {
-                ctx.wizard.state.action = sceneEntryAction; // Persist action in wizard state
+                ctx.wizard.state.action = sceneEntryAction;
                 if (params?.selectedAlertId) {
                     ctx.wizard.state.selectedAlertId = params.selectedAlertId;
                 }
                 
                 if (sceneEntryAction === 'add') {
                     this.logger.debug(`onSceneEnter: action 'add', selecting step 3 and prompting for mint address.`);
-                    ctx.wizard.selectStep(3); // Step 3 is for handling mint address input
+                    ctx.wizard.selectStep(3);
                     await ctx.replyWithHTML(
                         '🔔 <b>Add Price Alert</b>\n\nEnter a token mint address to set a price alert for:\n\nExample:\n• <code>So11111111111111111111111111111111111111112</code> (SOL)',
                         {
@@ -74,27 +73,22 @@ export class AlertsScene {
                     return;
                 } else if (sceneEntryAction === 'view') {
                     this.logger.debug(`onSceneEnter: action 'view', selecting step 5 and calling handleViewAlerts.`);
-                    ctx.wizard.selectStep(5); // Step 5 is handleViewAlerts
-                    // It's important that handleViewAlerts can be called directly and will reply.
+                    ctx.wizard.selectStep(5);
                     return this.handleViewAlerts(ctx);
                 } else if (sceneEntryAction === 'view_details') {
                     if (ctx.wizard.state.selectedAlertId) {
                         this.logger.debug(`onSceneEnter: action 'view_details' for alert ${ctx.wizard.state.selectedAlertId}, selecting step 6 and calling showAlertSettings.`);
-                        ctx.wizard.selectStep(6); // Step 6 is showAlertSettings
+                        ctx.wizard.selectStep(6);
                         return this.showAlertSettings(ctx);
                     } else {
                         this.logger.warn(`onSceneEnter: action 'view_details' but no selectedAlertId in state. Falling back to default menu.`);
-                        // Fall through to display default menu
                     }
                 }
-                // If sceneEntryAction was present but not 'add', 'view', or handled 'view_details', it will fall through.
                 this.logger.debug(`onSceneEnter: Unhandled sceneEntryAction '${sceneEntryAction}', falling through to display main menu.`);
             }
             
-            // DEFAULT BEHAVIOR: If no sceneEntryAction, or if it fell through:
-            // Show the main alerts menu and set to step 2 for menu button handling.
             this.logger.debug(`onSceneEnter: Displaying main alerts menu and setting step to 2.`);
-            ctx.wizard.state = {}; // Clear wizard state for a clean menu display.
+            ctx.wizard.state = {};
             
             await ctx.replyWithHTML(
                 '🔔 <b>Alerts Menu</b>\n\nSelect the type of alert you want to manage:',
@@ -107,13 +101,11 @@ export class AlertsScene {
                 }
             );
             
-            ctx.wizard.selectStep(2); // Go to handleMenuSelection
+            ctx.wizard.selectStep(2);
             
         } catch (error) {
-            // Error handling
             this.logger.error(`Error in onSceneEnter: ${error.message}`);
             await ctx.scene.leave();
-            // Clear session to prevent state issues
             ctx.session = {};
             await handleErrorResponse({
                 ctx,
@@ -126,7 +118,6 @@ export class AlertsScene {
 
     @WizardStep(1)
     async dummyStep(@Ctx() ctx: WizardContext) {
-        // Just advance to step 2
         ctx.wizard.next();
     }
 
@@ -151,10 +142,8 @@ export class AlertsScene {
                 if (data === 'ADD_ALERT' || data === 'ADD_ALERT_DIRECT') {
                     this.logger.debug('Handling ADD_ALERT in menu selection');
                     
-                    // Reset any existing state
                     ctx.wizard.state = { action: 'add' };
                     
-                    // Show the mint address prompt
                     await ctx.replyWithHTML(
                         '🔔 <b>Add Price Alert</b>\n\nEnter a token mint address to set a price alert for:\n\nExample:\n• <code>So11111111111111111111111111111111111111112</code> (SOL)',
                         { 
@@ -164,7 +153,6 @@ export class AlertsScene {
                         }
                     );
                     
-                    // Go to the mint address step
                     await ctx.wizard.selectStep(3);
                     return;
                 }
@@ -177,7 +165,6 @@ export class AlertsScene {
                     return;
                 }
                 
-                // Handle ALERT_X callbacks directly without going to handleCallback
                 if (data.startsWith('ALERT_')) {
                     const selectedAlertId = parseInt(data.split('_')[1]);
                     this.logger.debug(`Handling alert selection directly: ${selectedAlertId}`);
@@ -185,14 +172,12 @@ export class AlertsScene {
                     ctx.wizard.state.selectedAlertId = selectedAlertId;
                     ctx.wizard.state.action = 'view_details';
                     
-                    // Fetch the alert data
                     const userId = ctx.from?.id;
                     if (!userId) {
                         throw new Error('User ID not found');
                     }
                     
                     try {
-                        // Fetch alert data
                         this.logger.debug(`Fetching alert ID ${selectedAlertId} for user ${userId}`);
                         const alerts = await this.alertsService.getUserAlerts(userId);
                         
@@ -225,7 +210,6 @@ export class AlertsScene {
                             return;
                         }
                         
-                        // Display alert settings
                         this.logger.debug(`Displaying settings for alert ${currentAlert.id}`);
                         await ctx.replyWithHTML(
                             `⚙️ <b>Price Alert Settings - ${currentAlert.mintAddress.substring(0, 8)}...${currentAlert.mintAddress.substring(currentAlert.mintAddress.length - 4)}</b>\n\n` +
@@ -297,7 +281,6 @@ export class AlertsScene {
     @WizardStep(3)
     async handleAddAlertMint(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }): Promise<void> {
         try {
-            // Only process if this is a message update with text
             if (ctx.updateType !== 'message' || !(ctx.message as any)?.text) {
             if (ctx.updateType === 'callback_query') {
                 const data = (ctx.callbackQuery as any).data;
@@ -315,7 +298,6 @@ export class AlertsScene {
             const messageText = (ctx.message as { text: string }).text;
             this.logger.debug(`Processing mint address: ${messageText}`);
             
-            // Handle commands
             if (messageText.startsWith('/')) {
                 this.logger.debug(`Command detected: ${messageText}, exiting scene`);
                 await ctx.scene.leave();
@@ -323,7 +305,6 @@ export class AlertsScene {
                 return;
             }
 
-            // Validate the Solana address
             if (!isValidSolanaAddress(messageText)) {
                 this.logger.warn(`Invalid mint address: ${messageText}`);
                 await ctx.replyWithHTML(
@@ -337,7 +318,6 @@ export class AlertsScene {
                 return;
             }
 
-            // Valid mint address - save it and move to price step
             this.logger.debug(`Valid mint address received: ${messageText}, saving to state`);
             ctx.wizard.state.mintAddress = messageText;
             
@@ -366,7 +346,6 @@ export class AlertsScene {
     @WizardStep(4)
     async handleAddAlertPrice(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }): Promise<void> {
         try {
-            // Only process if this is a message update with text
             if (ctx.updateType !== 'message' || !(ctx.message as any)?.text) {
             if (ctx.updateType === 'callback_query') {
                 const data = (ctx.callbackQuery as any).data;
@@ -384,7 +363,6 @@ export class AlertsScene {
             const messageText = (ctx.message as { text: string }).text;
             this.logger.debug(`Processing price input: ${messageText}`);
             
-            // Handle commands
             if (messageText.startsWith('/')) {
                 this.logger.debug(`Command detected: ${messageText}, exiting scene`);
                 await ctx.scene.leave();
@@ -392,7 +370,6 @@ export class AlertsScene {
                 return;
             }
 
-            // Get the mint address from state
             const { mintAddress } = ctx.wizard.state;
             this.logger.debug(`Current state mintAddress: ${mintAddress}`);
             
@@ -410,7 +387,6 @@ export class AlertsScene {
                 return;
             }
 
-            // Parse and validate price
             const targetPrice = parseFloat(messageText);
             this.logger.debug(`Parsed price: ${targetPrice}`);
             
@@ -433,7 +409,6 @@ export class AlertsScene {
             }
 
             try {
-                // Create the alert
                 this.logger.debug(`Creating alert with mintAddress: ${mintAddress}, price: ${targetPrice}`);
                 const alert = await this.alertsService.createAlert(userId, mintAddress, targetPrice);
                 this.logger.debug(`Successfully created alert ${alert.id}`);
@@ -500,9 +475,7 @@ You will be notified when the token price reaches your target.`,
                     ctx.wizard.state.selectedAlertId = selectedAlertId;
                     ctx.wizard.state.action = 'view_details';
                     
-                    // Fetch the alert data
                     try {
-                        // Fetch alert data
                         this.logger.debug(`Fetching alert ID ${selectedAlertId} for user ${userId}`);
                         const alerts = await this.alertsService.getUserAlerts(userId);
                         
@@ -535,7 +508,6 @@ You will be notified when the token price reaches your target.`,
                             return;
                         }
                         
-                        // Display alert settings
                         this.logger.debug(`Displaying settings for alert ${currentAlert.id}`);
                         await ctx.replyWithHTML(
                             `⚙️ <b>Price Alert Settings - ${currentAlert.mintAddress.substring(0, 8)}...${currentAlert.mintAddress.substring(currentAlert.mintAddress.length - 4)}</b>\n\n` +
@@ -594,7 +566,6 @@ You will be notified when the token price reaches your target.`,
                 }
 
                 if (data === 'VIEW_ALERTS') {
-                    // Just continue with fetching alerts
                     this.logger.debug('Received VIEW_ALERTS in handleViewAlerts, continuing with alert display');
                 } else {
                 await this.handleCallback(ctx, data);
@@ -610,7 +581,6 @@ You will be notified when the token price reaches your target.`,
                 return;
             }
 
-            // Fetch and display alerts
             try {
             const alerts = await this.alertsService.getUserAlerts(userId);
             if (!alerts.length) {
@@ -1281,11 +1251,14 @@ You will be notified when the token price reaches your target.`,
             );
             this.logger.debug(`@Action(VIEW_ALERTS): Reply sent successfully`);
             
-            // If we're inside a scene, leave it - we'll handle everything in this action handler
-            if (ctx.scene.current) {
-                this.logger.debug(`@Action(VIEW_ALERTS): Leaving current scene ${ctx.scene.current.id}`);
-                await ctx.scene.leave();
+            if (!ctx.scene.current || ctx.scene.current.id !== ALERTS_SCENE_ID) {
+                this.logger.debug(`@Action(VIEW_ALERTS): Not in ALERTS_SCENE, entering scene`);
+                await ctx.scene.enter(ALERTS_SCENE_ID);
             }
+            
+            ctx.wizard.state.action = 'view';
+            this.logger.debug(`@Action(VIEW_ALERTS): Setting wizard to step 5 to handle alert selection`);
+            ctx.wizard.selectStep(5);
             
         } catch (error) {
             this.logger.error(`Error in @Action(VIEW_ALERTS): ${error.message}`, error.stack);
@@ -1303,7 +1276,6 @@ You will be notified when the token price reaches your target.`,
                 this.logger.error(`Error sending error message in @Action(VIEW_ALERTS): ${e.message}`);
             }
             
-            // If we're inside a scene, leave it
             if (ctx.scene.current) {
                 await ctx.scene.leave();
             }
@@ -1316,13 +1288,10 @@ You will be notified when the token price reaches your target.`,
             this.logger.debug(`@Action(ADD_ALERT_DIRECT) handler called - directly handling add alert prompt`);
             await ctx.answerCbQuery('Adding new alert...');
             
-            // If we're already in a scene, we need to use the scene's mechanism
             if (ctx.scene.current && ctx.scene.current.id === ALERTS_SCENE_ID) {
                 this.logger.debug(`@Action(ADD_ALERT_DIRECT): Already in ALERTS_SCENE, using in-scene handling`);
-                // Set the wizard state for the "add" action
                 ctx.wizard.state.action = 'add';
                 
-                // Display the prompt for adding a new alert
                 this.logger.debug(`@Action(ADD_ALERT_DIRECT): Displaying add alert prompt via in-scene handling`);
                 await ctx.replyWithHTML(
                     '🔔 <b>Add Price Alert</b>\n\nEnter a token mint address to set a price alert for:\n\nExample:\n• <code>So11111111111111111111111111111111111111112</code> (SOL)',
@@ -1333,19 +1302,15 @@ You will be notified when the token price reaches your target.`,
                     }
                 );
                 
-                // Go directly to step 3 (handleAddAlertMint) without re-entering scene
                 this.logger.debug(`@Action(ADD_ALERT_DIRECT): Selecting step 3 for mint address input`);
                 ctx.wizard.selectStep(3);
                 return;
             } else {
-                // If we're not in the ALERTS_SCENE, we need to enter it first
                 this.logger.debug(`@Action(ADD_ALERT_DIRECT): Not in ALERTS_SCENE, entering scene normally`);
                 await ctx.scene.enter(ALERTS_SCENE_ID);
                 
-                // After entering, set up for adding alert
                 ctx.wizard.state.action = 'add';
                 
-                // Display the prompt for adding a new alert
                 this.logger.debug(`@Action(ADD_ALERT_DIRECT): Displaying add alert prompt after scene entry`);
                 await ctx.replyWithHTML(
                     '🔔 <b>Add Price Alert</b>\n\nEnter a token mint address to set a price alert for:\n\nExample:\n• <code>So11111111111111111111111111111111111111112</code> (SOL)',
@@ -1356,7 +1321,6 @@ You will be notified when the token price reaches your target.`,
                     }
                 );
                 
-                // Select the mint input step (handleAddAlertMint)
                 this.logger.debug(`@Action(ADD_ALERT_DIRECT): Selecting step 3 for mint address input`);
                 ctx.wizard.selectStep(3);
             }
