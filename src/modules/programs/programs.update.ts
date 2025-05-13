@@ -98,6 +98,19 @@ export class ProgramsUpdate {
         }
     }
 
+    @Action(Actions.MARKETS_MENU)
+    async onAlertsMenu(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📊 Accessing Alerts menu...');
+            await ctx.replyWithHTML(
+                BOT_MESSAGES.ALERTS.MENU,
+                { reply_markup: this.keyboard.getAlertsKeyboard().reply_markup }
+            );
+        } catch (error) {
+            this.logger.error(`Error entering Markets menu: ${error.message}`);
+        }
+    }
+
     @Action(Actions.PROGRAMS)
     async onPrograms(@Ctx() ctx: Context & SceneContext) {
         try {

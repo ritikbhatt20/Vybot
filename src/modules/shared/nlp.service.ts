@@ -229,6 +229,11 @@ export class NlpService {
             keywords: ['cancel', 'stop', 'exit'],
             exactPhrases: ['cancel', 'stop'],
         },
+        {
+            command: Commands.Alerts,
+            keywords: ['alerts', 'price alerts', 'token alerts', 'notifications', 'alert settings', 'price notifications', 'manage alerts', 'view alerts', 'check alerts', 'my alerts', 'set alert', 'create alert', 'add alert', 'remove alert', 'delete alert', 'price tracking'],
+            exactPhrases: ['alerts', 'price alerts', 'token alerts', 'my alerts'],
+        },
     ];
 
     private readonly sceneMap: { [key in Commands]: string } = {
@@ -260,6 +265,7 @@ export class NlpService {
         [Commands.DexAmm]: 'DEX_AMM_SCENE',
         [Commands.Markets]: 'MARKETS_SCENE',
         [Commands.TokenPrice]: 'TOKEN_PRICE_SCENE',
+        [Commands.Alerts]: 'ALERTS_SCENE',
         [Commands.HELP]: '',
         [Commands.MAIN_MENU]: '',
         [Commands.Cancel]: '',

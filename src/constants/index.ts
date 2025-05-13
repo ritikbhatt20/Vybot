@@ -35,6 +35,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.TokenPrice]: '/tokenprice - 💰 View token price and 24h price change for a Solana token',
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
+    [Commands.Alerts]: '/alerts - 🔔 Manage your token price alerts',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
 };
 
@@ -44,7 +45,7 @@ export const BOT_MESSAGES = {
 🌊 Dive into the Solana blockchain with <b>real-time insights</b>!
 📈 Track token balances, analyze wallet performance 
 🖼️ explore NFT owners , and tap into Pyth oracle prices 
-📊—VybeBot’s sleek commands make it all a breeze! 😎
+📊—VybeBot's sleek commands make it all a breeze! 😎
 
 <b>Smash that button below</b> to unleash the full power of Solana analytics! 💥✨`,
 
@@ -597,4 +598,40 @@ Example:
     },
 
     CANCEL: '🚫 <b>Operation cancelled. What would you like to do next?</b>',
+
+    ALERTS: {
+        MENU: '🔔 Manage your token price alerts:',
+        ASK_MINT_ADDRESS: `🔔 *Add Price Alert*
+
+Enter a token mint address or name (e.g., SOL, USDC) to set a price alert:
+
+Example:
+• \`So11111111111111111111111111111111111111112\` (SOL)`,
+        ASK_PRICE: `💲 *Target Price*
+
+Enter the target price for the alert (in USD):
+
+Example:
+• \`147.50\``,
+        SEARCHING: '🔍 <b>Fetching your alerts...</b>',
+        NO_ALERTS: '📭 You have no token price alerts set up.',
+        RESULTS_HEADER: '🔔 <b>Your Token Price Alerts</b>\n\n',
+        ALERT_CREATED: `✅ *Price Alert Created!*
+
+*Token:* \${token}
+*Target Price:* $\${price}
+*Status:* 🟢 Active
+
+You will be notified when the token price reaches your target.`,
+        ALERT_UPDATED: `✅ *Price Alert Updated!*
+
+*Token:* \${token}
+*New Target Price:* $\${price}
+*Status:* \${status}`,
+        ALERT_DELETED: '🗑️ Alert deleted successfully.',
+        ALERT_TOGGLED: '✅ Alert ${status} successfully.',
+        MAX_ALERTS_REACHED: '❌ You have reached the maximum limit of 10 active alerts. Please delete some alerts before creating new ones.',
+        DUPLICATE_ALERT: '❌ You already have an active alert for this token at a similar price point.',
+        INVALID_PRICE: '❌ Please enter a valid price between 0 and 1,000,000,000 USD (e.g., 147.50).',
+    },
 };

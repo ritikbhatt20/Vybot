@@ -24,6 +24,8 @@
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.2.10",
     "@nestjs/platform-express": "^10.2.10",
+    "@nestjs/schedule": "^6.0.0",
+    "@nestjs/typeorm": "^11.0.0",
     "@solana/web3.js": "^1.98.2",
     "@telegraf/session": "2.0.0-beta.7",
     "@telegraf/types": "^6.9.1",
@@ -40,7 +42,8 @@
     "pg-connection-string": "^2.7.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "telegraf": "^4.15.3"
+    "telegraf": "^4.15.3",
+    "typeorm": "^0.3.23"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.2.1",

@@ -27,6 +27,7 @@ export enum Commands {
     DexAmm = 'dexamm',
     Markets = 'markets',
     TokenPrice = 'tokenprice',
+    Alerts = 'alerts',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',

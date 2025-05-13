@@ -20,11 +20,14 @@ export class KeyboardService {
                 Markup.button.callback('📊 Markets', Actions.MARKETS_MENU),
             ],
             [
+                Markup.button.callback('🔔 Alerts', Actions.ALERTS_MENU),
+                Markup.button.url('💬 Support', 'https://t.me/VybeNetwork_Official'),
+            ],
+            [
                 Markup.button.url('🌐 Vybe Network', 'https://www.vybenetwork.com'),
                 Markup.button.url('📃 Vybe Documentation', 'docs.vybenetwork.com/docs'),
             ],
             [
-                Markup.button.url('💬 Support', 'https://t.me/VybeNetwork_Official'),
                 Markup.button.callback('❓ Help', Actions.HELP),
             ],
         ]);
@@ -621,6 +624,26 @@ export class KeyboardService {
         return Markup.inlineKeyboard([
             [Markup.button.callback('🔄 Try Again', SceneActions.TOKEN_PRICE_AGAIN)],
             [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
+            [
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getAlertsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [
+                Markup.button.callback('🚫 Cancel', SceneActions.CANCEL_BUTTON),
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+            ],
+        ]);
+    }
+
+    getAlertsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Check Alerts Again', SceneActions.ALERTS_AGAIN)],
+            [Markup.button.callback('➕ Add New Alert', 'ADD_ALERT')],
             [
                 Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),

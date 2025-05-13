@@ -28,6 +28,7 @@ import { PROGRAM_DETAILS_SCENE_ID } from './modules/programs/program-details.sce
 import { PROGRAM_RANKING_SCENE_ID } from './modules/programs/program-ranking.scene';
 import { PYTH_ACCOUNTS_SCENE_ID } from './modules/prices/pyth-accounts.scene';
 import { TOKEN_PRICE_SCENE_ID } from './modules/prices/token-price.scene';
+import { ALERTS_SCENE_ID } from './modules/alerts/alerts.scene';
 
 @Update()
 export class AppUpdate {
@@ -201,6 +202,9 @@ export class AppUpdate {
                     case Commands.TokenPrice:
                         await this.handleTokenPrice(ctx);
                         return;
+                    case Commands.Alerts: // NEW: Handle /alerts command
+                        await this.handleAlertsCommand(ctx);
+                        return;
                     default:
                         this.logger.warn(`Unrecognized command: ${command}`);
                         await ctx.replyWithHTML(
@@ -259,6 +263,10 @@ export class AppUpdate {
                 await this.handleCancel(ctx);
                 return;
             }
+            if (intent.command === Commands.Alerts) {
+                await this.handleAlertsCommand(ctx);
+                return;
+            }
 
             // Enter the appropriate scene
             if (intent.sceneId) {
@@ -292,6 +300,25 @@ export class AppUpdate {
             }
         } catch (error) {
             this.logger.error(`Error handling text input: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    async handleAlertsCommand(@Ctx() ctx: Context & SceneContext) {
+        try {
+            if (ctx.scene && ctx.scene.current) {
+                await ctx.scene.leave();
+            }
+            const [message] = await Promise.allSettled([
+                ctx.reply('🔔 Opening alerts explorer...'),
+                ctx.scene.enter(ALERTS_SCENE_ID),
+            ]);
+
+            if (message.status === 'fulfilled') {
+                await ctx.deleteMessage(message.value.message_id).catch(() => { });
+            }
+        } catch (error) {
+            this.logger.error(`Error handling alerts command: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

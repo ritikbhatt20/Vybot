@@ -11,11 +11,43 @@ import { ProgramsModule } from './modules/programs/programs.module';
 import { NftModule } from './modules/nft/nft.module';
 import { PricesModule } from './modules/prices/prices.module';
 import { MarketsModule } from './modules/markets/markets.module';
+import { AlertsModule } from './modules/alerts/alerts.module';
 import { PostgresSessionStore } from './utils/pg-session-store';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TokenPriceAlert } from './modules/alerts/token-price-alert.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const connectionString = configService.get<string>('DATABASE_URL') || '';
+        const dbConfig = parseConnectionString(connectionString);
+
+        if (!dbConfig.host || !dbConfig.database || !dbConfig.user || !dbConfig.password) {
+          throw new Error('Unable to parse database connection string');
+        }
+
+        return {
+          type: 'postgres',
+          host: dbConfig.host,
+          port: dbConfig.port ? Number(dbConfig.port) : 5432,
+          username: dbConfig.user,
+          password: dbConfig.password,
+          database: dbConfig.database,
+          entities: [TokenPriceAlert],
+          synchronize: true, // Be careful with this in production
+          ssl: true,
+          extra: {
+            ssl: {
+              rejectUnauthorized: false
+            }
+          }
+        };
+      },
+    }),
     TelegrafModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -55,6 +87,7 @@ import { PostgresSessionStore } from './utils/pg-session-store';
     NftModule,
     PricesModule,
     MarketsModule,
+    AlertsModule,
   ],
   providers: [AppUpdate],
 })
