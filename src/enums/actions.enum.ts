@@ -40,6 +40,7 @@ export enum Actions {
     MARKETS_MENU = 'MARKETS_MENU',
     ALERTS = 'ALERTS',
     ALERTS_MENU = 'ALERTS_MENU',
+    PERCENT_ALERTS = 'PERCENT_ALERTS',
 }
 
 export enum SceneActions {
@@ -82,4 +83,5 @@ export enum SceneActions {
     DEX_AMM_AGAIN = 'DEX_AMM_AGAIN',
     MARKETS_AGAIN = 'MARKETS_AGAIN',
     ALERTS_AGAIN = 'ALERTS_AGAIN',
+    PERCENT_ALERTS_AGAIN = 'PERCENT_ALERTS_AGAIN',
 }

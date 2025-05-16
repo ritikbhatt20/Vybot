@@ -8,7 +8,7 @@ import { Commands } from '../../enums/commands.enum';
 import { SceneActions, Actions } from '../../enums/actions.enum';
 import { BOT_MESSAGES } from '../../constants';
 import { handleErrorResponse, isValidSolanaAddress, escapeMarkdownV2 } from '../../utils';
-import { TokenPriceAlert } from './token-price-alert.entity';
+import { TokenPriceAlert, AlertType, PercentageDirection } from './token-price-alert.entity';
 
 export const ALERTS_SCENE_ID = 'ALERTS_SCENE';
 
@@ -18,6 +18,9 @@ interface AlertsWizardState {
     targetPrice?: number;
     selectedAlertId?: number;
     currentAlert?: TokenPriceAlert;
+    alertType?: AlertType;
+    percentageChange?: number;
+    percentageDirection?: PercentageDirection;
 }
 
 interface WizardSessionData {
@@ -282,11 +285,11 @@ export class AlertsScene {
     async handleAddAlertMint(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }): Promise<void> {
         try {
             if (ctx.updateType !== 'message' || !(ctx.message as any)?.text) {
-            if (ctx.updateType === 'callback_query') {
-                const data = (ctx.callbackQuery as any).data;
-                await ctx.answerCbQuery();
+                if (ctx.updateType === 'callback_query') {
+                    const data = (ctx.callbackQuery as any).data;
+                    await ctx.answerCbQuery();
                     if (data === 'MAIN_MENU_BUTTON' || data === SceneActions.MAIN_MENU_BUTTON) {
-                await ctx.scene.leave();
+                        await ctx.scene.leave();
                         await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
                             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
                         });
@@ -321,10 +324,13 @@ export class AlertsScene {
             this.logger.debug(`Valid mint address received: ${messageText}, saving to state`);
             ctx.wizard.state.mintAddress = messageText;
             
+            // Ask for alert type
             await ctx.replyWithHTML(
-                '💲 Enter the target price for the alert (in USD):\n\nExample:\n• 147.50',
+                '📊 <b>Select Alert Type</b>\n\nChoose how you want to be alerted:',
                 { 
                     reply_markup: Markup.inlineKeyboard([
+                        [Markup.button.callback('💲 Absolute Price Target', 'ALERT_TYPE_ABSOLUTE')],
+                        [Markup.button.callback('📈 Percentage Change', 'ALERT_TYPE_PERCENTAGE')],
                         [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')]
                     ]).reply_markup 
                 }
@@ -344,14 +350,81 @@ export class AlertsScene {
     }
 
     @WizardStep(4)
-    async handleAddAlertPrice(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }): Promise<void> {
+    async handleAlertTypeSelection(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }): Promise<void> {
         try {
-            if (ctx.updateType !== 'message' || !(ctx.message as any)?.text) {
             if (ctx.updateType === 'callback_query') {
                 const data = (ctx.callbackQuery as any).data;
                 await ctx.answerCbQuery();
+
+                if (data === 'ALERT_TYPE_ABSOLUTE') {
+                    ctx.wizard.state.alertType = AlertType.ABSOLUTE_PRICE;
+                    await ctx.replyWithHTML(
+                        '💲 Enter the target price for the alert (in USD):\n\nExample:\n• 147.50',
+                        { 
+                            reply_markup: Markup.inlineKeyboard([
+                                [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')]
+                            ]).reply_markup 
+                        }
+                    );
+                    ctx.wizard.next();
+                    return;
+                }
+
+                if (data === 'ALERT_TYPE_PERCENTAGE') {
+                    ctx.wizard.state.alertType = AlertType.PERCENTAGE_CHANGE;
+                    await ctx.replyWithHTML(
+                        '📊 Enter the percentage change for the alert (without % symbol):\n\nExample:\n• 10 (for 10%)',
+                        { 
+                            reply_markup: Markup.inlineKeyboard([
+                                [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')]
+                            ]).reply_markup 
+                        }
+                    );
+                    ctx.wizard.selectStep(6); // Skip absolute price step
+                    return;
+                }
+
+                if (data === 'MAIN_MENU_BUTTON') {
+                    await ctx.scene.leave();
+                    await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
+                        reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+                    });
+                    return;
+                }
+            }
+
+            // Handle any text input as invalid
+            await ctx.replyWithHTML(
+                '❌ Please use the buttons to select an alert type.',
+                { 
+                    reply_markup: Markup.inlineKeyboard([
+                        [Markup.button.callback('💲 Absolute Price Target', 'ALERT_TYPE_ABSOLUTE')],
+                        [Markup.button.callback('📈 Percentage Change', 'ALERT_TYPE_PERCENTAGE')],
+                        [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')]
+                    ]).reply_markup 
+                }
+            );
+        } catch (error) {
+            this.logger.error(`Error in handleAlertTypeSelection: ${error.message}`);
+            await ctx.scene.leave();
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: 'ALERTS_AGAIN' }],
+            });
+        }
+    }
+
+    @WizardStep(5)
+    async handleAddAlertPrice(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }): Promise<void> {
+        try {
+            if (ctx.updateType !== 'message' || !(ctx.message as any)?.text) {
+                if (ctx.updateType === 'callback_query') {
+                    const data = (ctx.callbackQuery as any).data;
+                    await ctx.answerCbQuery();
                     if (data === 'MAIN_MENU_BUTTON' || data === SceneActions.MAIN_MENU_BUTTON) {
-                await ctx.scene.leave();
+                        await ctx.scene.leave();
                         await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
                             reply_markup: this.keyboard.getMainKeyboard().reply_markup,
                         });
@@ -454,10 +527,179 @@ You will be notified when the token price reaches your target.`,
         }
     }
 
-    @WizardStep(5)
+    @WizardStep(6)
+    async handlePercentageInput(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }): Promise<void> {
+        try {
+            if (ctx.updateType !== 'message' || !(ctx.message as any)?.text) {
+                if (ctx.updateType === 'callback_query') {
+                    const data = (ctx.callbackQuery as any).data;
+                    await ctx.answerCbQuery();
+                    if (data === 'MAIN_MENU_BUTTON') {
+                        await ctx.scene.leave();
+                        await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
+                            reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+                        });
+                    }
+                    return;
+                }
+                return;
+            }
+
+            const messageText = (ctx.message as { text: string }).text;
+            const percentageChange = parseFloat(messageText);
+
+            if (isNaN(percentageChange) || percentageChange <= 0 || percentageChange > 1000) {
+                await ctx.replyWithHTML(
+                    '❌ Please enter a valid percentage between 0 and 1000 (e.g., 10 for 10%).',
+                    { 
+                        reply_markup: Markup.inlineKeyboard([
+                            [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')]
+                        ]).reply_markup 
+                    }
+                );
+                return;
+            }
+
+            ctx.wizard.state.percentageChange = percentageChange;
+
+            await ctx.replyWithHTML(
+                '📈 Select the price change direction to monitor:',
+                { 
+                    reply_markup: Markup.inlineKeyboard([
+                        [Markup.button.callback('📈 Increase Only', 'DIRECTION_INCREASE')],
+                        [Markup.button.callback('📉 Decrease Only', 'DIRECTION_DECREASE')],
+                        [Markup.button.callback('📊 Both Directions', 'DIRECTION_BOTH')],
+                        [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')]
+                    ]).reply_markup 
+                }
+            );
+
+            ctx.wizard.next();
+        } catch (error) {
+            this.logger.error(`Error in handlePercentageInput: ${error.message}`);
+            await ctx.scene.leave();
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: 'ALERTS_AGAIN' }],
+            });
+        }
+    }
+
+    @WizardStep(7)
+    async handleDirectionSelection(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }): Promise<void> {
+        try {
+            if (ctx.updateType === 'callback_query') {
+                const data = (ctx.callbackQuery as any).data;
+                await ctx.answerCbQuery();
+
+                if (data === 'MAIN_MENU_BUTTON') {
+                    await ctx.scene.leave();
+                    await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
+                        reply_markup: this.keyboard.getMainKeyboard().reply_markup,
+                    });
+                    return;
+                }
+
+                const { mintAddress, percentageChange } = ctx.wizard.state;
+                if (!mintAddress || !percentageChange) {
+                    throw new Error('Missing required alert data');
+                }
+
+                const userId = ctx.from?.id;
+                if (!userId) {
+                    throw new Error('User ID not found');
+                }
+
+                let direction: PercentageDirection;
+                let directionText: string;
+
+                switch (data) {
+                    case 'DIRECTION_INCREASE':
+                        direction = PercentageDirection.INCREASE;
+                        directionText = 'increases';
+                        break;
+                    case 'DIRECTION_DECREASE':
+                        direction = PercentageDirection.DECREASE;
+                        directionText = 'decreases';
+                        break;
+                    case 'DIRECTION_BOTH':
+                        direction = PercentageDirection.BOTH;
+                        directionText = 'changes';
+                        break;
+                    default:
+                        await ctx.replyWithHTML(
+                            '❌ Invalid selection. Please use the buttons to choose a direction.',
+                            { 
+                                reply_markup: Markup.inlineKeyboard([
+                                    [Markup.button.callback('📈 Increase Only', 'DIRECTION_INCREASE')],
+                                    [Markup.button.callback('📉 Decrease Only', 'DIRECTION_DECREASE')],
+                                    [Markup.button.callback('📊 Both Directions', 'DIRECTION_BOTH')],
+                                    [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')]
+                                ]).reply_markup 
+                            }
+                        );
+                        return;
+                }
+
+                const alert = await this.alertsService.createAlert(
+                    userId,
+                    mintAddress,
+                    0, // Default target price for percentage alerts
+                    AlertType.PERCENTAGE_CHANGE,
+                    percentageChange,
+                    direction
+                );
+
+                await ctx.replyWithHTML(
+                    `✅ <b>Percentage Alert Created!</b>
+
+<b>Token:</b> <code>${mintAddress}</code>
+<b>Alert Type:</b> Percentage Change
+<b>Trigger:</b> When price ${directionText} by ${percentageChange}%
+<b>Status:</b> 🟢 Active
+
+You will be notified when the token price changes by the specified percentage.`,
+                    { 
+                        reply_markup: Markup.inlineKeyboard([
+                            [Markup.button.callback('🔔 View Your Alerts', 'VIEW_ALERTS')],
+                            [Markup.button.callback('➕ Add Another Alert', 'ADD_ALERT')],
+                            [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')]
+                        ]).reply_markup 
+                    }
+                );
+
+                await ctx.scene.leave();
+            } else {
+                await ctx.replyWithHTML(
+                    '❌ Please use the buttons to select a direction.',
+                    { 
+                        reply_markup: Markup.inlineKeyboard([
+                            [Markup.button.callback('📈 Increase Only', 'DIRECTION_INCREASE')],
+                            [Markup.button.callback('📉 Decrease Only', 'DIRECTION_DECREASE')],
+                            [Markup.button.callback('📊 Both Directions', 'DIRECTION_BOTH')],
+                            [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')]
+                        ]).reply_markup 
+                    }
+                );
+            }
+        } catch (error) {
+            this.logger.error(`Error in handleDirectionSelection: ${error.message}`);
+            await ctx.scene.leave();
+            await handleErrorResponse({
+                ctx,
+                error,
+                defaultMessage: BOT_MESSAGES.ERROR.API_ERROR,
+                buttons: [{ text: '🔄 Try Again', action: 'ALERTS_AGAIN' }],
+            });
+        }
+    }
+
+    @WizardStep(8)
     async handleViewAlerts(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }): Promise<void> {
         try {
-            this.logger.debug(`Processing ${ALERTS_SCENE_ID}, step 5: handleViewAlerts, updateType: ${ctx.updateType}, action: ${ctx.wizard.state.action}`);
+            this.logger.debug(`Processing ${ALERTS_SCENE_ID}, step 8: handleViewAlerts, updateType: ${ctx.updateType}, action: ${ctx.wizard.state.action}`);
 
             const userId = ctx.from?.id;
             if (!userId) {
@@ -490,8 +732,8 @@ You will be notified when the token price reaches your target.`,
                                     ]).reply_markup 
                                 }
                             );
-                    return;
-                }
+                            return;
+                        }
 
                         const currentAlert = alerts.find(a => a.id === selectedAlertId);
                         if (!currentAlert) {
@@ -508,14 +750,24 @@ You will be notified when the token price reaches your target.`,
                             return;
                         }
                         
+                        const alertDetails = currentAlert.alertType === AlertType.ABSOLUTE_PRICE ?
+                            `<b>Target Price:</b> $${currentAlert.targetPrice.toFixed(2)}` :
+                            `<b>Alert Type:</b> Percentage Change\n` +
+                            `<b>Trigger:</b> ${currentAlert.percentageDirection === PercentageDirection.BOTH ? 'Any' : 
+                                currentAlert.percentageDirection === PercentageDirection.INCREASE ? 'Increase' : 'Decrease'} by ${currentAlert.percentageChange}%\n` +
+                            `<b>Base Price:</b> $${currentAlert.basePrice ? currentAlert.basePrice.toFixed(2) : 'Not set'}`;
+
                         this.logger.debug(`Displaying settings for alert ${currentAlert.id}`);
                         await ctx.replyWithHTML(
                             `⚙️ <b>Price Alert Settings - ${currentAlert.mintAddress.substring(0, 8)}...${currentAlert.mintAddress.substring(currentAlert.mintAddress.length - 4)}</b>\n\n` +
-                            `<b>Target Price:</b> $${currentAlert.targetPrice.toFixed(2)}\n` +
+                            `${alertDetails}\n` +
                             `<b>Status:</b> ${currentAlert.isActive ? '🟢 Active' : '🔴 Inactive'}`,
                             {
                                 reply_markup: Markup.inlineKeyboard([
-                                    [Markup.button.callback('💲 Update Price', 'UPDATE_PRICE')],
+                                    [Markup.button.callback(
+                                        currentAlert.alertType === AlertType.ABSOLUTE_PRICE ? '💲 Update Price' : '📊 Update Percentage',
+                                        'UPDATE_PRICE'
+                                    )],
                                     [Markup.button.callback('🗑️ Delete', 'DELETE_ALERT')],
                                     [Markup.button.callback(
                                         currentAlert.isActive ? '🔴 Deactivate' : '🟢 Activate',
@@ -527,7 +779,7 @@ You will be notified when the token price reaches your target.`,
                             }
                         );
                         
-                        await ctx.wizard.selectStep(6);
+                        await ctx.wizard.selectStep(9);
                     } catch (error) {
                         this.logger.error(`Error showing alert details: ${error.message}`);
                         await ctx.replyWithHTML(
@@ -558,7 +810,7 @@ You will be notified when the token price reaches your target.`,
                 }
 
                 if (data === 'MAIN_MENU_BUTTON') {
-                await ctx.scene.leave();
+                    await ctx.scene.leave();
                     await ctx.replyWithHTML(BOT_MESSAGES.MAIN_MENU, {
                         reply_markup: this.keyboard.getMainKeyboard().reply_markup,
                     });
@@ -568,8 +820,8 @@ You will be notified when the token price reaches your target.`,
                 if (data === 'VIEW_ALERTS') {
                     this.logger.debug('Received VIEW_ALERTS in handleViewAlerts, continuing with alert display');
                 } else {
-                await this.handleCallback(ctx, data);
-                return;
+                    await this.handleCallback(ctx, data);
+                    return;
                 }
             }
 
@@ -582,9 +834,9 @@ You will be notified when the token price reaches your target.`,
             }
 
             try {
-            const alerts = await this.alertsService.getUserAlerts(userId);
-            if (!alerts.length) {
-                await ctx.replyWithHTML(
+                const alerts = await this.alertsService.getUserAlerts(userId);
+                if (!alerts.length) {
+                    await ctx.replyWithHTML(
                         'You don\'t have any active price alerts. Use the ➕ Add New button to create one.',
                         { 
                             reply_markup: Markup.inlineKeyboard([
@@ -592,28 +844,33 @@ You will be notified when the token price reaches your target.`,
                                 [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')],
                             ]).reply_markup 
                         }
-                );
-                await ctx.scene.leave();
-                return;
-            }
-
-            const buttons = alerts.map(alert =>
-                Markup.button.callback(
-                        `${alert.mintAddress.substring(0, 8)}...${alert.mintAddress.substring(alert.mintAddress.length - 4)} ($${alert.targetPrice.toFixed(2)}) ${alert.isActive ? '🟢' : '🔴'}`,
-                    `ALERT_${alert.id}`
-                )
-            );
-
-            await ctx.replyWithHTML(
-                    '🔔 <b>Your Price Alerts</b>\n\nSelect an alert to manage:',
-                {
-                    reply_markup: Markup.inlineKeyboard([
-                        ...buttons.map(btn => [btn]),
-                        [Markup.button.callback('➕ Add New', 'ADD_ALERT')],
-                            [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')],
-                    ]).reply_markup,
+                    );
+                    await ctx.scene.leave();
+                    return;
                 }
-            );
+
+                const buttons = alerts.map(alert => {
+                    let buttonText = '';
+                    if (alert.alertType === AlertType.ABSOLUTE_PRICE) {
+                        buttonText = `${alert.mintAddress.substring(0, 8)}...${alert.mintAddress.substring(alert.mintAddress.length - 4)} ($${alert.targetPrice.toFixed(2)}) ${alert.isActive ? '🟢' : '🔴'}`;
+                    } else {
+                        const direction = alert.percentageDirection === PercentageDirection.BOTH ? '📊' :
+                            alert.percentageDirection === PercentageDirection.INCREASE ? '📈' : '📉';
+                        buttonText = `${alert.mintAddress.substring(0, 8)}...${alert.mintAddress.substring(alert.mintAddress.length - 4)} (${direction} ${alert.percentageChange}%) ${alert.isActive ? '🟢' : '🔴'}`;
+                    }
+                    return Markup.button.callback(buttonText, `ALERT_${alert.id}`);
+                });
+
+                await ctx.replyWithHTML(
+                    '🔔 <b>Your Price Alerts</b>\n\nSelect an alert to manage:',
+                    {
+                        reply_markup: Markup.inlineKeyboard([
+                            ...buttons.map(btn => [btn]),
+                            [Markup.button.callback('➕ Add New', 'ADD_ALERT')],
+                            [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')],
+                        ]).reply_markup,
+                    }
+                );
             } catch (error) {
                 this.logger.error(`Error fetching alerts: ${error.message}`);
                 await ctx.replyWithHTML(
@@ -639,10 +896,10 @@ You will be notified when the token price reaches your target.`,
         }
     }
 
-    @WizardStep(6)
+    @WizardStep(9)
     async showAlertSettings(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }) {
         try {
-            this.logger.debug(`Processing ${ALERTS_SCENE_ID}, step 6: showAlertSettings, updateType: ${ctx.updateType}`);
+            this.logger.debug(`Processing ${ALERTS_SCENE_ID}, step 9: showAlertSettings, updateType: ${ctx.updateType}`);
 
             // Handle callbacks
             if (ctx.updateType === 'callback_query') {
@@ -655,15 +912,15 @@ You will be notified when the token price reaches your target.`,
                     return;
                 }
 
-            const userId = ctx.from?.id;
-            if (!userId) {
-                throw new Error('User ID not found');
-            }
+                const userId = ctx.from?.id;
+                if (!userId) {
+                    throw new Error('User ID not found');
+                }
 
-            const alertId = ctx.wizard.state.selectedAlertId;
-            if (!alertId) {
+                const alertId = ctx.wizard.state.selectedAlertId;
+                if (!alertId) {
                     this.logger.error(`Alert ID missing in wizard state: ${JSON.stringify(ctx.wizard.state)}`);
-                await ctx.replyWithHTML(
+                    await ctx.replyWithHTML(
                         '❌ No alert selected. Please try selecting an alert again.',
                         { 
                             reply_markup: Markup.inlineKeyboard([
@@ -671,10 +928,10 @@ You will be notified when the token price reaches your target.`,
                                 [Markup.button.callback('🏠 Back to Menu', 'MAIN_MENU_BUTTON')],
                             ]).reply_markup 
                         }
-                );
-                await ctx.scene.leave();
-                return;
-            }
+                    );
+                    await ctx.scene.leave();
+                    return;
+                }
 
                 if (data === 'UPDATE_PRICE') {
                     ctx.wizard.state.action = 'update';
@@ -684,7 +941,7 @@ You will be notified when the token price reaches your target.`,
                     );
                     ctx.wizard.next();
                     ctx.session.__scenes = ctx.session.__scenes ?? { cursor: 0, current: ALERTS_SCENE_ID, state: {} };
-                    ctx.session.__scenes.cursor = 7;
+                    ctx.session.__scenes.cursor = 10;
                     return;
                 }
 
@@ -729,7 +986,7 @@ You will be notified when the token price reaches your target.`,
 
                 if (data === 'VIEW_ALERTS') {
                     ctx.wizard.state.action = 'view';
-                    ctx.wizard.selectStep(5);
+                    ctx.wizard.selectStep(8);
                     await this.handleViewAlerts(ctx);
                     return;
                 }
@@ -750,7 +1007,7 @@ You will be notified when the token price reaches your target.`,
             }
 
             // If we get here, it means we need to just wait for user input or callbacks
-            ctx.wizard.selectStep(6);
+            ctx.wizard.selectStep(9);
         } catch (error) {
             this.logger.error(`Error in showAlertSettings: ${error.message}`);
             await ctx.scene.leave();
@@ -764,10 +1021,10 @@ You will be notified when the token price reaches your target.`,
         }
     }
 
-    @WizardStep(7)
+    @WizardStep(10)
     async handleUpdatePrice(@Ctx() ctx: WizardContext & { wizard: { state: AlertsWizardState }, session: CustomSession }) {
         try {
-            this.logger.debug(`Processing ${ALERTS_SCENE_ID}, step 7: handleUpdatePrice, updateType: ${ctx.updateType}`);
+            this.logger.debug(`Processing ${ALERTS_SCENE_ID}, step 10: handleUpdatePrice, updateType: ${ctx.updateType}`);
 
             if (ctx.updateType === 'callback_query') {
                 const data = (ctx.callbackQuery as any).data;
@@ -777,21 +1034,11 @@ You will be notified when the token price reaches your target.`,
                 return;
             }
 
-            const messageText = (ctx.message as { text: string })?.text;
-            if (messageText && messageText.startsWith('/')) {
+            const messageText = (ctx.message as { text: string }).text;
+            if (messageText.startsWith('/')) {
                 this.logger.debug(`Command detected: ${messageText}, exiting scene`);
                 await ctx.scene.leave();
                 await this.handleCommand(ctx, messageText);
-                return;
-            }
-
-            const targetPrice = parseFloat(messageText);
-            if (isNaN(targetPrice) || targetPrice <= 0) {
-                this.logger.warn(`Invalid target price: ${messageText}`);
-                await ctx.replyWithHTML(
-                    '❌ Please enter a valid positive number for the target price (e.g., 147.50).',
-                    { reply_markup: this.keyboard.getTokenPriceKeyboard().reply_markup }
-                );
                 return;
             }
 
@@ -801,14 +1048,60 @@ You will be notified when the token price reaches your target.`,
                 throw new Error('User ID or alert ID not found');
             }
 
-            const alert = await this.alertsService.updateAlert(alertId, userId, targetPrice);
-            await ctx.replyWithHTML(
-                `✅ <b>Price Alert Updated!</b>\n\n` +
-                `<b>Token Mint:</b> <code>${alert.mintAddress.substring(0, 8)}...${alert.mintAddress.substring(alert.mintAddress.length - 4)}</code>\n` +
-                `<b>New Target Price:</b> $${targetPrice.toFixed(2)}\n` +
-                `<b>Status:</b> ${alert.isActive ? '🟢 Active' : '🔴 Inactive'}`,
-                { reply_markup: this.keyboard.getMainKeyboard().reply_markup }
-            );
+            // Get the current alert to determine its type
+            const alerts = await this.alertsService.getUserAlerts(userId);
+            const currentAlert = alerts.find(a => a.id === alertId);
+            if (!currentAlert) {
+                throw new Error('Alert not found');
+            }
+
+            if (currentAlert.alertType === AlertType.ABSOLUTE_PRICE) {
+                const targetPrice = parseFloat(messageText);
+                if (isNaN(targetPrice) || targetPrice <= 0 || targetPrice > 1000000000) {
+                    this.logger.warn(`Invalid target price: ${messageText}`);
+                    await ctx.replyWithHTML(
+                        '❌ Please enter a valid price between 0 and 1,000,000,000 USD (e.g., 147.50).',
+                        { reply_markup: this.keyboard.getTokenPriceKeyboard().reply_markup }
+                    );
+                    return;
+                }
+
+                const alert = await this.alertsService.updateAlert(alertId, userId, targetPrice);
+                await ctx.replyWithHTML(
+                    `✅ <b>Price Alert Updated!</b>\n\n` +
+                    `<b>Token Mint:</b> <code>${alert.mintAddress.substring(0, 8)}...${alert.mintAddress.substring(alert.mintAddress.length - 4)}</code>\n` +
+                    `<b>New Target Price:</b> $${targetPrice.toFixed(2)}\n` +
+                    `<b>Status:</b> ${alert.isActive ? '🟢 Active' : '🔴 Inactive'}`,
+                    { reply_markup: this.keyboard.getMainKeyboard().reply_markup }
+                );
+            } else {
+                const percentageChange = parseFloat(messageText);
+                if (isNaN(percentageChange) || percentageChange <= 0 || percentageChange > 1000) {
+                    await ctx.replyWithHTML(
+                        '❌ Please enter a valid percentage between 0 and 1000 (e.g., 10 for 10%).',
+                        { reply_markup: this.keyboard.getTokenPriceKeyboard().reply_markup }
+                    );
+                    return;
+                }
+
+                const alert = await this.alertsService.updateAlert(
+                    alertId,
+                    userId,
+                    undefined,
+                    percentageChange,
+                    currentAlert.percentageDirection
+                );
+
+                await ctx.replyWithHTML(
+                    `✅ <b>Percentage Alert Updated!</b>\n\n` +
+                    `<b>Token Mint:</b> <code>${alert.mintAddress.substring(0, 8)}...${alert.mintAddress.substring(alert.mintAddress.length - 4)}</code>\n` +
+                    `<b>New Percentage:</b> ${percentageChange}%\n` +
+                    `<b>Direction:</b> ${alert.percentageDirection === PercentageDirection.BOTH ? 'Any' : 
+                        alert.percentageDirection === PercentageDirection.INCREASE ? 'Increase' : 'Decrease'}\n` +
+                    `<b>Status:</b> ${alert.isActive ? '🟢 Active' : '🔴 Inactive'}`,
+                    { reply_markup: this.keyboard.getMainKeyboard().reply_markup }
+                );
+            }
 
             await ctx.scene.leave();
             ctx.session = {};
@@ -1231,12 +1524,17 @@ You will be notified when the token price reaches your target.`,
                 return;
             }
 
-            const buttons = alerts.map(alert =>
-                Markup.button.callback(
-                    `${alert.mintAddress.substring(0, 8)}...${alert.mintAddress.substring(alert.mintAddress.length - 4)} ($${alert.targetPrice.toFixed(2)}) ${alert.isActive ? '🟢' : '🔴'}`,
-                    `ALERT_${alert.id}`
-                )
-            );
+            const buttons = alerts.map(alert => {
+                let buttonText = '';
+                if (alert.alertType === AlertType.ABSOLUTE_PRICE) {
+                    buttonText = `${alert.mintAddress.substring(0, 8)}...${alert.mintAddress.substring(alert.mintAddress.length - 4)} ($${alert.targetPrice.toFixed(2)}) ${alert.isActive ? '🟢' : '🔴'}`;
+                } else {
+                    const direction = alert.percentageDirection === PercentageDirection.BOTH ? '📊' :
+                        alert.percentageDirection === PercentageDirection.INCREASE ? '📈' : '📉';
+                    buttonText = `${alert.mintAddress.substring(0, 8)}...${alert.mintAddress.substring(alert.mintAddress.length - 4)} (${direction} ${alert.percentageChange}%) ${alert.isActive ? '🟢' : '🔴'}`;
+                }
+                return Markup.button.callback(buttonText, `ALERT_${alert.id}`);
+            });
 
             this.logger.debug(`@Action(VIEW_ALERTS): Sending reply with ${alerts.length} alerts`);
             await ctx.replyWithHTML(
@@ -1257,8 +1555,8 @@ You will be notified when the token price reaches your target.`,
             }
             
             ctx.wizard.state.action = 'view';
-            this.logger.debug(`@Action(VIEW_ALERTS): Setting wizard to step 5 to handle alert selection`);
-            ctx.wizard.selectStep(5);
+            this.logger.debug(`@Action(VIEW_ALERTS): Setting wizard to step 8 to handle alert selection`);
+            ctx.wizard.selectStep(8);
             
         } catch (error) {
             this.logger.error(`Error in @Action(VIEW_ALERTS): ${error.message}`, error.stack);

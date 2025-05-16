@@ -234,6 +234,11 @@ export class NlpService {
             keywords: ['alerts', 'price alerts', 'token alerts', 'notifications', 'alert settings', 'price notifications', 'manage alerts', 'view alerts', 'check alerts', 'my alerts', 'set alert', 'create alert', 'add alert', 'remove alert', 'delete alert', 'price tracking'],
             exactPhrases: ['alerts', 'price alerts', 'token alerts', 'my alerts'],
         },
+        {
+            command: Commands.PercentAlerts,
+            keywords: ['percentage alerts', 'percent alerts', 'percentage price alerts', 'percent price alerts', 'percentage change alerts', 'percent change alerts', 'price change alerts'],
+            exactPhrases: ['percentage alerts', 'percent alerts', 'price change alerts'],
+        },
     ];
 
     private readonly sceneMap: { [key in Commands]: string } = {
@@ -266,6 +271,7 @@ export class NlpService {
         [Commands.Markets]: 'MARKETS_SCENE',
         [Commands.TokenPrice]: 'TOKEN_PRICE_SCENE',
         [Commands.Alerts]: 'ALERTS_SCENE',
+        [Commands.PercentAlerts]: 'ALERTS_SCENE',
         [Commands.HELP]: '',
         [Commands.MAIN_MENU]: '',
         [Commands.Cancel]: '',

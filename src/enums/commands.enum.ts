@@ -28,6 +28,7 @@ export enum Commands {
     Markets = 'markets',
     TokenPrice = 'tokenprice',
     Alerts = 'alerts',
+    PercentAlerts = 'percentalerts',
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',

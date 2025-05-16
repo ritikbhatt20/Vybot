@@ -9,12 +9,16 @@ import { Commands } from '../../enums/commands.enum';
 import { ALERTS_SCENE_ID } from './alerts.scene';
 import { BOT_MESSAGES } from '../../constants';
 import { Markup } from 'telegraf';
+import { AlertType, PercentageDirection } from './token-price-alert.entity';
 
 interface AlertsWizardState {
-    action?: 'add' | 'view' | 'update' | 'delete' | 'toggle';
+    action?: 'add' | 'view' | 'update' | 'delete' | 'toggle' | 'view_details';
     mintAddress?: string;
     targetPrice?: number;
     selectedAlertId?: number;
+    alertType?: AlertType;
+    percentageChange?: number;
+    percentageDirection?: PercentageDirection;
 }
 
 @Update()
@@ -106,6 +110,35 @@ export class AlertsUpdate {
             await ctx.wizard.selectStep(1);
         } catch (error) {
             this.logger.error(`Error handling alerts command: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Command(Commands.PercentAlerts)
+    async handlePercentAlerts(@Ctx() ctx: WizardContext) {
+        try {
+            // Make sure to leave any current scene first
+            if (ctx.scene.current) {
+                await ctx.scene.leave();
+            }
+            
+            await ctx.scene.enter(ALERTS_SCENE_ID);
+            ctx.wizard.state['action'] = 'add';
+            ctx.wizard.state['alertType'] = AlertType.PERCENTAGE_CHANGE;
+            ctx.wizard.selectStep(3);
+            
+            await ctx.replyWithHTML(
+                '🔔 <b>Add Percentage Alert</b>\n\nEnter a token mint address to set a percentage-based alert for:\n\nExample:\n• <code>So11111111111111111111111111111111111111112</code> (SOL)',
+                { 
+                    reply_markup: {
+                        inline_keyboard: [
+                            [{ text: '🏠 Back to Menu', callback_data: 'MAIN_MENU_BUTTON' }]
+                        ]
+                    }
+                }
+            );
+        } catch (error) {
+            this.logger.error(`Error handling percent alerts command: ${error.message}`);
             await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }

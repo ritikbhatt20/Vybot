@@ -36,6 +36,7 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.HELP]: '/help - 📚 Get help with using the bot',
     [Commands.MAIN_MENU]: '/main_menu - 🏠 Go back to the main menu',
     [Commands.Alerts]: '/alerts - 🔔 Manage your token price alerts',
+    [Commands.PercentAlerts]: '/percentalerts - 📊 Create percentage-based price alerts',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
 };
 
@@ -150,6 +151,38 @@ Example:
 
     PRICES: {
         MENU: '💲 Discover Prices Insights:',
+        TOKEN_PRICE: {
+            ASK_MINT_ADDRESS: `💰 <b>Token Price</b>
+
+Enter a token mint address to view its price:
+
+Example:
+• <code>So11111111111111111111111111111111111111112</code> (SOL)`,
+            SEARCHING: '🔍 <b>Fetching token price...</b>',
+            NO_RESULTS: '🔍 <b>No price data found for this token</b>',
+            RESULTS_HEADER: '💰 <b>Token Price</b>\n\n',
+        },
+        ALERTS: {
+            PERCENTAGE_CHANGE: {
+                ASK_PERCENTAGE: `📊 Enter the percentage change for the alert (without % symbol):
+
+Example:
+• 10 (for 10%)`,
+                ASK_DIRECTION: `📈 Select the price change direction to monitor:
+
+• Increase - Alert when price goes up by the specified percentage
+• Decrease - Alert when price goes down by the specified percentage
+• Both - Alert when price changes in either direction`,
+                CONFIRMATION: `✅ <b>Percentage Alert Created!</b>
+
+<b>Token:</b> {token}
+<b>Alert Type:</b> Percentage Change
+<b>Trigger:</b> When price {direction} by {percentage}%
+<b>Status:</b> 🟢 Active
+
+You will be notified when the token price changes by the specified percentage.`,
+            },
+        },
         PYTH_ACCOUNTS: {
             ASK_FILTER: `📈 <b>Pyth Accounts</b>
 
@@ -245,17 +278,6 @@ Example:
             SEARCHING: '🔍 <b>Fetching DEX and AMM programs...</b>',
             NO_RESULTS: '🔍 <b>No DEX or AMM programs found</b>',
             RESULTS_HEADER: '🛠️ <b>DEX and AMM Programs</b>\n\n',
-        },
-        TOKEN_PRICE: {
-            ASK_MINT_ADDRESS: `💰 <b>Token Price Explorer</b>
-
-Enter a Solana mint address to view the token price and 24h change:
-
-Example:
-• <code>So11111111111111111111111111111111111111112</code>`,
-            SEARCHING: '🔍 <b>Fetching token price...</b>',
-            NO_RESULTS: '❌ <b>No price data found for the given mint address</b>',
-            RESULTS_HEADER: '<b>Token Price Data</b>\n\n',
         },
     },
 
