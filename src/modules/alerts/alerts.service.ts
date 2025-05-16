@@ -150,7 +150,7 @@ export class AlertsService {
         }
     }
 
-    @Cron(CronExpression.EVERY_MINUTE)
+    @Cron(CronExpression.EVERY_12_HOURS)
     async checkPriceAlerts() {
         this.logger.debug('Checking active price alerts');
         const activeAlerts = await this.alertRepository.find({ where: { isActive: true } });
