@@ -57,7 +57,21 @@ export class PatternRecognitionScene {
     private async askForToken(ctx: PatternRecognitionContext) {
         await ctx.reply(
             BOT_MESSAGES.PATTERNS.ASK_TOKEN,
-            { parse_mode: 'Markdown' }
+            { 
+                parse_mode: 'Markdown',
+                reply_markup: this.keyboardService.createInlineKeyboard([
+                    [{ text: '🔙 Back to Menu', callback_data: 'back_to_patterns_menu' }]
+                ])
+            }
+        );
+    }
+
+    @Action('back_to_patterns_menu')
+    async onBackToPatternsMenu(@Ctx() ctx: PatternRecognitionContext) {
+        await ctx.answerCbQuery();
+        await ctx.editMessageText(
+            BOT_MESSAGES.PATTERNS.MENU,
+            { reply_markup: this.keyboardService.getPatternsKeyboard().reply_markup }
         );
     }
 
