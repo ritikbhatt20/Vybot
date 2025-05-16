@@ -12,9 +12,14 @@ import { NftModule } from './modules/nft/nft.module';
 import { PricesModule } from './modules/prices/prices.module';
 import { MarketsModule } from './modules/markets/markets.module';
 import { AlertsModule } from './modules/alerts/alerts.module';
+import { PatternRecognitionModule } from './modules/patterns/pattern-recognition.module';
 import { PostgresSessionStore } from './utils/pg-session-store';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenPriceAlert } from './modules/alerts/token-price-alert.entity';
+import { PatternAlert, IdentifiedPattern } from './modules/patterns/entities/pattern-alert.entity';
+import { AddPatternRecognitionTables1684218200000 } from './migrations/1684218200000-AddPatternRecognitionTables';
+import { AddUserIdToPatternAlerts1684218201000 } from './migrations/1684218201000-AddUserIdToPatternAlerts';
+import { CreatePatternAlertsTable1684218202000 } from './migrations/1684218202000-CreatePatternAlertsTable';
 
 @Module({
   imports: [
@@ -37,8 +42,14 @@ import { TokenPriceAlert } from './modules/alerts/token-price-alert.entity';
           username: dbConfig.user,
           password: dbConfig.password,
           database: dbConfig.database,
-          entities: [TokenPriceAlert],
-          synchronize: true, // Be careful with this in production
+          entities: [TokenPriceAlert, PatternAlert, IdentifiedPattern],
+          migrations: [
+            AddPatternRecognitionTables1684218200000,
+            AddUserIdToPatternAlerts1684218201000,
+            CreatePatternAlertsTable1684218202000
+          ],
+          migrationsRun: true,
+          synchronize: false, // Disable auto-sync since we're using migrations
           ssl: true,
           extra: {
             ssl: {
@@ -88,6 +99,7 @@ import { TokenPriceAlert } from './modules/alerts/token-price-alert.entity';
     PricesModule,
     MarketsModule,
     AlertsModule,
+    PatternRecognitionModule,
   ],
   providers: [AppUpdate],
 })

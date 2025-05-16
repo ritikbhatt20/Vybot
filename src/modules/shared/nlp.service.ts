@@ -239,6 +239,31 @@ export class NlpService {
             keywords: ['percentage alerts', 'percent alerts', 'percentage price alerts', 'percent price alerts', 'percentage change alerts', 'percent change alerts', 'price change alerts'],
             exactPhrases: ['percentage alerts', 'percent alerts', 'price change alerts'],
         },
+        {
+            command: Commands.Patterns,
+            keywords: ['patterns', 'chart patterns', 'technical patterns', 'trading patterns', 'pattern recognition', 'pattern alerts'],
+            exactPhrases: ['chart patterns', 'pattern recognition'],
+        },
+        {
+            command: Commands.HeadAndShoulders,
+            keywords: ['head and shoulders', 'head & shoulders', 'h&s pattern', 'head shoulders pattern'],
+            exactPhrases: ['head and shoulders', 'head & shoulders'],
+        },
+        {
+            command: Commands.DoubleTopBottom,
+            keywords: ['double top', 'double bottom', 'double top bottom', 'double patterns'],
+            exactPhrases: ['double top', 'double bottom'],
+        },
+        {
+            command: Commands.TrianglePatterns,
+            keywords: ['triangle patterns', 'ascending triangle', 'descending triangle', 'symmetric triangle'],
+            exactPhrases: ['triangle patterns', 'ascending triangle', 'descending triangle'],
+        },
+        {
+            command: Commands.FlagsAndPennants,
+            keywords: ['flags and pennants', 'flag patterns', 'pennant patterns', 'flags pennants'],
+            exactPhrases: ['flags and pennants', 'flag patterns', 'pennant patterns'],
+        },
     ];
 
     private readonly sceneMap: { [key in Commands]: string } = {
@@ -275,6 +300,11 @@ export class NlpService {
         [Commands.HELP]: '',
         [Commands.MAIN_MENU]: '',
         [Commands.Cancel]: '',
+        [Commands.Patterns]: 'PATTERN_RECOGNITION_SCENE',
+        [Commands.HeadAndShoulders]: 'PATTERN_RECOGNITION_SCENE',
+        [Commands.DoubleTopBottom]: 'PATTERN_RECOGNITION_SCENE',
+        [Commands.TrianglePatterns]: 'PATTERN_RECOGNITION_SCENE',
+        [Commands.FlagsAndPennants]: 'PATTERN_RECOGNITION_SCENE',
     };
 
     detectIntent(message: string): { command: Commands; sceneId?: string; mintAddress?: string; programAddress?: string } | null {

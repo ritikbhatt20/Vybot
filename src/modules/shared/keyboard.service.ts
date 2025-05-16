@@ -3,6 +3,11 @@ import { Markup } from 'telegraf';
 import { InlineKeyboardMarkup } from '@telegraf/types';
 import { Actions, SceneActions } from '../../enums/actions.enum';
 
+interface InlineKeyboardButton {
+    text: string;
+    callback_data: string;
+}
+
 @Injectable()
 export class KeyboardService {
     getMainKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
@@ -21,7 +26,7 @@ export class KeyboardService {
             ],
             [
                 Markup.button.callback('🔔 Alerts', Actions.ALERTS_MENU),
-                Markup.button.url('💬 Support', 'https://t.me/VybeNetwork_Official'),
+                Markup.button.callback('📈 Patterns', Actions.PATTERNS_MENU),
             ],
             [
                 Markup.button.url('🌐 Vybe Network', 'https://www.vybenetwork.com'),
@@ -649,5 +654,41 @@ export class KeyboardService {
                 Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
             ],
         ]);
+    }
+
+    getPatternsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [
+                Markup.button.callback('👥 Head & Shoulders', Actions.HEAD_AND_SHOULDERS),
+                Markup.button.callback('🔄 Double Top/Bottom', Actions.DOUBLE_TOP_BOTTOM),
+            ],
+            [
+                Markup.button.callback('📐 Triangle Patterns', Actions.TRIANGLE_PATTERNS),
+                Markup.button.callback('🚩 Flags & Pennants', Actions.FLAGS_AND_PENNANTS),
+            ],
+            [
+                Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    getPatternsResultsKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
+        return Markup.inlineKeyboard([
+            [Markup.button.callback('🔄 Check Patterns Again', SceneActions.PATTERNS_AGAIN)],
+            [Markup.button.url('🔍 More Analytics', 'https://docs.vybenetwork.com')],
+            [
+                Markup.button.callback('🏠 Back to Menu', SceneActions.MAIN_MENU_BUTTON),
+                Markup.button.callback('❌ Close', SceneActions.CLOSE_BUTTON),
+            ],
+        ]);
+    }
+
+    createInlineKeyboard(buttons: InlineKeyboardButton[][]): {
+        inline_keyboard: InlineKeyboardButton[][];
+    } {
+        return {
+            inline_keyboard: buttons
+        };
     }
 }

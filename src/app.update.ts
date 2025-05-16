@@ -29,6 +29,8 @@ import { PROGRAM_RANKING_SCENE_ID } from './modules/programs/program-ranking.sce
 import { PYTH_ACCOUNTS_SCENE_ID } from './modules/prices/pyth-accounts.scene';
 import { TOKEN_PRICE_SCENE_ID } from './modules/prices/token-price.scene';
 import { ALERTS_SCENE_ID } from './modules/alerts/alerts.scene';
+import { PATTERN_RECOGNITION_SCENE_ID } from './modules/patterns/pattern-recognition.scene';
+import { PatternType } from './modules/patterns/entities/pattern-alert.entity';
 
 @Update()
 export class AppUpdate {
@@ -918,6 +920,64 @@ export class AppUpdate {
             });
         } catch (error) {
             this.logger.error(`Error in cancel button action: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.PATTERNS_MENU)
+    async onPatternsMenu(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📈 Accessing pattern recognition menu...');
+            await ctx.replyWithHTML(
+                '📈 Technical Analysis Pattern Recognition:\n\n' +
+                'Select a pattern type to monitor:',
+                { reply_markup: this.keyboard.getPatternsKeyboard().reply_markup }
+            );
+        } catch (error) {
+            this.logger.error(`Error entering patterns menu: ${error.message}`);
+        }
+    }
+
+    @Action(Actions.HEAD_AND_SHOULDERS)
+    async onHeadAndShoulders(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('👥 Setting up Head and Shoulders pattern monitoring...');
+            await ctx.scene.enter(PATTERN_RECOGNITION_SCENE_ID, { pattern: PatternType.HEAD_AND_SHOULDERS });
+        } catch (error) {
+            this.logger.error(`Error in head and shoulders action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action(Actions.DOUBLE_TOP_BOTTOM)
+    async onDoubleTopBottom(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🔄 Setting up Double Top/Bottom pattern monitoring...');
+            await ctx.scene.enter(PATTERN_RECOGNITION_SCENE_ID, { pattern: PatternType.DOUBLE_TOP });
+        } catch (error) {
+            this.logger.error(`Error in double top/bottom action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action(Actions.TRIANGLE_PATTERNS)
+    async onTrianglePatterns(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('📐 Setting up Triangle pattern monitoring...');
+            await ctx.scene.enter(PATTERN_RECOGNITION_SCENE_ID, { pattern: PatternType.ASCENDING_TRIANGLE });
+        } catch (error) {
+            this.logger.error(`Error in triangle patterns action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
+        }
+    }
+
+    @Action(Actions.FLAGS_AND_PENNANTS)
+    async onFlagsAndPennants(@Ctx() ctx: Context & SceneContext) {
+        try {
+            await ctx.answerCbQuery('🚩 Setting up Flags and Pennants pattern monitoring...');
+            await ctx.scene.enter(PATTERN_RECOGNITION_SCENE_ID, { pattern: PatternType.BULLISH_FLAG });
+        } catch (error) {
+            this.logger.error(`Error in flags and pennants action: ${error.message}`);
+            await ctx.replyWithHTML(BOT_MESSAGES.ERROR.GENERIC);
         }
     }
 }

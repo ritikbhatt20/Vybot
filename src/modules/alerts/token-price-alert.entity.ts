@@ -21,7 +21,7 @@ export class TokenPriceAlert {
 
     @Column()
     mintAddress: string; // Token mint address
-    
+
     @Column({
         type: 'enum',
         enum: AlertType,

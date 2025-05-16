@@ -32,4 +32,9 @@ export enum Commands {
     HELP = 'help',
     MAIN_MENU = 'main_menu',
     Cancel = 'cancel',
+    Patterns = 'patterns',
+    HeadAndShoulders = 'headandshoulders',
+    DoubleTopBottom = 'doubletopbottom',
+    TrianglePatterns = 'trianglepatterns',
+    FlagsAndPennants = 'flagsandpennants',
 }

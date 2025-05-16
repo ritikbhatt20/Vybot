@@ -38,6 +38,11 @@ export const commandDescriptions: CommandDescriptions = {
     [Commands.Alerts]: '/alerts - 🔔 Manage your token price alerts',
     [Commands.PercentAlerts]: '/percentalerts - 📊 Create percentage-based price alerts',
     [Commands.Cancel]: '/cancel - 🚫 Cancel the current operation',
+    [Commands.Patterns]: '/patterns - 📈 View and manage pattern recognition alerts',
+    [Commands.HeadAndShoulders]: '/headandshoulders - 👥 Monitor Head and Shoulders patterns',
+    [Commands.DoubleTopBottom]: '/doubletopbottom - 🔄 Monitor Double Top/Bottom patterns',
+    [Commands.TrianglePatterns]: '/trianglepatterns - 📐 Monitor Triangle patterns',
+    [Commands.FlagsAndPennants]: '/flagsandpennants - 🚩 Monitor Flags and Pennants patterns',
 };
 
 export const BOT_MESSAGES = {
@@ -655,5 +660,16 @@ You will be notified when the token price reaches your target.`,
         MAX_ALERTS_REACHED: '❌ You have reached the maximum limit of 10 active alerts. Please delete some alerts before creating new ones.',
         DUPLICATE_ALERT: '❌ You already have an active alert for this token at a similar price point.',
         INVALID_PRICE: '❌ Please enter a valid price between 0 and 1,000,000,000 USD (e.g., 147.50).',
+    },
+
+    PATTERNS: {
+        MENU: '📈 Technical Analysis Pattern Recognition:\n\nSelect a pattern type to monitor:',
+        ASK_TOKEN: '🔍 Enter the token address you want to monitor for patterns:\n\nExample:\n• `So11111111111111111111111111111111111111112` (SOL)',
+        ASK_TIMEFRAME: '⏰ Select the timeframe for pattern monitoring:',
+        ASK_CONFIDENCE: '📊 Select the minimum confidence level for pattern detection:',
+        PATTERN_ADDED: '✅ Pattern Alert Created!\n\n*Token:* `${token}`\n*Pattern:* ${pattern}\n*Timeframe:* ${timeframe}\n*Confidence:* ${confidence}%\n\nYou will be notified when this pattern is detected.',
+        NO_RESULTS: '🔍 No patterns found for the given criteria.',
+        RESULTS_HEADER: '📈 Pattern Recognition Results\n\n',
+        INVALID_TOKEN: '❌ Invalid token. Please provide a valid token mint address or name.',
     },
 };
