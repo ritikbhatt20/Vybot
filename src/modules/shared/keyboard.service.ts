@@ -33,6 +33,9 @@ export class KeyboardService {
                 Markup.button.url('📃 Vybe Documentation', 'docs.vybenetwork.com/docs'),
             ],
             [
+                Markup.button.url('💬 Support', 'https://t.me/VybeNetwork_Official'),
+            ],
+            [
                 Markup.button.callback('❓ Help', Actions.HELP),
             ],
         ]);
