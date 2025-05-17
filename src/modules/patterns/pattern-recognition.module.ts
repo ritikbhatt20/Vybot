@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PatternRecognitionService } from './services/pattern-recognition.service';
 import { PatternRecognitionScene } from './pattern-recognition.scene';
-import { PatternAlert } from './entities/pattern-alert.entity';
-import { IdentifiedPattern } from './entities/identified-pattern.entity';
+import { PatternAlertsScene } from './pattern-alerts.scene';
+import { PatternRecognitionService } from './services/pattern-recognition.service';
+import { PatternAlert, IdentifiedPattern } from './entities/pattern-alert.entity';
 import { SharedModule } from '../shared/shared.module';
 
 @Module({
@@ -11,7 +11,11 @@ import { SharedModule } from '../shared/shared.module';
         TypeOrmModule.forFeature([PatternAlert, IdentifiedPattern]),
         SharedModule,
     ],
-    providers: [PatternRecognitionService, PatternRecognitionScene],
+    providers: [
+        PatternRecognitionScene,
+        PatternAlertsScene,
+        PatternRecognitionService,
+    ],
     exports: [PatternRecognitionService],
 })
 export class PatternRecognitionModule {} 

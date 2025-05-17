@@ -5,6 +5,7 @@ import { PatternType } from './entities/pattern-alert.entity';
 import { Context } from '../shared/interfaces/context.interface';
 import { Logger } from '@nestjs/common';
 import { BOT_MESSAGES } from '../../constants';
+import { PATTERN_ALERTS_SCENE_ID } from './pattern-alerts.scene';
 
 export const PATTERN_RECOGNITION_SCENE_ID = 'pattern-recognition';
 
@@ -203,5 +204,11 @@ export class PatternRecognitionScene {
                 ]),
             },
         );
+    }
+
+    @Action('my_pattern_alerts')
+    async onMyPatternAlerts(@Ctx() ctx: PatternRecognitionContext) {
+        await ctx.answerCbQuery('📋 Opening your pattern alerts...');
+        await ctx.scene.enter(PATTERN_ALERTS_SCENE_ID);
     }
 } 

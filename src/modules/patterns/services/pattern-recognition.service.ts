@@ -58,6 +58,17 @@ export class PatternRecognitionService {
         }
     }
 
+    async getPatternAlert(alertId: string): Promise<PatternAlert | null> {
+        try {
+            return await this.patternAlertRepository.findOne({
+                where: { id: alertId }
+            });
+        } catch (error) {
+            this.logger.error(`Error fetching pattern alert: ${error.message}`);
+            throw error;
+        }
+    }
+
     async togglePatternAlert(alertId: string, isActive: boolean): Promise<PatternAlert> {
         try {
             const alert = await this.patternAlertRepository.findOne({ where: { id: alertId } });
