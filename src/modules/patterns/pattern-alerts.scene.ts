@@ -5,6 +5,7 @@ import { Context } from '../shared/interfaces/context.interface';
 import { Logger } from '@nestjs/common';
 import { BOT_MESSAGES } from '../../constants';
 import { PatternAlert } from './entities/pattern-alert.entity';
+import { SceneActions } from '../../enums/actions.enum';
 
 export const PATTERN_ALERTS_SCENE_ID = 'pattern-alerts';
 
@@ -32,6 +33,11 @@ export class PatternAlertsScene {
             .join(' ');
     }
 
+    @SceneEnter()
+    async onSceneEnter(@Ctx() ctx: PatternAlertsContext) {
+        await this.displayAlerts(ctx);
+    }
+
     private async displayAlerts(ctx: PatternAlertsContext) {
         try {
             const alerts = await this.patternRecognitionService.getUserPatternAlerts(ctx.from.id);
@@ -55,7 +61,7 @@ export class PatternAlertsScene {
 
             // Add back buttons
             buttons.push([{ text: '➕ Create New Alert', callback_data: 'create_new_alert' }]);
-            buttons.push([{ text: '🏠 Back to Main Menu', callback_data: 'back_to_main' }]);
+            buttons.push([{ text: '🏠 Back to Main Menu', callback_data: SceneActions.MAIN_MENU_BUTTON }]);
 
             await ctx.reply(
                 '📋 Your Pattern Alerts:\nClick on an alert to view details and manage it.',
@@ -70,11 +76,6 @@ export class PatternAlertsScene {
                 { reply_markup: this.keyboardService.getPatternAlertsListKeyboard().reply_markup }
             );
         }
-    }
-
-    @SceneEnter()
-    async onSceneEnter(@Ctx() ctx: PatternAlertsContext) {
-        await this.displayAlerts(ctx);
     }
 
     @Action(/^toggle_pattern_alert:(.+)$/)
@@ -116,12 +117,6 @@ export class PatternAlertsScene {
         }
     }
 
-    @Action('my_pattern_alerts')
-    async onViewAlerts(@Ctx() ctx: PatternAlertsContext) {
-        await ctx.answerCbQuery();
-        await this.displayAlerts(ctx);
-    }
-
     @Action(/^view_alert:(.+)$/)
     async onViewAlert(@Ctx() ctx: PatternAlertsContext) {
         try {
@@ -160,11 +155,46 @@ export class PatternAlertsScene {
 
     @Action('create_new_alert')
     async onCreateNewAlert(@Ctx() ctx: PatternAlertsContext) {
-        await ctx.scene.enter('pattern-recognition');
+        try {
+            await ctx.answerCbQuery();
+            await ctx.scene.leave();
+            await ctx.scene.enter('pattern-recognition');
+        } catch (error) {
+            this.logger.error(`Error creating new alert: ${error.message}`);
+            await ctx.answerCbQuery('❌ Error creating new alert');
+        }
     }
 
     @Action('back_to_alerts_list')
     async onBackToAlertsList(@Ctx() ctx: PatternAlertsContext) {
-        await this.displayAlerts(ctx);
+        try {
+            await ctx.answerCbQuery();
+            await this.displayAlerts(ctx);
+        } catch (error) {
+            this.logger.error(`Error returning to alerts list: ${error.message}`);
+            await ctx.answerCbQuery('❌ Error returning to alerts list');
+        }
+    }
+
+    @Action(SceneActions.PATTERN_ALERTS)
+    async onPatternAlerts(@Ctx() ctx: PatternAlertsContext) {
+        await ctx.answerCbQuery('📋 Opening your pattern alerts...');
+        await ctx.scene.enter(PATTERN_ALERTS_SCENE_ID);
+    }
+
+    @Action(SceneActions.MAIN_MENU_BUTTON)
+    @Action('back_to_main')
+    async onBackToMain(@Ctx() ctx: PatternAlertsContext) {
+        try {
+            await ctx.answerCbQuery();
+            await ctx.scene.leave();
+            await ctx.replyWithHTML(
+                BOT_MESSAGES.MAIN_MENU,
+                { reply_markup: this.keyboardService.getMainKeyboard().reply_markup }
+            );
+        } catch (error) {
+            this.logger.error(`Error returning to main menu: ${error.message}`);
+            await ctx.answerCbQuery('❌ Error returning to main menu');
+        }
     }
 } 

@@ -6,6 +6,7 @@ import { Context } from '../shared/interfaces/context.interface';
 import { Logger } from '@nestjs/common';
 import { BOT_MESSAGES } from '../../constants';
 import { PATTERN_ALERTS_SCENE_ID } from './pattern-alerts.scene';
+import { SceneActions, Actions } from '../../enums/actions.enum';
 
 export const PATTERN_RECOGNITION_SCENE_ID = 'pattern-recognition';
 
@@ -48,11 +49,15 @@ export class PatternRecognitionScene {
             ctx.session.pattern = pattern;
             await this.askForToken(ctx);
         } else {
-            await ctx.reply(
-                BOT_MESSAGES.PATTERNS.MENU,
-                { reply_markup: this.keyboardService.getPatternsKeyboard().reply_markup }
-            );
+            await this.showPatternsMenu(ctx);
         }
+    }
+
+    private async showPatternsMenu(ctx: PatternRecognitionContext) {
+        await ctx.reply(
+            BOT_MESSAGES.PATTERNS.MENU,
+            { reply_markup: this.keyboardService.getPatternsKeyboard().reply_markup }
+        );
     }
 
     private async askForToken(ctx: PatternRecognitionContext) {
@@ -69,20 +74,50 @@ export class PatternRecognitionScene {
 
     @Action('back_to_patterns_menu')
     async onBackToPatternsMenu(@Ctx() ctx: PatternRecognitionContext) {
-        await ctx.answerCbQuery();
-        await ctx.editMessageText(
-            BOT_MESSAGES.PATTERNS.MENU,
-            { reply_markup: this.keyboardService.getPatternsKeyboard().reply_markup }
-        );
+        try {
+            await ctx.answerCbQuery();
+            await ctx.editMessageText(
+                BOT_MESSAGES.PATTERNS.MENU,
+                { reply_markup: this.keyboardService.getPatternsKeyboard().reply_markup }
+            );
+        } catch (error) {
+            await this.showPatternsMenu(ctx);
+        }
+    }
+
+    @Action(Actions.PATTERN_ALERTS)
+    async onMyPatternAlerts(@Ctx() ctx: PatternRecognitionContext) {
+        try {
+            await ctx.answerCbQuery('📋 Opening your pattern alerts...');
+            await ctx.scene.leave();
+            await ctx.scene.enter(PATTERN_ALERTS_SCENE_ID);
+        } catch (error) {
+            this.logger.error(`Error entering pattern alerts scene: ${error.message}`);
+            await ctx.answerCbQuery('❌ Error opening pattern alerts');
+            await this.showPatternsMenu(ctx);
+        }
+    }
+
+    @Action(SceneActions.MAIN_MENU_BUTTON)
+    @Action('back_to_main')
+    async onBackToMain(@Ctx() ctx: PatternRecognitionContext) {
+        try {
+            await ctx.answerCbQuery();
+            await ctx.scene.leave();
+            await ctx.reply(
+                BOT_MESSAGES.MAIN_MENU,
+                { reply_markup: this.keyboardService.getMainKeyboard().reply_markup }
+            );
+        } catch (error) {
+            this.logger.error(`Error returning to main menu: ${error.message}`);
+            await ctx.answerCbQuery('❌ Error returning to main menu');
+        }
     }
 
     @On('text')
     async onText(@Ctx() ctx: PatternRecognitionContext) {
         if (!ctx.session.pattern) {
-            await ctx.reply(
-                BOT_MESSAGES.PATTERNS.MENU,
-                { reply_markup: this.keyboardService.getPatternsKeyboard().reply_markup }
-            );
+            await this.showPatternsMenu(ctx);
             return;
         }
 
@@ -101,7 +136,7 @@ export class PatternRecognitionScene {
                         { text: '4H', callback_data: 'timeframe_4h' },
                         { text: '1D', callback_data: 'timeframe_1d' },
                     ],
-                    [{ text: '❌ Cancel', callback_data: 'cancel' }],
+                    [{ text: '❌ Cancel', callback_data: 'back_to_patterns_menu' }],
                 ]),
             },
         );
@@ -204,11 +239,5 @@ export class PatternRecognitionScene {
                 ]),
             },
         );
-    }
-
-    @Action('my_pattern_alerts')
-    async onMyPatternAlerts(@Ctx() ctx: PatternRecognitionContext) {
-        await ctx.answerCbQuery('📋 Opening your pattern alerts...');
-        await ctx.scene.enter(PATTERN_ALERTS_SCENE_ID);
     }
 } 

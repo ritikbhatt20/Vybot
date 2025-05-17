@@ -662,8 +662,8 @@ export class KeyboardService {
             [Markup.button.callback('🔄 Double Top/Bottom', Actions.DOUBLE_TOP_BOTTOM)],
             [Markup.button.callback('📐 Triangle Patterns', Actions.TRIANGLE_PATTERNS)],
             [Markup.button.callback('🚩 Flags and Pennants', Actions.FLAGS_AND_PENNANTS)],
-            [Markup.button.callback('📋 My Pattern Alerts', 'my_pattern_alerts')],
-            [Markup.button.callback('🏠 Back to Main Menu', Actions.MAIN_MENU)],
+            [Markup.button.callback('📋 My Pattern Alerts', SceneActions.PATTERN_ALERTS)],
+            [Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON)],
         ]);
     }
 
@@ -673,15 +673,15 @@ export class KeyboardService {
                 Markup.button.callback('🔄 Toggle Active/Inactive', `toggle_pattern_alert:${alertId}`),
                 Markup.button.callback('🗑️ Delete', `delete_pattern_alert:${alertId}`)
             ],
-            [Markup.button.callback('🔙 Back to Alerts', 'my_pattern_alerts')],
-            [Markup.button.callback('🏠 Back to Main Menu', Actions.MAIN_MENU)],
+            [Markup.button.callback('🔙 Back to Alerts', 'back_to_alerts_list')],
+            [Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON)],
         ]);
     }
 
     getPatternAlertsListKeyboard(): Markup.Markup<InlineKeyboardMarkup> {
         return Markup.inlineKeyboard([
-            [Markup.button.callback('➕ Create New Alert', Actions.PATTERNS_MENU)],
-            [Markup.button.callback('🏠 Back to Main Menu', Actions.MAIN_MENU)],
+            [Markup.button.callback('➕ Create New Alert', 'create_new_alert')],
+            [Markup.button.callback('🏠 Back to Main Menu', SceneActions.MAIN_MENU_BUTTON)],
         ]);
     }
 
